@@ -51,4 +51,28 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+    public function userSubscriptions(): HasMany
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
+    public function userParameters(): HasOne
+    {
+        return $this->hasOne(UserParameter::class);
+    }
+
+    public function testResults(): HasMany
+    {
+        return $this->hasMany(TestResult::class);
+    }
+
+    public function userProgress(): HasMany
+    {
+        return $this->hasMany(UserProgress::class);
+    }
+
+    public function userWorkouts(): HasMany
+    {
+        return $this->hasMany(UserWorkout::class);
+    }
 }
