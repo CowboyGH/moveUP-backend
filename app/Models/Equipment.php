@@ -10,6 +10,8 @@ class Equipment extends Model
 {
     use HasFactory;
 
+    protected $table = 'equipments';
+
     protected $fillable = [
         'name',
     ];

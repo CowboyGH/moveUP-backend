@@ -1,7 +1,7 @@
 - Команда для создания миграции: `docker exec laravel-api php artisan make:migration create_roles_table`
 - Команда для миграций в бд: `docker exec laravel-api php artisan migrate`
 - Команда для создания модели: `docker exec laravel-api php artisan make:model Role`
-
+- Команда для сброса бд и запуска сидов: `docker exec laravel-api php artisan migrate:fresh --seed`
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 <p align="center">
