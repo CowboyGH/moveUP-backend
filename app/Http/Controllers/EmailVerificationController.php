@@ -10,9 +10,6 @@ use App\Http\Requests\Auth\VerifyEmailRequest;
 
 class EmailVerificationController extends Controller
 {
-    /**
-     * Подтверждение email через код
-     */
     public function verifyEmail(VerifyEmailRequest $request)
     {
         $validated = $request->validated();

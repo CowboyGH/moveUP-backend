@@ -12,9 +12,6 @@ use App\Http\Requests\Auth\ResetPasswordRequest;
 
 class PasswordResetController extends Controller
 {
-    /**
-     * Запрос на восстановление пароля
-     */
     public function forgotPassword(ForgotPasswordRequest $request)
     {
         $validated = $request->validated();
@@ -31,9 +28,6 @@ class PasswordResetController extends Controller
         ]);
     }
 
-    /**
-     * Подтверждение кода сброса пароля
-     */
     public function verifyResetCode(VerifyResetCodeRequest $request)
     {
         $validated = $request->validated();
@@ -53,9 +47,6 @@ class PasswordResetController extends Controller
         ]);
     }
 
-    /**
-     * Сброс пароля
-     */
     public function resetPassword(ResetPasswordRequest $request)
     {
         $validated = $request->validated();

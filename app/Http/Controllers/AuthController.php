@@ -14,7 +14,6 @@ use App\Http\Requests\Auth\LoginRequest;
 
 class AuthController extends Controller
 {
-
     public function register(RegisterRequest $request)
     {
         $validated = $request->validated();
