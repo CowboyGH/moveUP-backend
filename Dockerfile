@@ -4,6 +4,7 @@ FROM webdevops/php:8.2-alpine
 RUN apk add --no-cache \
     libzip-dev \
     mariadb-client \
+    php82-pecl-redis \
     && docker-php-ext-install zip pdo_mysql
 
 WORKDIR /var/www/html
