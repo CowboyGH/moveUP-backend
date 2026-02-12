@@ -10,7 +10,6 @@ RUN apk add --no-cache \
 WORKDIR /var/www/html
 
 COPY composer.json composer.lock ./
-
 RUN composer install --no-interaction --no-scripts --prefer-dist
 
 COPY . .
@@ -18,6 +17,6 @@ COPY . .
 RUN chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
-EXPOSE 8000
+COPY supervisord.conf /opt/docker/etc/supervisor.d/laravel.conf
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+EXPOSE 80
