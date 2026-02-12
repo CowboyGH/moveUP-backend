@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
@@ -26,11 +27,6 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'role_id',
         'avatar',
-        'email_verification_code',
-        'email_verification_code_expires_at',
-        'password_reset_code',
-        'password_reset_code_expires_at'
-
     ];
 
     /**
@@ -41,8 +37,6 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
-        'email_verification_code',
-        'password_reset_code'
     ];
 
     /**
@@ -55,8 +49,6 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'email_verification_code_expires_at' => 'datetime',
-            'password_reset_code_expires_at' => 'datetime'
         ];
     }
 
@@ -79,67 +71,51 @@ class User extends Authenticatable implements JWTSubject
     public function generateEmailVerificationCode(): string
     {
         $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-
-        $this->update([
-            'email_verification_code' => $code,
-            'email_verification_code_expires_at' => now()->addMinutes(5)
-        ]);
-
+        $key = "email_verification:{$this->email}";
+        Cache::put($key, $code, 300);
         return $code;
     }
 
     public function generatePasswordResetCode(): string
     {
         $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-
-        $this->update([
-            'password_reset_code' => $code,
-            'password_reset_code_expires_at' => now()->addMinutes(5)
-        ]);
-
+        $key = "password_reset:{$this->email}";
+        Cache::put($key, $code, 300);
         return $code;
     }
 
     public function verifyEmailCode(string $code): bool
     {
-        $storedCode = (string) $this->email_verification_code;
-        $inputCode = (string) $code;
+        $key = "email_verification:{$this->email}";
+        $storedCode = Cache::get($key);
 
-        $storedCode = trim($storedCode);
-        $inputCode = trim($inputCode);
-
-        return $storedCode === $inputCode
-            && $this->email_verification_code_expires_at
-            && $this->email_verification_code_expires_at->isFuture();
+        if (!$storedCode) {
+            return false;
+        }
+        return (string) $storedCode === (string) $code;
     }
 
     public function verifyPasswordResetCode(string $code): bool
     {
-        $storedCode = (string) $this->password_reset_code;
-        $inputCode = (string) $code;
+        $key = "password_reset:{$this->email}";
+        $storedCode = Cache::get($key);
 
-        $storedCode = trim($storedCode);
-        $inputCode = trim($inputCode);
-
-        return $storedCode === $inputCode
-            && $this->password_reset_code_expires_at
-            && $this->password_reset_code_expires_at->isFuture();
+        if (!$storedCode) {
+            return false;
+        }
+        return (string) $storedCode === (string) $code;
     }
 
     public function clearEmailVerificationCode(): void
     {
-        $this->update([
-            'email_verification_code' => null,
-            'email_verification_code_expires_at' => null
-        ]);
+        $key = "email_verification:{$this->email}";
+        Cache::forget($key);
     }
 
     public function clearPasswordResetCode(): void
     {
-        $this->update([
-            'password_reset_code' => null,
-            'password_reset_code_expires_at' => null
-        ]);
+        $key = "password_reset:{$this->email}";
+        Cache::forget($key);
     }
 
 
