@@ -3,35 +3,22 @@
 namespace App\Http\Swagger\Paths;
 
 /**
- * Подтверждение email через код
- *
  * @OA\Post(
  *     path="/api/verify-email",
- *     summary="Подтверждение email через код",
+ *     summary="Подтверждение email с помощью кода",
  *     tags={"Email Verification"},
  *     @OA\RequestBody(
  *         required=true,
- *         @OA\JsonContent(
- *             required={"email", "code"},
- *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
- *             @OA\Property(property="code", type="string", example="123456")
- *         )
+ *         @OA\JsonContent(ref="#/components/schemas/VerifyEmailRequest")
  *     ),
  *     @OA\Response(
  *         response=200,
  *         description="Email успешно подтвержден",
- *         @OA\JsonContent(
- *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="message", type="string", example="Email успешно подтвержден."),
- *             @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."),
- *             @OA\Property(property="token_type", type="string", example="bearer"),
- *             @OA\Property(property="expires_in", type="integer", example=3600),
- *             @OA\Property(property="user", ref="#/components/schemas/User")
- *         )
+ *         @OA\JsonContent(ref="#/components/schemas/VerifyEmailResponse")
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Ошибки подтверждения",
+ *         description="Email уже подтвержден или неверный код",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     ),
  *     @OA\Response(
@@ -42,3 +29,54 @@ namespace App\Http\Swagger\Paths;
  * )
  */
 class EmailVerificationPaths {}
+
+/**
+ * @OA\Post(
+ *     path="/api/resend-verification-code",
+ *     summary="Повторная отправка кода подтверждения",
+ *     description="Отправляет новый 6-значный код подтверждения на email пользователя",
+ *     tags={"Email Verification"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(ref="#/components/schemas/ResendVerificationRequest")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Новый код успешно отправлен",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Новый код подтверждения отправлен на вашу почту.")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Email уже подтвержден",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=false),
+ *             @OA\Property(property="message", type="string", example="Email уже подтвержден.")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Пользователь не найден",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=false),
+ *             @OA\Property(property="message", type="string", example="Пользователь с таким email не найден.")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибки валидации",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=429,
+ *         description="Слишком много попыток",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=false),
+ *             @OA\Property(property="message", type="string", example="Слишком много попыток. Попробуйте позже.")
+ *         )
+ *     )
+ * )
+ */
+class ResendVerificationPath {}

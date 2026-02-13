@@ -31,7 +31,9 @@ class LoginRequest extends ApiFormRequest
     {
         return [
             'email.required' => 'Поле "Email" обязательно для заполнения.',
+            'email.email' => 'Введите корректный адрес электронной почты.',
             'password.required' => 'Поле "Пароль" обязательно для заполнения.',
+            'password.string' => 'Неверный пароль.',
         ];
     }
 }

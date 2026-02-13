@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Http\Requests\ApiFormRequest;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
-class VerifyEmailRequest extends ApiFormRequest
+class ResendVerificationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,17 +24,35 @@ class VerifyEmailRequest extends ApiFormRequest
     {
         return [
             'email' => 'required|email',
-            'code' => 'required|string|size:6|regex:/^[0-9]+$/',
         ];
     }
+
     public function messages(): array
     {
         return [
             'email.required' => 'Поле "Email" обязательно для заполнения.',
             'email.email' => 'Введите корректный адрес электронной почты.',
-            'code.required' => 'Поле "Код" обязательно для заполнения.',
-            'code.size' => 'Неверный код.',
-            'code.regex' => 'Неверный код.',
         ];
+    }
+
+    /**
+     * Проверка существования email и что email еще не подтвержден
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            if (!$validator->errors()->any()) {
+                $user = User::where('email', $this->email)->first();
+
+                if (!$user) {
+                    $validator->errors()->add('email', 'Пользователь с таким email не найден.');
+                    return;
+                }
+
+                if ($user->email_verified_at) {
+                    $validator->errors()->add('email', 'Email уже подтвержден.');
+                }
+            }
+        });
     }
 }

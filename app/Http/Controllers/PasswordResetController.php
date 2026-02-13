@@ -15,11 +15,9 @@ class PasswordResetController extends Controller
     public function forgotPassword(ForgotPasswordRequest $request)
     {
         $validated = $request->validated();
-
         $user = User::where('email', $validated['email'])->first();
 
         $resetCode = $user->generatePasswordResetCode();
-
         Mail::to($user->email)->send(new PasswordResetMail($resetCode));
 
         return response()->json([
@@ -30,17 +28,6 @@ class PasswordResetController extends Controller
 
     public function verifyResetCode(VerifyResetCodeRequest $request)
     {
-        $validated = $request->validated();
-
-        $user = User::where('email', $validated['email'])->first();
-
-        if (!$user->verifyPasswordResetCode($validated['code'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Неверный или истекший код сброса.'
-            ], 400);
-        }
-
         return response()->json([
             'success' => true,
             'message' => 'Код сброса пароля успешно подтвержден.'
@@ -50,15 +37,7 @@ class PasswordResetController extends Controller
     public function resetPassword(ResetPasswordRequest $request)
     {
         $validated = $request->validated();
-
         $user = User::where('email', $validated['email'])->first();
-
-        if (!$user->verifyPasswordResetCode($validated['code'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Неверный или истекший код сброса.'
-            ], 400);
-        }
 
         $user->update([
             'password' => Hash::make($validated['password']),

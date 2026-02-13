@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\ResendVerificationRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerificationCodeMail;
@@ -44,6 +45,22 @@ class EmailVerificationController extends Controller
             'token_type' => 'bearer',
             'expires_in' => config('jwt.ttl') * 60,
             'user' => $user->fresh()
+        ]);
+    }
+
+    public function resendVerificationCode(ResendVerificationRequest $request)
+    {
+        $validated = $request->validated();
+
+        $user = User::where('email', $validated['email'])->first();
+
+        $verificationCode = $user->generateEmailVerificationCode();
+
+        Mail::to($user->email)->send(new VerificationCodeMail($verificationCode));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Новый код подтверждения отправлен на вашу почту.'
         ]);
     }
 }

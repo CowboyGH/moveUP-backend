@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\ApiFormRequest;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ForgotPasswordRequest extends ApiFormRequest
@@ -30,6 +31,22 @@ class ForgotPasswordRequest extends ApiFormRequest
     {
         return [
             'email.required' => 'Поле "Email" обязательно для заполнения.',
+            'email.email' => 'Введите корректный адрес электронной почты.',
         ];
+    }
+    /**
+     * Проверка существования email в системе
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            if (!$validator->errors()->any()) {
+                $user = User::where('email', $this->email)->first();
+
+                if (!$user) {
+                    $validator->errors()->add('email', 'Email не обнаружен в системе.');
+                }
+            }
+        });
     }
 }

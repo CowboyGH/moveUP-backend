@@ -9,7 +9,17 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 class ApiFormRequest extends FormRequest
 {
     /**
-     * Handle a failed validation attempt.
+     * Автоматическое удаление пробелов.
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge(array_map(function ($value) {
+            return is_string($value) ? trim($value) : $value;
+        }, $this->all()));
+    }
+
+    /**
+     * Обработка неудачной попытки проверки.
      */
     protected function failedValidation(Validator $validator)
     {
