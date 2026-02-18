@@ -111,8 +111,13 @@ class RefreshPath {}
  *     ),
  *     @OA\Response(
  *         response=401,
- *         description="Неавторизован",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         description="Неавторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *         @OA\JsonContent(
+ *             oneOf={
+ *                 @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *                 @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
+ *             }
+ *         )
  *     )
  * )
  */

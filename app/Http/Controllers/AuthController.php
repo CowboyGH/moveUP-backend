@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerificationCodeMail;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\LoginRequest;
 
@@ -63,6 +62,12 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => config('jwt.ttl') * 60,
+            'refresh_expires_in' => config('jwt.refresh_ttl') * 60,
+            'session' => [
+                'lifetime_days' => 7,
+                'inactivity_limit_hours' => 24,
+                'access_token_expires_in_minutes' => config('jwt.ttl')
+            ],
             'user' => $user
         ]);
     }

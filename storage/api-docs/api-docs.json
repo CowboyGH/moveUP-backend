@@ -674,11 +674,18 @@
                         }
                     },
                     "401": {
-                        "description": "Неавторизован",
+                        "description": "Неавторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -1398,6 +1405,27 @@
                 },
                 "type": "object"
             },
+            "SessionConfig": {
+                "description": "Конфигурация сессии",
+                "properties": {
+                    "lifetime_days": {
+                        "description": "Общая длительность сессии в днях",
+                        "type": "integer",
+                        "example": 7
+                    },
+                    "inactivity_limit_hours": {
+                        "description": "Лимит неактивности в часах",
+                        "type": "integer",
+                        "example": 24
+                    },
+                    "access_token_expires_in_minutes": {
+                        "description": "Время жизни access token в минутах",
+                        "type": "integer",
+                        "example": 60
+                    }
+                },
+                "type": "object"
+            },
             "LoginResponse": {
                 "properties": {
                     "success": {
@@ -1413,8 +1441,17 @@
                         "example": "bearer"
                     },
                     "expires_in": {
+                        "description": "Время жизни access token в секундах",
                         "type": "integer",
                         "example": 3600
+                    },
+                    "refresh_expires_in": {
+                        "description": "Время жизни refresh token в секундах (7 дней)",
+                        "type": "integer",
+                        "example": 604800
+                    },
+                    "session": {
+                        "$ref": "#/components/schemas/SessionConfig"
                     },
                     "user": {
                         "properties": {
@@ -1490,6 +1527,23 @@
                     "expires_in": {
                         "type": "integer",
                         "example": 3600
+                    }
+                },
+                "type": "object"
+            },
+            "InactivityErrorResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Сессия завершена из-за длительного бездействия."
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "session_expired_inactivity"
                     }
                 },
                 "type": "object"

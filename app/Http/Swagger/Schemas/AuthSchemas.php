@@ -47,12 +47,29 @@ class LoginRequestSchema {}
 
 /**
  * @OA\Schema(
+ *     schema="SessionConfig",
+ *     type="object",
+ *     description="Конфигурация сессии",
+ *     @OA\Property(property="lifetime_days", type="integer", example=7, description="Общая длительность сессии в днях"),
+ *     @OA\Property(property="inactivity_limit_hours", type="integer", example=24, description="Лимит неактивности в часах"),
+ *     @OA\Property(property="access_token_expires_in_minutes", type="integer", example=60, description="Время жизни access token в минутах")
+ * )
+ */
+class SessionConfigSchema {}
+
+/**
+ * @OA\Schema(
  *     schema="LoginResponse",
  *     type="object",
  *     @OA\Property(property="success", type="boolean", example=true),
  *     @OA\Property(property="access_token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."),
  *     @OA\Property(property="token_type", type="string", example="bearer"),
- *     @OA\Property(property="expires_in", type="integer", example=3600),
+ *     @OA\Property(property="expires_in", type="integer", example=3600, description="Время жизни access token в секундах"),
+ *     @OA\Property(property="refresh_expires_in", type="integer", example=604800, description="Время жизни refresh token в секундах (7 дней)"),
+ *     @OA\Property(
+ *         property="session",
+ *         ref="#/components/schemas/SessionConfig"
+ *     ),
  *     @OA\Property(
  *         property="user",
  *         type="object",
@@ -90,6 +107,17 @@ class LogoutResponseSchema {}
  * )
  */
 class RefreshResponseSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="InactivityErrorResponse",
+ *     type="object",
+ *     @OA\Property(property="success", type="boolean", example=false),
+ *     @OA\Property(property="message", type="string", example="Сессия завершена из-за длительного бездействия."),
+ *     @OA\Property(property="code", type="string", example="session_expired_inactivity")
+ * )
+ */
+class InactivityErrorResponseSchema {}
 
 /**
  * @OA\Schema(
