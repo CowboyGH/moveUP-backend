@@ -148,4 +148,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(UserWorkout::class);
     }
 
+    public function savedCards(): HasMany
+    {
+        return $this->hasMany(SavedCard::class);
+    }
+
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\SubscriptionController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailVerificationController;
@@ -17,13 +18,21 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 Route::get('/subscriptions', [SubscriptionController::class, 'index']);
 Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
 
-
 Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/me', [AuthController::class, 'me']);
 
     Route::get('/my-subscriptions', [App\Http\Controllers\SubscriptionController::class, 'mySubscriptions']);
+
+    Route::post('/payment/subscribe', [PaymentController::class, 'subscribe']);
+
+//    Route::post('/payment/process', [PaymentController::class, 'processPayment']);
+    Route::get('/payment/cards', [PaymentController::class, 'getSavedCards']);
+    Route::delete('/payment/cards/{cardId}', [PaymentController::class, 'deleteCard']);
+    Route::post('/payment/cards/{cardId}/default', [PaymentController::class, 'setDefaultCard']);
+
+    Route::post('/payment/save-card', [PaymentController::class, 'simpleSaveCard']);
 });
 
 Route::middleware(['auth:api', 'admin'])->prefix('admin')->group(function () {
