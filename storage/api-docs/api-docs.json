@@ -26,7 +26,11 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
                                             "type": "string",
                                             "example": "success"
                                         },
@@ -83,20 +87,20 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
                     },
                     "403": {
-                        "description": "Доступ запрещен"
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -163,9 +167,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
@@ -178,19 +182,24 @@
                                                     "example": 1
                                                 },
                                                 "name": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "example": "Premium 1 month"
                                                 },
                                                 "description": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "example": "Full access to all premium features"
                                                 },
                                                 "price": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "example": "9.99"
                                                 },
                                                 "duration_days": {
-                                                    "type": "integer"
+                                                    "type": "integer",
+                                                    "example": 30
                                                 },
                                                 "is_active": {
-                                                    "type": "boolean"
+                                                    "type": "boolean",
+                                                    "example": true
                                                 },
                                                 "created_at": {
                                                     "type": "string",
@@ -216,23 +225,30 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
                     },
                     "403": {
-                        "description": "Доступ запрещен"
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
                     },
                     "422": {
-                        "description": "Ошибка валидации"
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -266,29 +282,39 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
                                             "type": "string",
                                             "example": "success"
                                         },
                                         "data": {
                                             "properties": {
                                                 "id": {
-                                                    "type": "integer"
+                                                    "type": "integer",
+                                                    "example": 1
                                                 },
                                                 "name": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "example": "1 month"
                                                 },
                                                 "description": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "example": "Full access for 1 month"
                                                 },
                                                 "price": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "example": "9.99"
                                                 },
                                                 "duration_days": {
-                                                    "type": "integer"
+                                                    "type": "integer",
+                                                    "example": 30
                                                 },
                                                 "is_active": {
-                                                    "type": "boolean"
+                                                    "type": "boolean",
+                                                    "example": true
                                                 },
                                                 "created_at": {
                                                     "type": "string",
@@ -314,23 +340,30 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
                     },
                     "403": {
-                        "description": "Доступ запрещен"
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
                     },
                     "404": {
-                        "description": "Подписка не найдена"
+                        "description": "Подписка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -400,9 +433,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
@@ -411,22 +444,28 @@
                                         "data": {
                                             "properties": {
                                                 "id": {
-                                                    "type": "integer"
+                                                    "type": "integer",
+                                                    "example": 1
                                                 },
                                                 "name": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "example": "Updated name"
                                                 },
                                                 "description": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "example": "Updated description"
                                                 },
                                                 "price": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "example": "19.99"
                                                 },
                                                 "duration_days": {
-                                                    "type": "integer"
+                                                    "type": "integer",
+                                                    "example": 90
                                                 },
                                                 "is_active": {
-                                                    "type": "boolean"
+                                                    "type": "boolean",
+                                                    "example": false
                                                 },
                                                 "created_at": {
                                                     "type": "string",
@@ -452,26 +491,40 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
                     },
                     "403": {
-                        "description": "Доступ запрещен"
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
                     },
                     "404": {
-                        "description": "Подписка не найдена"
+                        "description": "Подписка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
                     },
                     "422": {
-                        "description": "Ошибка валидации"
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -503,9 +556,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
@@ -522,26 +575,40 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
                     },
                     "403": {
-                        "description": "Доступ запрещен"
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
                     },
                     "404": {
-                        "description": "Подписка не найдена"
+                        "description": "Подписка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
                     },
                     "422": {
-                        "description": "Нельзя удалить используемую подписку"
+                        "description": "Нельзя удалить используемую подписку",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -615,64 +682,37 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "access_token": {
-                                            "type": "string",
-                                            "example": "eyJ0eXAiOiJKV1Qi..."
-                                        },
-                                        "token_type": {
-                                            "type": "string",
-                                            "example": "bearer"
-                                        },
-                                        "expires_in": {
-                                            "type": "integer",
-                                            "example": 3600
-                                        },
-                                        "refresh_expires_in": {
-                                            "description": "30 дней в секундах",
-                                            "type": "integer",
-                                            "example": 2592000
-                                        },
-                                        "session": {
-                                            "properties": {
-                                                "lifetime_days": {
-                                                    "type": "integer",
-                                                    "example": 30
-                                                },
-                                                "inactivity_limit_days": {
-                                                    "type": "integer",
-                                                    "example": 7
-                                                },
-                                                "access_token_expires_in_minutes": {
-                                                    "type": "integer",
-                                                    "example": 60
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "user": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "name": {
-                                                    "type": "string",
-                                                    "example": "Иван Иванов"
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "user@example.com"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неверные учетные данные",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InvalidCredentialsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Email не подтвержден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmailNotVerifiedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибки валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }
@@ -699,18 +739,11 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+                        "description": "Не авторизован",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
@@ -742,18 +775,11 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+                        "description": "Срок действия сессии истек",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/SessionExpiredAbsoluteResponse"
                                 }
                             }
                         }
@@ -785,16 +811,19 @@
                         }
                     },
                     "401": {
-                        "description": "Неавторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+                        "description": "Неавторизован. Возможные причины: истекший токен или сессия завершена из-за неактивности",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "oneOf": [
                                         {
-                                            "$ref": "#/components/schemas/ErrorResponse"
+                                            "$ref": "#/components/schemas/TokenExpiredResponse"
                                         },
                                         {
                                             "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/UnauthorizedResponse"
                                         }
                                     ]
                                 }
@@ -842,7 +871,14 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ConflictResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -866,7 +902,6 @@
                     "Email Verification"
                 ],
                 "summary": "Повторная отправка кода подтверждения",
-                "description": "Отправляет новый 6-значный код подтверждения на email пользователя",
                 "operationId": "d28eb7880521fd76bf040aabbbb4dc0f",
                 "requestBody": {
                     "required": true,
@@ -884,17 +919,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Новый код подтверждения отправлен на вашу почту."
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/ResendVerificationResponse"
                                 }
                             }
                         }
@@ -904,17 +929,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Email уже подтвержден."
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/ConflictResponse"
                                 }
                             }
                         }
@@ -924,17 +939,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Пользователь с таким email не найден."
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/NotFoundResponse"
                                 }
                             }
                         }
@@ -954,17 +959,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Слишком много попыток. Попробуйте позже."
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/RateLimitedResponse"
                                 }
                             }
                         }
@@ -996,6 +991,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForgotPasswordResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Пользователь не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
                                 }
                             }
                         }
@@ -1051,6 +1056,16 @@
                             }
                         }
                     },
+                    "404": {
+                        "description": "Пользователь не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
                     "422": {
                         "description": "Ошибки валидации",
                         "content": {
@@ -1102,6 +1117,16 @@
                             }
                         }
                     },
+                    "404": {
+                        "description": "Пользователь не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
                     "422": {
                         "description": "Ошибки валидации",
                         "content": {
@@ -1121,7 +1146,6 @@
                     "Payments"
                 ],
                 "summary": "Оплата подписки",
-                "description": "Обработка платежа за подписку. Можно использовать новую или сохраненную карту.",
                 "operationId": "7d2e2db466c6a8fa04d99ff3ff097930",
                 "requestBody": {
                     "required": true,
@@ -1149,38 +1173,17 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Не удалось получить данные карты"
-                                        },
-                                        "status": {
-                                            "type": "string",
-                                            "example": "failed"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
                     },
                     "401": {
-                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+                        "description": "Не авторизован",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
@@ -1190,7 +1193,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "$ref": "#/components/schemas/NotFoundResponse"
                                 }
                             }
                         }
@@ -1210,7 +1213,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
                                 }
                             }
                         }
@@ -1229,7 +1232,6 @@
                     "Cards"
                 ],
                 "summary": "Список сохраненных карт",
-                "description": "Получение списка всех сохраненных карт пользователя",
                 "operationId": "9e815b8dbd974b23564b1adcc9a7b714",
                 "responses": {
                     "200": {
@@ -1237,7 +1239,23 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/CardsListResponse"
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SavedCard"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -1247,14 +1265,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
@@ -1273,7 +1284,6 @@
                     "Cards"
                 ],
                 "summary": "Сохранение карты",
-                "description": "Сохранение новой банковской карты пользователя. Карта сохраняется всегда, так как это специальный эндпоинт для сохранения.",
                 "operationId": "bf1a2387003430262b6831fd2521e91b",
                 "requestBody": {
                     "required": true,
@@ -1300,19 +1310,24 @@
                                             "type": "string",
                                             "example": "Карта успешно сохранена"
                                         },
-                                        "card_saved": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "card": {
+                                        "data": {
                                             "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 12
+                                                "card_saved": {
+                                                    "type": "boolean",
+                                                    "example": true
                                                 },
-                                                "last_four": {
-                                                    "type": "string",
-                                                    "example": "7777"
+                                                "card": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 12
+                                                        },
+                                                        "last_four": {
+                                                            "type": "string",
+                                                            "example": "7777"
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 }
                                             },
                                             "type": "object"
@@ -1328,14 +1343,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
@@ -1355,7 +1363,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
                                 }
                             }
                         }
@@ -1374,7 +1382,6 @@
                     "Cards"
                 ],
                 "summary": "Удаление карты",
-                "description": "Удаление сохраненной карты пользователя",
                 "operationId": "9d8040e28f1e66581a436b12e531dbed",
                 "parameters": [
                     {
@@ -1395,9 +1402,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
@@ -1414,14 +1421,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
@@ -1431,17 +1431,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "string",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Карта не найдена"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/NotFoundResponse"
                                 }
                             }
                         }
@@ -1460,7 +1450,6 @@
                     "Cards"
                 ],
                 "summary": "Установка основной карты",
-                "description": "Установка карты по умолчанию для пользователя",
                 "operationId": "5cdb991bc5c821719f12f14e006483a7",
                 "parameters": [
                     {
@@ -1481,9 +1470,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         },
                                         "message": {
                                             "type": "string",
@@ -1500,14 +1489,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
@@ -1517,17 +1499,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "string",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Карта не найдена"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/NotFoundResponse"
                                 }
                             }
                         }
@@ -1537,17 +1509,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "error"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Ошибка при изменении основной карты"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
                                 }
                             }
                         }
@@ -1574,7 +1536,11 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
                                             "type": "string",
                                             "example": "success"
                                         },
@@ -1601,20 +1567,6 @@
                                                     "duration_days": {
                                                         "type": "integer",
                                                         "example": 30
-                                                    },
-                                                    "is_active": {
-                                                        "type": "boolean",
-                                                        "example": true
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2024-01-01T12:00:00Z"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2024-01-01T12:00:00Z"
                                                     }
                                                 },
                                                 "type": "object"
@@ -1627,7 +1579,14 @@
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера"
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1658,7 +1617,11 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
                                             "type": "string",
                                             "example": "success"
                                         },
@@ -1712,23 +1675,20 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "error"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Подписка не найдена"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/NotFoundResponse"
                                 }
                             }
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера"
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1747,7 +1707,11 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
                                             "type": "string",
                                             "example": "success"
                                         },
@@ -1843,20 +1807,20 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "oneOf": [
-                                        {
-                                            "$ref": "#/components/schemas/ErrorResponse"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/InactivityErrorResponse"
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера"
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -2003,9 +1967,9 @@
                         "example": 3600
                     },
                     "refresh_expires_in": {
-                        "description": "Время жизни refresh token в секундах (7 дней)",
+                        "description": "30 дней в секундах",
                         "type": "integer",
-                        "example": 604800
+                        "example": 2592000
                     },
                     "session": {
                         "$ref": "#/components/schemas/SessionConfig"
@@ -2088,23 +2052,6 @@
                 },
                 "type": "object"
             },
-            "InactivityErrorResponse": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Сессия завершена после 7 дней бездействия."
-                    },
-                    "code": {
-                        "type": "string",
-                        "example": "session_expired_inactivity"
-                    }
-                },
-                "type": "object"
-            },
             "MeResponse": {
                 "properties": {
                     "success": {
@@ -2165,51 +2112,259 @@
                     "message": {
                         "type": "string",
                         "example": "Операция выполнена успешно"
+                    },
+                    "data": {
+                        "description": "Опциональные данные ответа",
+                        "type": "object",
+                        "nullable": true
                     }
                 },
                 "type": "object"
             },
             "ErrorResponse": {
-                "title": "Ответ с ошибкой",
+                "required": [
+                    "code",
+                    "message"
+                ],
                 "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": false
+                    "code": {
+                        "description": "Код ошибки",
+                        "type": "string"
                     },
                     "message": {
-                        "type": "string",
-                        "example": "Сообщение об ошибке"
+                        "description": "Сообщение об ошибке",
+                        "type": "string"
                     }
                 },
                 "type": "object"
             },
             "ValidationErrorResponse": {
-                "title": "Ответ с ошибками валидации",
+                "required": [
+                    "code",
+                    "message",
+                    "errors"
+                ],
                 "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": false
+                    "code": {
+                        "type": "string",
+                        "example": "validation_failed"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Ошибка валидации"
                     },
                     "errors": {
+                        "description": "Детальные ошибки валидации",
                         "type": "object",
                         "example": {
                             "email": [
-                                "Поле email обязательно для заполнения"
+                                "Поле email обязательно"
                             ],
                             "password": [
                                 "Пароль должен содержать минимум 8 символов"
                             ]
-                        },
-                        "additionalProperties": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "example": "Поле обязательно для заполнения"
-                            }
                         }
                     }
                 },
                 "type": "object"
+            },
+            "InvalidCredentialsResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "invalid_credentials"
+                            },
+                            "message": {
+                                "example": "Неверные учетные данные."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "EmailNotVerifiedResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "email_not_verified"
+                            },
+                            "message": {
+                                "example": "Email не подтвержден."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "TokenExpiredResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "token_expired"
+                            },
+                            "message": {
+                                "example": "Токен истек."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "InactivityErrorResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "session_expired_inactivity"
+                            },
+                            "message": {
+                                "example": "Сессия завершена после 7 дней бездействия."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "SessionExpiredAbsoluteResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "session_expired_absolute"
+                            },
+                            "message": {
+                                "example": "Срок действия сессии истек. Войдите снова."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "UnauthorizedResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "unauthorized"
+                            },
+                            "message": {
+                                "example": "Неавторизован."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "ForbiddenResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "forbidden"
+                            },
+                            "message": {
+                                "example": "Доступ запрещен."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "NotFoundResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "not_found"
+                            },
+                            "message": {
+                                "example": "Ресурс не найден."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "ConflictResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "conflict"
+                            },
+                            "message": {
+                                "example": "Конфликт данных."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "RateLimitedResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "rate_limited"
+                            },
+                            "message": {
+                                "example": "Слишком много запросов. Попробуйте позже."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "ServerErrorResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "server_error"
+                            },
+                            "message": {
+                                "example": "Внутренняя ошибка сервера."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
             },
             "VerifyEmailRequest": {
                 "required": [

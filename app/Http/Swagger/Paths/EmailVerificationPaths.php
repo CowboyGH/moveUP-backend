@@ -19,7 +19,12 @@ namespace App\Http\Swagger\Paths;
  *     @OA\Response(
  *         response=400,
  *         description="Email уже подтвержден или неверный код",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         @OA\JsonContent(
+ *             oneOf={
+ *                 @OA\Schema(ref="#/components/schemas/ConflictResponse"),
+ *                 @OA\Schema(ref="#/components/schemas/ErrorResponse")
+ *             }
+ *         )
  *     ),
  *     @OA\Response(
  *         response=422,
@@ -34,7 +39,6 @@ class EmailVerificationPaths {}
  * @OA\Post(
  *     path="/api/resend-verification-code",
  *     summary="Повторная отправка кода подтверждения",
- *     description="Отправляет новый 6-значный код подтверждения на email пользователя",
  *     tags={"Email Verification"},
  *     @OA\RequestBody(
  *         required=true,
@@ -43,26 +47,17 @@ class EmailVerificationPaths {}
  *     @OA\Response(
  *         response=200,
  *         description="Новый код успешно отправлен",
- *         @OA\JsonContent(
- *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="message", type="string", example="Новый код подтверждения отправлен на вашу почту.")
- *         )
+ *         @OA\JsonContent(ref="#/components/schemas/ResendVerificationResponse")
  *     ),
  *     @OA\Response(
  *         response=400,
  *         description="Email уже подтвержден",
- *         @OA\JsonContent(
- *             @OA\Property(property="success", type="boolean", example=false),
- *             @OA\Property(property="message", type="string", example="Email уже подтвержден.")
- *         )
+ *         @OA\JsonContent(ref="#/components/schemas/ConflictResponse")
  *     ),
  *     @OA\Response(
  *         response=404,
  *         description="Пользователь не найден",
- *         @OA\JsonContent(
- *             @OA\Property(property="success", type="boolean", example=false),
- *             @OA\Property(property="message", type="string", example="Пользователь с таким email не найден.")
- *         )
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
  *     ),
  *     @OA\Response(
  *         response=422,
@@ -72,10 +67,7 @@ class EmailVerificationPaths {}
  *     @OA\Response(
  *         response=429,
  *         description="Слишком много попыток",
- *         @OA\JsonContent(
- *             @OA\Property(property="success", type="boolean", example=false),
- *             @OA\Property(property="message", type="string", example="Слишком много попыток. Попробуйте позже.")
- *         )
+ *         @OA\JsonContent(ref="#/components/schemas/RateLimitedResponse")
  *     )
  * )
  */

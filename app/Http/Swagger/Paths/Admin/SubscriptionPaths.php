@@ -12,7 +12,8 @@ namespace App\Http\Swagger\Paths\Admin;
  *         response=200,
  *         description="Успешный ответ",
  *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="success"),
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
@@ -30,16 +31,15 @@ namespace App\Http\Swagger\Paths\Admin;
  *         )
  *     ),
  *     @OA\Response(
- *          response=401,
- *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
- *          @OA\JsonContent(
- *              oneOf={
- *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
- *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
- *              }
- *          )
- *      ),
- *     @OA\Response(response=403, description="Доступ запрещен")
+ *         response=401,
+ *         description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Доступ запрещен (только для администраторов)",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     )
  * )
  */
 class SubscriptionPaths {}
@@ -65,33 +65,36 @@ class SubscriptionPaths {}
  *         response=201,
  *         description="Подписка создана",
  *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="success", type="boolean", example=true),
  *             @OA\Property(property="message", type="string", example="Подписка успешно создана"),
  *             @OA\Property(
  *                 property="data",
  *                 @OA\Property(property="id", type="integer", example=1),
- *                 @OA\Property(property="name", type="string"),
- *                 @OA\Property(property="description", type="string"),
- *                 @OA\Property(property="price", type="string"),
- *                 @OA\Property(property="duration_days", type="integer"),
- *                 @OA\Property(property="is_active", type="boolean"),
+ *                 @OA\Property(property="name", type="string", example="Premium 1 month"),
+ *                 @OA\Property(property="description", type="string", example="Full access to all premium features"),
+ *                 @OA\Property(property="price", type="string", example="9.99"),
+ *                 @OA\Property(property="duration_days", type="integer", example=30),
+ *                 @OA\Property(property="is_active", type="boolean", example=true),
  *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
  *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-01-01T12:00:00Z")
  *             )
  *         )
  *     ),
  *     @OA\Response(
- *          response=401,
- *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
- *          @OA\JsonContent(
- *              oneOf={
- *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
- *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
- *              }
- *          )
- *      ),
- *     @OA\Response(response=403, description="Доступ запрещен"),
- *     @OA\Response(response=422, description="Ошибка валидации")
+ *         response=401,
+ *         description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Доступ запрещен (только для администраторов)",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибка валидации",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+ *     )
  * )
  */
 class SubscriptionStore {}
@@ -112,32 +115,36 @@ class SubscriptionStore {}
  *         response=200,
  *         description="Успешный ответ",
  *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="success"),
  *             @OA\Property(
  *                 property="data",
- *                 @OA\Property(property="id", type="integer"),
- *                 @OA\Property(property="name", type="string"),
- *                 @OA\Property(property="description", type="string"),
- *                 @OA\Property(property="price", type="string"),
- *                 @OA\Property(property="duration_days", type="integer"),
- *                 @OA\Property(property="is_active", type="boolean"),
+ *                 @OA\Property(property="id", type="integer", example=1),
+ *                 @OA\Property(property="name", type="string", example="1 month"),
+ *                 @OA\Property(property="description", type="string", example="Full access for 1 month"),
+ *                 @OA\Property(property="price", type="string", example="9.99"),
+ *                 @OA\Property(property="duration_days", type="integer", example=30),
+ *                 @OA\Property(property="is_active", type="boolean", example=true),
  *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
  *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-01-01T12:00:00Z")
  *             )
  *         )
  *     ),
  *     @OA\Response(
- *          response=401,
- *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
- *          @OA\JsonContent(
- *              oneOf={
- *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
- *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
- *              }
- *          )
- *      ),
- *     @OA\Response(response=403, description="Доступ запрещен"),
- *     @OA\Response(response=404, description="Подписка не найдена")
+ *         response=401,
+ *         description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Доступ запрещен (только для администраторов)",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Подписка не найдена",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     )
  * )
  */
 class SubscriptionShow {}
@@ -167,34 +174,41 @@ class SubscriptionShow {}
  *         response=200,
  *         description="Подписка обновлена",
  *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="success", type="boolean", example=true),
  *             @OA\Property(property="message", type="string", example="Подписка успешно обновлена"),
  *             @OA\Property(
  *                 property="data",
- *                 @OA\Property(property="id", type="integer"),
- *                 @OA\Property(property="name", type="string"),
- *                 @OA\Property(property="description", type="string"),
- *                 @OA\Property(property="price", type="string"),
- *                 @OA\Property(property="duration_days", type="integer"),
- *                 @OA\Property(property="is_active", type="boolean"),
+ *                 @OA\Property(property="id", type="integer", example=1),
+ *                 @OA\Property(property="name", type="string", example="Updated name"),
+ *                 @OA\Property(property="description", type="string", example="Updated description"),
+ *                 @OA\Property(property="price", type="string", example="19.99"),
+ *                 @OA\Property(property="duration_days", type="integer", example=90),
+ *                 @OA\Property(property="is_active", type="boolean", example=false),
  *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
  *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-01-01T12:00:00Z")
  *             )
  *         )
  *     ),
  *     @OA\Response(
- *          response=401,
- *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
- *          @OA\JsonContent(
- *              oneOf={
- *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
- *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
- *              }
- *          )
- *      ),
- *     @OA\Response(response=403, description="Доступ запрещен"),
- *     @OA\Response(response=404, description="Подписка не найдена"),
- *     @OA\Response(response=422, description="Ошибка валидации")
+ *         response=401,
+ *         description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Доступ запрещен (только для администраторов)",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Подписка не найдена",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибка валидации",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+ *     )
  * )
  */
 class SubscriptionUpdate {}
@@ -215,23 +229,30 @@ class SubscriptionUpdate {}
  *         response=200,
  *         description="Подписка удалена",
  *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="success", type="boolean", example=true),
  *             @OA\Property(property="message", type="string", example="Подписка успешно удалена")
  *         )
  *     ),
  *     @OA\Response(
- *          response=401,
- *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
- *          @OA\JsonContent(
- *              oneOf={
- *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
- *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
- *              }
- *          )
- *      ),
- *     @OA\Response(response=403, description="Доступ запрещен"),
- *     @OA\Response(response=404, description="Подписка не найдена"),
- *     @OA\Response(response=422, description="Нельзя удалить используемую подписку")
+ *         response=401,
+ *         description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Доступ запрещен (только для администраторов)",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Подписка не найдена",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Нельзя удалить используемую подписку",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+ *     )
  * )
  */
 class SubscriptionDestroy {}

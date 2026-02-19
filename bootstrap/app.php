@@ -19,6 +19,68 @@ return Application::configure(basePath: dirname(__DIR__))
             'track.activity' => \App\Http\Middleware\TrackUserActivity::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
+    ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->renderable(function (\Illuminate\Validation\ValidationException $e, $request) {
+            if ($request->is('api/*')) {
+                return \App\Http\Responses\ErrorResponse::make(
+                    'validation_failed',
+                    'Ошибка валидации',
+                    422,
+                    $e->errors()
+                );
+            }
+        });
+
+        $exceptions->renderable(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, $request) {
+            if ($request->is('api/*')) {
+                return \App\Http\Responses\ErrorResponse::make(
+                    'not_found',
+                    'Ресурс не найден',
+                    404
+                );
+            }
+        });
+
+        $exceptions->renderable(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, $request) {
+            if ($request->is('api/*')) {
+                return \App\Http\Responses\ErrorResponse::make(
+                    'not_found',
+                    'Маршрут не найден',
+                    404
+                );
+            }
+        });
+
+        $exceptions->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+            if ($request->is('api/*')) {
+                return \App\Http\Responses\ErrorResponse::make(
+                    'unauthorized',
+                    'Неавторизован',
+                    401
+                );
+            }
+        });
+
+        $exceptions->renderable(function (\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException $e, $request) {
+            if ($request->is('api/*')) {
+                return \App\Http\Responses\ErrorResponse::make(
+                    'forbidden',
+                    'Доступ запрещен',
+                    403
+                );
+            }
+        });
+
+        $exceptions->renderable(function (\Throwable $e, $request) {
+            if ($request->is('api/*')) {
+                // Логируем ошибку
+                \Log::error('API Error: ' . $e->getMessage());
+
+                return \App\Http\Responses\ErrorResponse::make(
+                    'server_error',
+                    'Внутренняя ошибка сервера',
+                    500
+                );
+            }
+        });
     })->create();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Responses\ErrorResponse;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
@@ -37,24 +38,24 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $validated = $request->validated();
-
         $credentials = $request->only('email', 'password');
 
         if (!$token = Auth::attempt($credentials)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Неверные учетные данные.'
-            ], 401);
+            return ErrorResponse::make(
+                ErrorResponse::INVALID_CREDENTIALS,
+                'Неверные учетные данные.',
+                401
+            );
         }
 
         $user = Auth::user();
 
         if (!$user->email_verified_at) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Email не подтвержден.'
-            ], 403);
+            return ErrorResponse::make(
+                ErrorResponse::EMAIL_NOT_VERIFIED,
+                'Email не подтвержден.',
+                403
+            );
         }
 
         return response()->json([
@@ -84,12 +85,28 @@ class AuthController extends Controller
 
     public function refresh()
     {
-        return response()->json([
-            'success' => true,
-            'access_token' => Auth::refresh(),
-            'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60
-        ]);
+        try {
+            $newToken = Auth::refresh();
+
+            return response()->json([
+                'success' => true,
+                'access_token' => $newToken,
+                'token_type' => 'bearer',
+                'expires_in' => config('jwt.ttl') * 60
+            ]);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return ErrorResponse::make(
+                ErrorResponse::SESSION_EXPIRED_ABSOLUTE,
+                'Срок действия сессии истек. Войдите снова.',
+                401
+            );
+        } catch (\Exception $e) {
+            return ErrorResponse::make(
+                ErrorResponse::UNAUTHORIZED,
+                'Неавторизован.',
+                401
+            );
+        }
     }
 
     public function me()

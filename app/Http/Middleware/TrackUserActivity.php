@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Responses\ErrorResponse;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -23,15 +24,10 @@ class TrackUserActivity
             $now = Carbon::now();
 
             if ($lastActivity) {
-                if (!$lastActivity instanceof Carbon) {
-                    if (is_string($lastActivity)) {
-                        $lastActivity = Carbon::parse($lastActivity);
-                    } else {
-                        $lastActivity = Carbon::create($lastActivity);
-                    }
-                }
+                $lastActivity = $lastActivity instanceof Carbon
+                    ? $lastActivity
+                    : Carbon::parse($lastActivity)->timezone($now->timezone);
 
-                $lastActivity = $lastActivity->timezone($now->timezone);
                 $inactiveDays = $now->diffInDays($lastActivity, false);
 
                 if (abs($inactiveDays) >= self::INACTIVITY_LIMIT_DAYS) {
@@ -42,11 +38,11 @@ class TrackUserActivity
                     } catch (\Exception $e) {
                     }
 
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Сессия завершена после 7 дней бездействия.',
-                        'code' => 'session_expired_inactivity'
-                    ], 401);
+                    return ErrorResponse::make(
+                        ErrorResponse::SESSION_EXPIRED_INACTIVITY,
+                        'Сессия завершена после ' . self::INACTIVITY_LIMIT_DAYS . ' дней бездействия.',
+                        401
+                    );
                 }
             }
 

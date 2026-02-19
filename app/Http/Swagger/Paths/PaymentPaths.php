@@ -6,7 +6,6 @@ namespace App\Http\Swagger\Paths;
  * @OA\Post(
  *     path="/api/payment/subscription",
  *     summary="Оплата подписки",
- *     description="Обработка платежа за подписку. Можно использовать новую или сохраненную карту.",
  *     tags={"Payments"},
  *     security={{"bearerAuth":{}}},
  *     @OA\RequestBody(
@@ -21,26 +20,17 @@ namespace App\Http\Swagger\Paths;
  *     @OA\Response(
  *         response=400,
  *         description="Ошибка в данных карты",
- *         @OA\JsonContent(
- *             @OA\Property(property="success", type="boolean", example=false),
- *             @OA\Property(property="message", type="string", example="Не удалось получить данные карты"),
- *             @OA\Property(property="status", type="string", example="failed")
- *         )
+ *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     ),
  *     @OA\Response(
- *          response=401,
- *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
- *          @OA\JsonContent(
- *              oneOf={
- *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
- *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
- *              }
- *          )
- *      ),
+ *         response=401,
+ *         description="Не авторизован",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
  *     @OA\Response(
  *         response=404,
  *         description="Подписка или карта не найдена",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
  *     ),
  *     @OA\Response(
  *         response=422,
@@ -50,7 +40,7 @@ namespace App\Http\Swagger\Paths;
  *     @OA\Response(
  *         response=500,
  *         description="Внутренняя ошибка сервера",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/ServerErrorResponse")
  *     )
  * )
  */

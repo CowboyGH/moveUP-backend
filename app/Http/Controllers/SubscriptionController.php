@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Responses\ApiResponse;
+use App\Http\Responses\ErrorResponse;
 use App\Models\UserSubscription;
-use Illuminate\Http\Request;
 use App\Models\Subscription;
 use Illuminate\Http\JsonResponse;
 
@@ -11,7 +12,7 @@ class SubscriptionController extends Controller
 {
     public function index(): JsonResponse
     {
-        $subscriptions = Subscription::where('is_active',1)->get()
+        $subscriptions = Subscription::where('is_active', 1)->get()
             ->map(function ($subscription) {
                 return [
                     'id' => $subscription->id,
@@ -20,28 +21,26 @@ class SubscriptionController extends Controller
                     'price' => $subscription->price,
                     'duration_days' => $subscription->duration_days,
                 ];
-        });
-        return response()->json([
-            'status' => 'success',
-            'data' => $subscriptions
-        ]);
+            });
+
+        return ApiResponse::data($subscriptions);
     }
 
     public function show(int $id): JsonResponse
     {
         $subscription = Subscription::where('id', $id)
-            ->where('is_active',1)->first();
+            ->where('is_active', 1)
+            ->first();
 
-        if(!$subscription){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Подписка не найдена'
-            ], 404);
+        if (!$subscription) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Подписка не найдена',
+                404
+            );
         }
-        return response()->json([
-            'status' => 'success',
-            'data' => $subscription
-        ]);
+
+        return ApiResponse::data($subscription);
     }
 
     public function mySubscriptions(): JsonResponse
@@ -70,19 +69,19 @@ class SubscriptionController extends Controller
             ];
         });
 
-        return response()->json([
-            'status' => 'success',
-            'data' => [
-                'active' => $activeSubscription ? [
-                    'id' => $activeSubscription->id,
-                    'name' => $activeSubscription->subscription->name,
-                    'end_date' => $activeSubscription->end_date->format('Y-m-d'),
-                    'days_left' => (int) now()->diffInDays($activeSubscription->end_date),
-                ] : null,
-                'history' => $formattedHistory,
-            ]
-        ]);
+        $data = [
+            'active' => $activeSubscription ? [
+                'id' => $activeSubscription->id,
+                'name' => $activeSubscription->subscription->name,
+                'end_date' => $activeSubscription->end_date->format('Y-m-d'),
+                'days_left' => (int) now()->diffInDays($activeSubscription->end_date),
+            ] : null,
+            'history' => $formattedHistory,
+        ];
+
+        return ApiResponse::data($data);
     }
+
     private function getSubscriptionStatus(UserSubscription $subscription): string
     {
         if ($subscription->is_active && $subscription->end_date->isFuture()) {
@@ -94,5 +93,4 @@ class SubscriptionController extends Controller
         }
         return 'inactive';
     }
-
 }

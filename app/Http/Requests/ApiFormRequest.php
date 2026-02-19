@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Responses\ErrorResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\ValidationException;
 
 class ApiFormRequest extends FormRequest
 {
@@ -18,16 +20,15 @@ class ApiFormRequest extends FormRequest
         }, $this->all()));
     }
 
-    /**
-     * Обработка неудачной попытки проверки.
-     */
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
-            response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422)
+            ErrorResponse::make(
+                'validation_failed',
+                'Ошибка валидации',
+                422,
+                $validator->errors()->toArray()
+            )
         );
     }
 }

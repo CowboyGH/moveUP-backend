@@ -11,7 +11,8 @@ namespace App\Http\Swagger\Paths;
  *         response=200,
  *         description="Успешный ответ. Список доступных подписок",
  *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="success"),
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
@@ -20,17 +21,15 @@ namespace App\Http\Swagger\Paths;
  *                     @OA\Property(property="name", type="string", example="1 month"),
  *                     @OA\Property(property="description", type="string", example="Full access for 1 month"),
  *                     @OA\Property(property="price", type="string", example="9.99"),
- *                     @OA\Property(property="duration_days", type="integer", example=30),
- *                     @OA\Property(property="is_active", type="boolean", example=true),
- *                     @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
- *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-01-01T12:00:00Z")
+ *                     @OA\Property(property="duration_days", type="integer", example=30)
  *                 )
  *             )
  *         )
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Внутренняя ошибка сервера"
+ *         description="Внутренняя ошибка сервера",
+ *         @OA\JsonContent(ref="#/components/schemas/ServerErrorResponse")
  *     )
  * )
  */
@@ -52,7 +51,8 @@ class SubscriptionPaths {}
  *         response=200,
  *         description="Успешный ответ. Информация о подписке",
  *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="success"),
  *             @OA\Property(
  *                 property="data",
  *                 @OA\Property(property="id", type="integer", example=1),
@@ -69,14 +69,12 @@ class SubscriptionPaths {}
  *     @OA\Response(
  *         response=404,
  *         description="Подписка не найдена",
- *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="error"),
- *             @OA\Property(property="message", type="string", example="Подписка не найдена")
- *         )
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Внутренняя ошибка сервера"
+ *         description="Внутренняя ошибка сервера",
+ *         @OA\JsonContent(ref="#/components/schemas/ServerErrorResponse")
  *     )
  * )
  */
@@ -92,7 +90,8 @@ class SubscriptionShow {}
  *         response=200,
  *         description="Успешный ответ. История подписок пользователя",
  *         @OA\JsonContent(
- *             @OA\Property(property="status", type="string", example="success"),
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="success"),
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
@@ -132,18 +131,14 @@ class SubscriptionShow {}
  *         )
  *     ),
  *     @OA\Response(
- *          response=401,
- *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
- *          @OA\JsonContent(
- *              oneOf={
- *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
- *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
- *              }
- *          )
+ *         response=401,
+ *         description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
  *     ),
  *     @OA\Response(
  *         response=500,
- *         description="Внутренняя ошибка сервера"
+ *         description="Внутренняя ошибка сервера",
+ *         @OA\JsonContent(ref="#/components/schemas/ServerErrorResponse")
  *     )
  * )
  */

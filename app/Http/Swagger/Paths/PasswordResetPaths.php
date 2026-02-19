@@ -17,6 +17,11 @@ namespace App\Http\Swagger\Paths;
  *         @OA\JsonContent(ref="#/components/schemas/ForgotPasswordResponse")
  *     ),
  *     @OA\Response(
+ *         response=404,
+ *         description="Пользователь не найден",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
  *         response=422,
  *         description="Ошибки валидации",
  *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
@@ -45,6 +50,11 @@ class PasswordResetPaths {}
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
  *     ),
  *     @OA\Response(
+ *         response=404,
+ *         description="Пользователь не найден",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
  *         response=422,
  *         description="Ошибки валидации",
  *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
@@ -71,6 +81,11 @@ class VerifyResetCodePath {}
  *         response=400,
  *         description="Неверный код",
  *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Пользователь не найден",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
  *     ),
  *     @OA\Response(
  *         response=422,
