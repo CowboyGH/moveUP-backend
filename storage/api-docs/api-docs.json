@@ -79,7 +79,21 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован"
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "403": {
                         "description": "Доступ запрещен"
@@ -198,7 +212,21 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован"
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "403": {
                         "description": "Доступ запрещен"
@@ -282,7 +310,21 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован"
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "403": {
                         "description": "Доступ запрещен"
@@ -406,7 +448,21 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован"
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "403": {
                         "description": "Доступ запрещен"
@@ -462,7 +518,21 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован"
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "403": {
                         "description": "Доступ запрещен"
@@ -545,37 +615,64 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/LoginResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Неверные учетные данные",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Email не подтвержден",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Ошибки валидации",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1Qi..."
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "bearer"
+                                        },
+                                        "expires_in": {
+                                            "type": "integer",
+                                            "example": 3600
+                                        },
+                                        "refresh_expires_in": {
+                                            "description": "30 дней в секундах",
+                                            "type": "integer",
+                                            "example": 2592000
+                                        },
+                                        "session": {
+                                            "properties": {
+                                                "lifetime_days": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                },
+                                                "inactivity_limit_days": {
+                                                    "type": "integer",
+                                                    "example": 7
+                                                },
+                                                "access_token_expires_in_minutes": {
+                                                    "type": "integer",
+                                                    "example": 60
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Иван Иванов"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "user@example.com"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -602,11 +699,18 @@
                         }
                     },
                     "401": {
-                        "description": "Неавторизован",
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -638,11 +742,18 @@
                         }
                     },
                     "401": {
-                        "description": "Неавторизован",
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -1058,11 +1169,18 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован",
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -1125,11 +1243,18 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован",
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -1199,11 +1324,18 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован",
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -1278,11 +1410,18 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован",
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -1357,11 +1496,18 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован",
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -1693,17 +1839,18 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован",
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthenticated."
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/InactivityErrorResponse"
                                         }
-                                    },
-                                    "type": "object"
+                                    ]
                                 }
                             }
                         }
@@ -1821,12 +1968,12 @@
                     "lifetime_days": {
                         "description": "Общая длительность сессии в днях",
                         "type": "integer",
-                        "example": 7
+                        "example": 30
                     },
-                    "inactivity_limit_hours": {
-                        "description": "Лимит неактивности в часах",
+                    "inactivity_limit_days": {
+                        "description": "Лимит неактивности в днях",
                         "type": "integer",
-                        "example": 24
+                        "example": 7
                     },
                     "access_token_expires_in_minutes": {
                         "description": "Время жизни access token в минутах",
@@ -1949,7 +2096,7 @@
                     },
                     "message": {
                         "type": "string",
-                        "example": "Сессия завершена из-за длительного бездействия."
+                        "example": "Сессия завершена после 7 дней бездействия."
                     },
                     "code": {
                         "type": "string",

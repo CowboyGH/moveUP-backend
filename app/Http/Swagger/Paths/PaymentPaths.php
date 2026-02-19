@@ -28,10 +28,15 @@ namespace App\Http\Swagger\Paths;
  *         )
  *     ),
  *     @OA\Response(
- *         response=401,
- *         description="Не авторизован",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
- *     ),
+ *          response=401,
+ *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *          @OA\JsonContent(
+ *              oneOf={
+ *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
+ *              }
+ *          )
+ *      ),
  *     @OA\Response(
  *         response=404,
  *         description="Подписка или карта не найдена",

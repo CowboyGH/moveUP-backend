@@ -48,11 +48,13 @@ class LoginRequestSchema {}
 /**
  * @OA\Schema(
  *     schema="SessionConfig",
- *     type="object",
  *     description="Конфигурация сессии",
- *     @OA\Property(property="lifetime_days", type="integer", example=7, description="Общая длительность сессии в днях"),
- *     @OA\Property(property="inactivity_limit_hours", type="integer", example=24, description="Лимит неактивности в часах"),
- *     @OA\Property(property="access_token_expires_in_minutes", type="integer", example=60, description="Время жизни access token в минутах")
+ *     properties={
+ *         @OA\Property(property="lifetime_days", type="integer", example=30, description="Общая длительность сессии в днях"),
+ *         @OA\Property(property="inactivity_limit_days", type="integer", example=7, description="Лимит неактивности в днях"),
+ *         @OA\Property(property="access_token_expires_in_minutes", type="integer", example=60, description="Время жизни access token в минутах")
+ *     },
+ *     type="object"
  * )
  */
 class SessionConfigSchema {}
@@ -111,10 +113,12 @@ class RefreshResponseSchema {}
 /**
  * @OA\Schema(
  *     schema="InactivityErrorResponse",
- *     type="object",
- *     @OA\Property(property="success", type="boolean", example=false),
- *     @OA\Property(property="message", type="string", example="Сессия завершена из-за длительного бездействия."),
- *     @OA\Property(property="code", type="string", example="session_expired_inactivity")
+ *     properties={
+ *         @OA\Property(property="success", type="boolean", example=false),
+ *         @OA\Property(property="message", type="string", example="Сессия завершена после 7 дней бездействия."),
+ *         @OA\Property(property="code", type="string", example="session_expired_inactivity")
+ *     },
+ *     type="object"
  * )
  */
 class InactivityErrorResponseSchema {}

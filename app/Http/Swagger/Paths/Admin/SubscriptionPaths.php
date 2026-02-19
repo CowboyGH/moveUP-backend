@@ -29,7 +29,16 @@ namespace App\Http\Swagger\Paths\Admin;
  *             )
  *         )
  *     ),
- *     @OA\Response(response=401, description="Не авторизован"),
+ *     @OA\Response(
+ *          response=401,
+ *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *          @OA\JsonContent(
+ *              oneOf={
+ *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
+ *              }
+ *          )
+ *      ),
  *     @OA\Response(response=403, description="Доступ запрещен")
  * )
  */
@@ -71,7 +80,16 @@ class SubscriptionPaths {}
  *             )
  *         )
  *     ),
- *     @OA\Response(response=401, description="Не авторизован"),
+ *     @OA\Response(
+ *          response=401,
+ *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *          @OA\JsonContent(
+ *              oneOf={
+ *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
+ *              }
+ *          )
+ *      ),
  *     @OA\Response(response=403, description="Доступ запрещен"),
  *     @OA\Response(response=422, description="Ошибка валидации")
  * )
@@ -108,7 +126,16 @@ class SubscriptionStore {}
  *             )
  *         )
  *     ),
- *     @OA\Response(response=401, description="Не авторизован"),
+ *     @OA\Response(
+ *          response=401,
+ *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *          @OA\JsonContent(
+ *              oneOf={
+ *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
+ *              }
+ *          )
+ *      ),
  *     @OA\Response(response=403, description="Доступ запрещен"),
  *     @OA\Response(response=404, description="Подписка не найдена")
  * )
@@ -155,7 +182,16 @@ class SubscriptionShow {}
  *             )
  *         )
  *     ),
- *     @OA\Response(response=401, description="Не авторизован"),
+ *     @OA\Response(
+ *          response=401,
+ *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *          @OA\JsonContent(
+ *              oneOf={
+ *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
+ *              }
+ *          )
+ *      ),
  *     @OA\Response(response=403, description="Доступ запрещен"),
  *     @OA\Response(response=404, description="Подписка не найдена"),
  *     @OA\Response(response=422, description="Ошибка валидации")
@@ -183,7 +219,16 @@ class SubscriptionUpdate {}
  *             @OA\Property(property="message", type="string", example="Подписка успешно удалена")
  *         )
  *     ),
- *     @OA\Response(response=401, description="Не авторизован"),
+ *     @OA\Response(
+ *          response=401,
+ *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *          @OA\JsonContent(
+ *              oneOf={
+ *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
+ *              }
+ *          )
+ *      ),
  *     @OA\Response(response=403, description="Доступ запрещен"),
  *     @OA\Response(response=404, description="Подписка не найдена"),
  *     @OA\Response(response=422, description="Нельзя удалить используемую подписку")

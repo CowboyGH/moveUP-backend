@@ -11,18 +11,8 @@ use Carbon\Carbon;
 
 class TrackUserActivity
 {
-    /**
-     * Время неактивности в часах до завершения сессии
-     */
-    const INACTIVITY_LIMIT_HOURS = 24;
+    const INACTIVITY_LIMIT_DAYS = 7;
 
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
     public function handle(Request $request, Closure $next)
     {
         if (Auth::check()) {
@@ -42,26 +32,25 @@ class TrackUserActivity
                 }
 
                 $lastActivity = $lastActivity->timezone($now->timezone);
-                $inactiveHours = $now->diffInHours($lastActivity, false);
+                $inactiveDays = $now->diffInDays($lastActivity, false);
 
-                if (abs($inactiveHours) >= self::INACTIVITY_LIMIT_HOURS) {
+                if (abs($inactiveDays) >= self::INACTIVITY_LIMIT_DAYS) {
                     Auth::logout();
 
                     try {
                         JWTAuth::invalidate(JWTAuth::getToken());
                     } catch (\Exception $e) {
-                        // Логирование ошибки при необходимости
                     }
 
                     return response()->json([
                         'success' => false,
-                        'message' => 'Сессия завершена из-за длительного бездействия.',
+                        'message' => 'Сессия завершена после 7 дней бездействия.',
                         'code' => 'session_expired_inactivity'
                     ], 401);
                 }
             }
 
-            Cache::put($cacheKey, $now, now()->addHours(self::INACTIVITY_LIMIT_HOURS + 1));
+            Cache::put($cacheKey, $now, now()->addDays(self::INACTIVITY_LIMIT_DAYS + 1));
         }
 
         return $next($request);

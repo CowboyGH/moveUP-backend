@@ -15,10 +15,15 @@ namespace App\Http\Swagger\Paths;
  *         @OA\JsonContent(ref="#/components/schemas/CardsListResponse")
  *     ),
  *     @OA\Response(
- *         response=401,
- *         description="Не авторизован",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
- *     )
+ *          response=401,
+ *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *          @OA\JsonContent(
+ *              oneOf={
+ *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
+ *              }
+ *          )
+ *      ),
  * )
  */
 class SavedCardPaths {}
@@ -50,10 +55,15 @@ class SavedCardPaths {}
  *         )
  *     ),
  *     @OA\Response(
- *         response=401,
- *         description="Не авторизован",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
- *     ),
+ *          response=401,
+ *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *          @OA\JsonContent(
+ *              oneOf={
+ *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
+ *              }
+ *          )
+ *      ),
  *     @OA\Response(
  *         response=422,
  *         description="Ошибка валидации",
@@ -91,10 +101,15 @@ class SaveCardPath {}
  *         )
  *     ),
  *     @OA\Response(
- *         response=401,
- *         description="Не авторизован",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
- *     ),
+ *          response=401,
+ *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *          @OA\JsonContent(
+ *              oneOf={
+ *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
+ *              }
+ *          )
+ *      ),
  *     @OA\Response(
  *         response=404,
  *         description="Карта не найдена",
@@ -130,9 +145,14 @@ class DeleteCardPath {}
  *         )
  *     ),
  *     @OA\Response(
- *         response=401,
- *         description="Не авторизован",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *          response=401,
+ *          description="Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+ *          @OA\JsonContent(
+ *              oneOf={
+ *                  @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *                  @OA\Schema(ref="#/components/schemas/InactivityErrorResponse")
+ *              }
+ *          )
  *     ),
  *     @OA\Response(
  *         response=404,

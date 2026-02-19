@@ -64,8 +64,8 @@ class AuthController extends Controller
             'expires_in' => config('jwt.ttl') * 60,
             'refresh_expires_in' => config('jwt.refresh_ttl') * 60,
             'session' => [
-                'lifetime_days' => 7,
-                'inactivity_limit_hours' => 24,
+                'lifetime_days' => 30,
+                'inactivity_limit_days' => 7,
                 'access_token_expires_in_minutes' => config('jwt.ttl')
             ],
             'user' => $user
