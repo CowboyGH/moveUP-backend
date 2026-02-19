@@ -1004,6 +1004,416 @@
                 }
             }
         },
+        "/api/payment/subscription": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Оплата подписки",
+                "description": "Обработка платежа за подписку. Можно использовать новую или сохраненную карту.",
+                "operationId": "7d2e2db466c6a8fa04d99ff3ff097930",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubscriptionPaymentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешная оплата",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaymentResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка в данных карты",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Не удалось получить данные карты"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "failed"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Подписка или карта не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/payment/cards": {
+            "get": {
+                "tags": [
+                    "Cards"
+                ],
+                "summary": "Список сохраненных карт",
+                "description": "Получение списка всех сохраненных карт пользователя",
+                "operationId": "9e815b8dbd974b23564b1adcc9a7b714",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CardsListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/payment/cards/save": {
+            "post": {
+                "tags": [
+                    "Cards"
+                ],
+                "summary": "Сохранение карты",
+                "description": "Сохранение новой банковской карты пользователя. Карта сохраняется всегда, так как это специальный эндпоинт для сохранения.",
+                "operationId": "bf1a2387003430262b6831fd2521e91b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SaveCardRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Карта успешно сохранена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Карта успешно сохранена"
+                                        },
+                                        "card_saved": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "card": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "last_four": {
+                                                    "type": "string",
+                                                    "example": "7777"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка при сохранении",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/payment/cards/{cardId}": {
+            "delete": {
+                "tags": [
+                    "Cards"
+                ],
+                "summary": "Удаление карты",
+                "description": "Удаление сохраненной карты пользователя",
+                "operationId": "9d8040e28f1e66581a436b12e531dbed",
+                "parameters": [
+                    {
+                        "name": "cardId",
+                        "in": "path",
+                        "description": "ID карты",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Карта успешно удалена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Карта успешно удалена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Карта не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Карта не найдена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/payment/cards/{cardId}/default": {
+            "post": {
+                "tags": [
+                    "Cards"
+                ],
+                "summary": "Установка основной карты",
+                "description": "Установка карты по умолчанию для пользователя",
+                "operationId": "5cdb991bc5c821719f12f14e006483a7",
+                "parameters": [
+                    {
+                        "name": "cardId",
+                        "in": "path",
+                        "description": "ID карты",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Основная карта изменена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Основная карта изменена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Карта не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "string",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Карта не найдена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка при изменении",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ошибка при изменении основной карты"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/subscriptions": {
             "get": {
                 "tags": [
@@ -1879,6 +2289,253 @@
                 },
                 "type": "object"
             },
+            "SaveCardRequest": {
+                "title": "Запрос на сохранение карты",
+                "required": [
+                    "card_number",
+                    "card_holder",
+                    "expiry_month",
+                    "expiry_year"
+                ],
+                "properties": {
+                    "card_number": {
+                        "description": "16 цифр номера карты",
+                        "type": "string",
+                        "maxLength": 16,
+                        "minLength": 16,
+                        "example": "4111111111117777"
+                    },
+                    "card_holder": {
+                        "description": "Имя держателя карты латиницей",
+                        "type": "string",
+                        "example": "IVAN IVANOV"
+                    },
+                    "expiry_month": {
+                        "description": "Месяц окончания (2 цифры)",
+                        "type": "string",
+                        "maxLength": 2,
+                        "minLength": 2,
+                        "example": "02"
+                    },
+                    "expiry_year": {
+                        "description": "Год окончания (4 цифры)",
+                        "type": "string",
+                        "maxLength": 4,
+                        "minLength": 4,
+                        "example": "2029"
+                    }
+                },
+                "type": "object"
+            },
+            "SubscriptionPaymentRequest": {
+                "title": "Запрос на оплату подписки",
+                "required": [
+                    "subscription_id",
+                    "save_card",
+                    "use_saved_card"
+                ],
+                "properties": {
+                    "subscription_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "save_card": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "use_saved_card": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "saved_card_id": {
+                        "description": "Обязателен если use_saved_card=true",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "card_number": {
+                        "description": "Обязателен если use_saved_card=false",
+                        "type": "string",
+                        "example": "4111111111111111"
+                    },
+                    "card_holder": {
+                        "description": "Обязателен если use_saved_card=false",
+                        "type": "string",
+                        "example": "IVAN IVANOV"
+                    },
+                    "expiry_month": {
+                        "description": "Обязателен если use_saved_card=false",
+                        "type": "string",
+                        "example": "12"
+                    },
+                    "expiry_year": {
+                        "description": "Обязателен если use_saved_card=false",
+                        "type": "string",
+                        "example": "2025"
+                    },
+                    "cvv": {
+                        "description": "Обязателен если use_saved_card=false",
+                        "type": "string",
+                        "example": "123"
+                    }
+                },
+                "type": "object"
+            },
+            "PaymentResponse": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "properties": {
+                            "success": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "message": {
+                                "type": "string",
+                                "example": "Подписка успешно оформлена"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "$ref": "#/components/schemas/PaymentResult"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "SavedCard": {
+                "title": "Сохраненная карта",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "card_holder": {
+                        "type": "string",
+                        "example": "IVAN IVANOV"
+                    },
+                    "card_last_four": {
+                        "type": "string",
+                        "example": "1111"
+                    },
+                    "expiry_month": {
+                        "type": "string",
+                        "example": "12"
+                    },
+                    "expiry_year": {
+                        "type": "string",
+                        "example": "2025"
+                    },
+                    "expiry_formatted": {
+                        "type": "string",
+                        "example": "12/2025"
+                    },
+                    "is_default": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "Subscription": {
+                "title": "Подписка",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "1 month"
+                    },
+                    "price": {
+                        "type": "string",
+                        "example": "9.99"
+                    }
+                },
+                "type": "object"
+            },
+            "UserSubscription": {
+                "title": "Подписка пользователя",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 25
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-02-19"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-21"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "PaymentResult": {
+                "title": "Результат платежа",
+                "properties": {
+                    "transaction_id": {
+                        "type": "string",
+                        "example": "pay_69967c1f59273_1771469855"
+                    },
+                    "subscription": {
+                        "$ref": "#/components/schemas/Subscription"
+                    },
+                    "user_subscription": {
+                        "$ref": "#/components/schemas/UserSubscription"
+                    },
+                    "card_saved": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "saved_card": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 7
+                            },
+                            "last_four": {
+                                "type": "string",
+                                "example": "1111"
+                            },
+                            "is_default": {
+                                "type": "boolean",
+                                "example": false
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "CardsListResponse": {
+                "title": "Список сохраненных карт",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SavedCard"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "title": "Пользователь",
                 "properties": {
@@ -1975,6 +2632,14 @@
         {
             "name": "Password Reset",
             "description": "Password Reset"
+        },
+        {
+            "name": "Payments",
+            "description": "Payments"
+        },
+        {
+            "name": "Cards",
+            "description": "Cards"
         },
         {
             "name": "Subscriptions",
