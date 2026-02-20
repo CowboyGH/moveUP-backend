@@ -23,9 +23,15 @@ class Testing extends Model
         'is_active' => 'boolean',
     ];
 
-    public function testingExercises(): HasMany
+    public function testExercises(): BelongsToMany
     {
-        return $this->hasMany(TestingExercise::class);
+        return $this->belongsToMany(TestingExercise::class, 'testing_test_exercises')
+            ->withPivot('order_number')->withTimestamps()->orderBy('order_number');
+    }
+
+    public function testingTestExercises(): HasMany
+    {
+        return $this->hasMany(TestingTestExercise::class);
     }
 
     public function testResults(): HasMany

@@ -17,7 +17,6 @@ class TestingExerciseFactory extends Factory
     public function definition(): array
     {
         return [
-            'testing_id' => Testing::factory(),
             'description' => fake()->paragraph(2),
             'image' => 'testing_exercises/' . fake()->image(null, 600, 400, 'exercise', true),
         ];
