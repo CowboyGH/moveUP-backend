@@ -6,6 +6,7 @@ namespace App\Http\Swagger\Paths;
  * @OA\Post(
  *     path="/api/forgot-password",
  *     summary="Запрос на сброс пароля",
+ *     description="Отправляет код для сброса пароля на email. Только для подтвержденных email",
  *     tags={"Password Reset"},
  *     @OA\RequestBody(
  *         required=true,
@@ -15,6 +16,14 @@ namespace App\Http\Swagger\Paths;
  *         response=200,
  *         description="Код сброса отправлен на email",
  *         @OA\JsonContent(ref="#/components/schemas/ForgotPasswordResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Email не подтвержден",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="code", type="string", example="conflict"),
+ *             @OA\Property(property="message", type="string", example="Email не подтвержден. Сначала подтвердите email.")
+ *         )
  *     ),
  *     @OA\Response(
  *         response=404,
@@ -34,6 +43,7 @@ class PasswordResetPaths {}
  * @OA\Post(
  *     path="/api/verify-reset-code",
  *     summary="Проверка кода сброса пароля",
+ *     description="Проверяет валидность кода сброса пароля",
  *     tags={"Password Reset"},
  *     @OA\RequestBody(
  *         required=true,
@@ -46,8 +56,23 @@ class PasswordResetPaths {}
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Неверный код",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         description="Ошибка бизнес-логики",
+ *         @OA\JsonContent(
+ *             oneOf={
+ *                 @OA\Schema(
+ *                     @OA\Property(property="code", type="string", example="conflict"),
+ *                     @OA\Property(property="message", type="string", example="Email не подтвержден. Сначала подтвердите email.")
+ *                 ),
+ *                 @OA\Schema(
+ *                     @OA\Property(property="code", type="string", example="validation_failed"),
+ *                     @OA\Property(property="message", type="string", example="Неверный код.")
+ *                 ),
+ *                 @OA\Schema(
+ *                     @OA\Property(property="code", type="string", example="validation_failed"),
+ *                     @OA\Property(property="message", type="string", example="Код истек или не был запрошен.")
+ *                 )
+ *             }
+ *         )
  *     ),
  *     @OA\Response(
  *         response=404,
@@ -67,6 +92,7 @@ class VerifyResetCodePath {}
  * @OA\Post(
  *     path="/api/reset-password",
  *     summary="Сброс пароля",
+ *     description="Сбрасывает пароль после подтверждения кода",
  *     tags={"Password Reset"},
  *     @OA\RequestBody(
  *         required=true,
@@ -79,8 +105,19 @@ class VerifyResetCodePath {}
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Неверный код",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         description="Ошибка бизнес-логики",
+ *         @OA\JsonContent(
+ *             oneOf={
+ *                 @OA\Schema(
+ *                     @OA\Property(property="code", type="string", example="conflict"),
+ *                     @OA\Property(property="message", type="string", example="Email не подтвержден. Сначала подтвердите email.")
+ *                 ),
+ *                 @OA\Schema(
+ *                     @OA\Property(property="code", type="string", example="validation_failed"),
+ *                     @OA\Property(property="message", type="string", example="Неверный или истекший код.")
+ *                 )
+ *             }
+ *         )
  *     ),
  *     @OA\Response(
  *         response=404,

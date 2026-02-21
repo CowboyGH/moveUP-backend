@@ -8,9 +8,8 @@ use App\Http\Requests\Auth\VerifyResetCodeRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\User;
+use App\Jobs\SendPasswordResetEmail;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\PasswordResetMail;
 
 class PasswordResetController extends Controller
 {
@@ -27,8 +26,16 @@ class PasswordResetController extends Controller
             );
         }
 
-        $resetCode = $user->generatePasswordResetCode();
-        Mail::to($user->email)->send(new PasswordResetMail($resetCode));
+        // Добавляем проверку на подтвержденный email
+        if (!$user->email_verified_at) {
+            return ApiResponse::error(
+                ErrorResponse::CONFLICT,
+                'Email не подтвержден. Сначала подтвердите email.',
+                400
+            );
+        }
+
+        SendPasswordResetEmail::dispatch($user);
 
         return ApiResponse::success('Код для сброса пароля отправлен на вашу почту.');
     }
@@ -43,6 +50,15 @@ class PasswordResetController extends Controller
                 ErrorResponse::NOT_FOUND,
                 'Пользователь с таким email не найден.',
                 404
+            );
+        }
+
+        // Добавляем проверку на подтвержденный email
+        if (!$user->email_verified_at) {
+            return ApiResponse::error(
+                ErrorResponse::CONFLICT,
+                'Email не подтвержден. Сначала подтвердите email.',
+                400
             );
         }
 
@@ -70,6 +86,15 @@ class PasswordResetController extends Controller
             );
         }
 
+        // Добавляем проверку на подтвержденный email
+        if (!$user->email_verified_at) {
+            return ApiResponse::error(
+                ErrorResponse::CONFLICT,
+                'Email не подтвержден. Сначала подтвердите email.',
+                400
+            );
+        }
+
         if (!$user->verifyPasswordResetCode($validated['code'])) {
             return ApiResponse::error(
                 ErrorResponse::VALIDATION_FAILED,
@@ -81,7 +106,6 @@ class PasswordResetController extends Controller
         $user->update([
             'password' => Hash::make($validated['password']),
         ]);
-
         $user->clearPasswordResetCode();
 
         return ApiResponse::success('Пароль успешно сброшен.');

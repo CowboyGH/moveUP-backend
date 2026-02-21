@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Responses\ErrorResponse;
 use App\Models\User;
 use App\Models\Role;
+use App\Jobs\SendVerificationEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -24,10 +25,7 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
             'role_id' => Role::where('name', 'user')->first()->id,
         ]);
-
-        $verificationCode = $user->generateEmailVerificationCode();
-
-        Mail::to($user->email)->send(new VerificationCodeMail($verificationCode));
+        SendVerificationEmail::dispatch($user);
 
         return response()->json([
             'success' => true,

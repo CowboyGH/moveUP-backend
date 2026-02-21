@@ -3,6 +3,7 @@
 - Команда для создания модели: `docker exec laravel-api php artisan make:model Role`
 - Команда для сброса бд и запуска сидов: `docker exec laravel-api php artisan migrate:fresh --seed`
 - Команда для проверки портов: `docker exec laravel-api php artisan route:list`
+- Команда для генерации Swagger: `docker exec -it laravel-api php artisan l5-swagger:generate`
 
 ## Команды для планировщика:
 ### Вариант 1: Запустить воркер в отдельном терминале

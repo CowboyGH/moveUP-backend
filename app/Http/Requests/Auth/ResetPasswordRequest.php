@@ -48,27 +48,4 @@ class ResetPasswordRequest extends ApiFormRequest
         ];
     }
 
-    /**
-     * Проверка существования email и валидности кода
-     */
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            if (!$validator->errors()->any()) {
-                $user = User::where('email', $this->email)->first();
-
-                if (!$user) {
-                    $validator->errors()->add('email', 'Email не обнаружен в системе.');
-                    return;
-                }
-
-                $key = "password_reset:{$this->email}";
-                $storedCode = Cache::get($key);
-
-                if (!$storedCode || (string) $storedCode !== (string) $this->code) {
-                    $validator->errors()->add('code', 'Неверный код.');
-                }
-            }
-        });
-    }
 }

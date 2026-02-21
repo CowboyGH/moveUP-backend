@@ -7,7 +7,7 @@ namespace App\Http\Swagger\Schemas;
  *     schema="ForgotPasswordRequest",
  *     type="object",
  *     required={"email"},
- *     @OA\Property(property="email", type="string", format="email", example="user@example.com")
+ *     @OA\Property(property="email", type="string", format="email", example="user@example.com", description="Подтвержденный email")
  * )
  */
 class PasswordResetSchemas {}
@@ -27,8 +27,8 @@ class ForgotPasswordResponseSchema {}
  *     schema="VerifyResetCodeRequest",
  *     type="object",
  *     required={"email", "code"},
- *     @OA\Property(property="email", type="string", format="email", example="user@example.com"),
- *     @OA\Property(property="code", type="string", minLength=6, maxLength=6, pattern="^[0-9]+$", example="123456")
+ *     @OA\Property(property="email", type="string", format="email", example="user@example.com", description="Email пользователя"),
+ *     @OA\Property(property="code", type="string", example="123456", description="6-значный код из письма")
  * )
  */
 class VerifyResetCodeRequestSchema {}
@@ -48,10 +48,10 @@ class VerifyResetCodeResponseSchema {}
  *     schema="ResetPasswordRequest",
  *     type="object",
  *     required={"email", "code", "password", "password_confirmation"},
- *     @OA\Property(property="email", type="string", format="email", example="user@example.com"),
- *     @OA\Property(property="code", type="string", minLength=6, maxLength=6, pattern="^[0-9]+$", example="123456"),
- *     @OA\Property(property="password", type="string", format="password", minLength=8, maxLength=12, example="newpassword123"),
- *     @OA\Property(property="password_confirmation", type="string", format="password", example="newpassword123")
+ *     @OA\Property(property="email", type="string", format="email", example="user@example.com", description="Email пользователя"),
+ *     @OA\Property(property="code", type="string", example="123456", description="6-значный код из письма"),
+ *     @OA\Property(property="password", type="string", format="password", minLength=8, maxLength=12, example="newpassword123", description="Новый пароль (только латинские буквы и цифры)"),
+ *     @OA\Property(property="password_confirmation", type="string", format="password", example="newpassword123", description="Подтверждение нового пароля")
  * )
  */
 class ResetPasswordRequestSchema {}

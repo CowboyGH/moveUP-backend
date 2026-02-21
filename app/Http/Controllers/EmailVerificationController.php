@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\VerifyEmailRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\User;
+use App\Jobs\SendVerificationEmail;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerificationCodeMail;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -73,9 +74,7 @@ class EmailVerificationController extends Controller
                 400
             );
         }
-
-        $verificationCode = $user->generateEmailVerificationCode();
-        Mail::to($user->email)->send(new VerificationCodeMail($verificationCode));
+        SendVerificationEmail::dispatch($user);
 
         return ApiResponse::success('Новый код подтверждения отправлен на вашу почту.');
     }

@@ -867,18 +867,48 @@
                         }
                     },
                     "400": {
-                        "description": "Email уже подтвержден или неверный код",
+                        "description": "Ошибка бизнес-логики",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "oneOf": [
                                         {
-                                            "$ref": "#/components/schemas/ConflictResponse"
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "conflict"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Email уже подтвержден."
+                                                }
+                                            },
+                                            "type": "object"
                                         },
                                         {
-                                            "$ref": "#/components/schemas/ErrorResponse"
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "validation_failed"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Неверный или истекший код подтверждения."
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Пользователь не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
                                 }
                             }
                         }
@@ -973,6 +1003,7 @@
                     "Password Reset"
                 ],
                 "summary": "Запрос на сброс пароля",
+                "description": "Отправляет код для сброса пароля на email. Только для подтвержденных email",
                 "operationId": "6fd06bcb0d62bdc036834873d0bcbe0f",
                 "requestBody": {
                     "required": true,
@@ -991,6 +1022,26 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForgotPasswordResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Email не подтвержден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "conflict"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email не подтвержден. Сначала подтвердите email."
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -1024,6 +1075,7 @@
                     "Password Reset"
                 ],
                 "summary": "Проверка кода сброса пароля",
+                "description": "Проверяет валидность кода сброса пароля",
                 "operationId": "4cea9d9f7c34c737c62bdd6db80cff5c",
                 "requestBody": {
                     "required": true,
@@ -1047,11 +1099,51 @@
                         }
                     },
                     "400": {
-                        "description": "Неверный код",
+                        "description": "Ошибка бизнес-логики",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "oneOf": [
+                                        {
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "conflict"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Email не подтвержден. Сначала подтвердите email."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "validation_failed"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Неверный код."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "validation_failed"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Код истек или не был запрошен."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -1085,6 +1177,7 @@
                     "Password Reset"
                 ],
                 "summary": "Сброс пароля",
+                "description": "Сбрасывает пароль после подтверждения кода",
                 "operationId": "a3e43c67aaa88c778fc6ab4f29bbc385",
                 "requestBody": {
                     "required": true,
@@ -1108,11 +1201,38 @@
                         }
                     },
                     "400": {
-                        "description": "Неверный код",
+                        "description": "Ошибка бизнес-логики",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "oneOf": [
+                                        {
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "conflict"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Email не подтвержден. Сначала подтвердите email."
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "validation_failed"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Неверный или истекший код."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
                                 }
                             }
                         }
@@ -2489,6 +2609,7 @@
                 ],
                 "properties": {
                     "email": {
+                        "description": "Подтвержденный email",
                         "type": "string",
                         "format": "email",
                         "example": "user@example.com"
@@ -2516,15 +2637,14 @@
                 ],
                 "properties": {
                     "email": {
+                        "description": "Email пользователя",
                         "type": "string",
                         "format": "email",
                         "example": "user@example.com"
                     },
                     "code": {
+                        "description": "6-значный код из письма",
                         "type": "string",
-                        "maxLength": 6,
-                        "minLength": 6,
-                        "pattern": "^[0-9]+$",
                         "example": "123456"
                     }
                 },
@@ -2552,18 +2672,18 @@
                 ],
                 "properties": {
                     "email": {
+                        "description": "Email пользователя",
                         "type": "string",
                         "format": "email",
                         "example": "user@example.com"
                     },
                     "code": {
+                        "description": "6-значный код из письма",
                         "type": "string",
-                        "maxLength": 6,
-                        "minLength": 6,
-                        "pattern": "^[0-9]+$",
                         "example": "123456"
                     },
                     "password": {
+                        "description": "Новый пароль (только латинские буквы и цифры)",
                         "type": "string",
                         "format": "password",
                         "maxLength": 12,
@@ -2571,6 +2691,7 @@
                         "example": "newpassword123"
                     },
                     "password_confirmation": {
+                        "description": "Подтверждение нового пароля",
                         "type": "string",
                         "format": "password",
                         "example": "newpassword123"

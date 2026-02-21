@@ -18,13 +18,24 @@ namespace App\Http\Swagger\Paths;
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Email уже подтвержден или неверный код",
+ *         description="Ошибка бизнес-логики",
  *         @OA\JsonContent(
  *             oneOf={
- *                 @OA\Schema(ref="#/components/schemas/ConflictResponse"),
- *                 @OA\Schema(ref="#/components/schemas/ErrorResponse")
+ *                 @OA\Schema(
+ *                     @OA\Property(property="code", type="string", example="conflict"),
+ *                     @OA\Property(property="message", type="string", example="Email уже подтвержден.")
+ *                 ),
+ *                 @OA\Schema(
+ *                     @OA\Property(property="code", type="string", example="validation_failed"),
+ *                     @OA\Property(property="message", type="string", example="Неверный или истекший код подтверждения.")
+ *                 )
  *             }
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Пользователь не найден",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
  *     ),
  *     @OA\Response(
  *         response=422,
