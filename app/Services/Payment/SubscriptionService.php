@@ -18,11 +18,8 @@ class SubscriptionService
     public function activateSubscription(User $user, Subscription $subscription, string $transactionId, ?SavedCard $savedCard = null): UserSubscription
     {
         return DB::transaction(function () use ($user, $subscription, $transactionId, $savedCard) {
-
             $this->deactivateCurrentSubscriptions($user);
-
             $userSubscription = $this->createUserSubscription($user, $subscription);
-
             $this->createPaymentRecord($user, $subscription, $transactionId, $savedCard);
 
             Log::info('Subscription activated', [
@@ -46,7 +43,7 @@ class SubscriptionService
     /**
      * Создание новой подписки пользователя
      */
-    private function createUserSubscription(User $user, Subscription $subscription): UserSubscription
+    public function createUserSubscription(User $user, Subscription $subscription): UserSubscription
     {
         $startDate = now();
         $endDate = now()->addDays($subscription->duration_days);

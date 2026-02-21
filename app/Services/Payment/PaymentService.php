@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Payment;
 
 use App\Models\Subscription;
@@ -22,8 +23,10 @@ class PaymentService
     public function processPayment(User $user, Subscription $subscription, array $paymentData): array
     {
         $isSavedCard = isset($paymentData['is_saved_card']) && $paymentData['is_saved_card'] === true;
+        $isAutoPayment = isset($paymentData['is_auto_payment']) && $paymentData['is_auto_payment'] === true;
 
-        if (!$this->validateRequiredFields($paymentData, $isSavedCard)) {
+        // Для автооплаты пропускаем валидацию полей, так как используем сохраненные карты
+        if (!$isAutoPayment && !$this->validateRequiredFields($paymentData, $isSavedCard)) {
             return [
                 'success' => false,
                 'message' => 'Отсутствуют обязательные поля карты',
@@ -37,7 +40,8 @@ class PaymentService
             if (!$savedCard) {
                 Log::warning('Saved card not found or does not belong to user', [
                     'user_id' => $user->id,
-                    'card_id' => $paymentData['saved_card_id']
+                    'card_id' => $paymentData['saved_card_id'],
+                    'is_auto_payment' => $isAutoPayment
                 ]);
                 return [
                     'success' => false,
@@ -47,32 +51,54 @@ class PaymentService
             }
         }
 
-        // Имитация случайной ошибки (5% для тестирования)
-        if (random_int(1, 100) <= 5) {
-            return [
-                'success' => false,
-                'message' => 'Ошибка обработки платежа. Попробуйте позже',
-                'status' => 'error'
-            ];
+        // Для автооплаты своя логика проверки (10-15% вероятность отказа)
+        if ($isAutoPayment) {
+            // 15% вероятность недостатка средств для автооплаты
+            if (random_int(1, 100) <= 15) {
+                Log::info('Auto-payment failed: insufficient funds', [
+                    'user_id' => $user->id,
+                    'subscription_id' => $subscription->id,
+                    'amount' => $subscription->price,
+                    'card_id' => $paymentData['saved_card_id'] ?? null
+                ]);
+
+                return [
+                    'success' => false,
+                    'message' => 'На карте недостаточно средств',
+                    'status' => 'insufficient_funds',
+                    'is_auto_payment' => true
+                ];
+            }
+        } else {
+            // Для ручной оплаты оставляем 5% случайной ошибки
+            if (random_int(1, 100) <= 5) {
+                return [
+                    'success' => false,
+                    'message' => 'Ошибка обработки платежа. Попробуйте позже',
+                    'status' => 'error'
+                ];
+            }
         }
 
-        $transactionId = 'pay_' . uniqid() . '_' . time();
+        $transactionId = ($isAutoPayment ? 'auto_' : 'pay_') . uniqid() . '_' . time();
 
         Log::info('Payment processed successfully', [
             'user_id' => $user->id,
             'subscription_id' => $subscription->id,
             'amount' => $subscription->price,
             'transaction_id' => $transactionId,
-            'is_saved_card' => $isSavedCard
+            'is_saved_card' => $isSavedCard,
+            'is_auto_payment' => $isAutoPayment,
         ]);
 
         return [
             'success' => true,
             'transaction_id' => $transactionId,
-            'message' => 'Платеж успешно обработан',
+            'message' => $isAutoPayment ? 'Автоплатеж успешно обработан' : 'Платеж успешно обработан',
             'status' => 'completed',
             'amount' => $subscription->price,
             'processed_at' => now()->toDateTimeString(),
+            'is_auto_payment' => $isAutoPayment,
         ];
     }
 
@@ -112,8 +138,10 @@ class PaymentService
                 'expiry_year' => $savedCard->expiry_year,
                 'is_saved_card' => true,
                 'saved_card_id' => $savedCard->id,
+                'is_auto_payment' => false, // По умолчанию не автооплата
             ];
         }
+
         return [
             'card_number' => $validated['card_number'],
             'card_holder' => $validated['card_holder'],
@@ -121,6 +149,24 @@ class PaymentService
             'expiry_year' => $validated['expiry_year'],
             'cvv' => $validated['cvv'] ?? null,
             'is_saved_card' => false,
+            'is_auto_payment' => false,
         ];
+    }
+
+    /**
+     * Специальный метод для автооплаты
+     */
+    public function processAutoPayment(User $user, Subscription $subscription, int $savedCardId): array
+    {
+        $paymentData = [
+            'is_saved_card' => true,
+            'saved_card_id' => $savedCardId,
+            'is_auto_payment' => true,
+            'card_holder' => 'AUTO PAYMENT',
+            'expiry_month' => '01',
+            'expiry_year' => '2030',
+        ];
+
+        return $this->processPayment($user, $subscription, $paymentData);
     }
 }
