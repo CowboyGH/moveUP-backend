@@ -4,6 +4,17 @@
 - Команда для сброса бд и запуска сидов: `docker exec laravel-api php artisan migrate:fresh --seed`
 - Команда для проверки портов: `docker exec laravel-api php artisan route:list`
 
+## Команды для планировщика:
+### Вариант 1: Запустить воркер в отдельном терминале
+- Он будет работать, пока терминал открыт`docker exec -it laravel-api php artisan schedule:work`
+
+#### Вариант 2: Запустить в фоне
+- Работает в фоне, не привязан к терминалу `docker exec -d laravel-api php artisan schedule:work`
+
+#### Просто проверить, работает ли payments:process-auto
+`docker exec laravel-api php artisan schedule:run`
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 <p align="center">
 <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>

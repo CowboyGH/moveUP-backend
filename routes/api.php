@@ -28,7 +28,6 @@ Route::middleware(['auth:api', 'track.activity'])->group(function () {
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::get('/my-subscriptions', [App\Http\Controllers\SubscriptionController::class, 'mySubscriptions']);
-    Route::get('/subscription/status', [App\Http\Controllers\SubscriptionController::class, 'checkSubscriptionStatus']);
 });
 
 Route::middleware(['auth:api', 'track.activity'])->prefix('payment')->group(function () {
