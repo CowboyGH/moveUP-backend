@@ -1,7 +1,6 @@
 <?php
 
 use App\Console\Commands\ProcessAutoPayments;
-use App\Console\Commands\TestAutoPayment;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,7 +14,6 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withCommands([
         ProcessAutoPayments::class,
-        TestAutoPayment::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
@@ -79,7 +77,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->renderable(function (\Throwable $e, $request) {
             if ($request->is('api/*')) {
-                // Логируем ошибку
                 \Log::error('API Error: ' . $e->getMessage());
 
                 return \App\Http\Responses\ErrorResponse::make(

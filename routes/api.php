@@ -10,6 +10,8 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Payment\SavedCardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\ExerciseController;
+use App\Http\Controllers\Admin\WarmupController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -63,5 +65,17 @@ Route::middleware(['auth:api', 'admin', 'track.activity'])->prefix('admin')->gro
     Route::get('/testing-exercises/{id}', [TestingExerciseController::class, 'show']);
     Route::put('/testing-exercises/{id}', [TestingExerciseController::class, 'update']);
     Route::delete('/testing-exercises/{id}', [TestingExerciseController::class, 'destroy']);
+
+    Route::get('/exercises', [ExerciseController::class, 'index']);
+    Route::post('/exercises', [ExerciseController::class, 'store']);
+    Route::get('/exercises/{id}', [ExerciseController::class, 'show']);
+    Route::put('/exercises/{id}', [ExerciseController::class, 'update']);
+    Route::delete('/exercises/{id}', [ExerciseController::class, 'destroy']);
+
+    Route::get('/warmups', [WarmupController::class, 'index']);
+    Route::post('/warmups', [WarmupController::class, 'store']);
+    Route::get('/warmups/{id}', [WarmupController::class, 'show']);
+    Route::put('/warmups/{id}', [WarmupController::class, 'update']);
+    Route::delete('/warmups/{id}', [WarmupController::class, 'destroy']);
 
 });

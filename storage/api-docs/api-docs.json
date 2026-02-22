@@ -596,6 +596,416 @@
                 ]
             }
         },
+        "/api/admin/exercises": {
+            "get": {
+                "tags": [
+                    "Admin Exercises"
+                ],
+                "summary": "Получить список всех упражнений",
+                "description": "Возвращает список всех упражнений с информацией об оборудовании и количеством тренировок",
+                "operationId": "getExercisesList",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Exercise"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin Exercises"
+                ],
+                "summary": "Создать новое упражнение",
+                "description": "Создает новое упражнение",
+                "operationId": "createExercise",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreExerciseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Упражнение успешно создано",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Упражнение успешно создано"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Exercise"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/exercises/{id}": {
+            "get": {
+                "tags": [
+                    "Admin Exercises"
+                ],
+                "summary": "Получить упражнение по ID",
+                "description": "Возвращает информацию о конкретном упражнении с тренировками, в которых оно используется",
+                "operationId": "getExerciseById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID упражнения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/ExerciseWithWorkouts"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Упражнение не найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin Exercises"
+                ],
+                "summary": "Обновить упражнение",
+                "description": "Обновляет существующее упражнение",
+                "operationId": "updateExercise",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID упражнения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateExerciseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Упражнение успешно обновлено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Упражнение успешно обновлено"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Exercise"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Упражнение не найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin Exercises"
+                ],
+                "summary": "Удалить упражнение",
+                "description": "Удаляет упражнение, если оно не используется в тренировках и нет результатов тестов",
+                "operationId": "deleteExercise",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID упражнения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Упражнение успешно удалено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Упражнение успешно удалено"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Упражнение не найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Нельзя удалить упражнение, которое используется в тренировках или есть результаты тестов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/subscriptions": {
             "get": {
                 "tags": [
@@ -3033,6 +3443,416 @@
                 ]
             }
         },
+        "/api/admin/warmups": {
+            "get": {
+                "tags": [
+                    "Admin Warmups"
+                ],
+                "summary": "Получить список всех разминок",
+                "description": "Возвращает список всех разминок с количеством тренировок",
+                "operationId": "getWarmupsList",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Warmup"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin Warmups"
+                ],
+                "summary": "Создать новую разминку",
+                "description": "Создает новую разминку",
+                "operationId": "createWarmup",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreWarmupRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Разминка успешно создана",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Разминка успешно создана"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Warmup"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/warmups/{id}": {
+            "get": {
+                "tags": [
+                    "Admin Warmups"
+                ],
+                "summary": "Получить разминку по ID",
+                "description": "Возвращает информацию о конкретной разминке с тренировками, в которых она используется",
+                "operationId": "getWarmupById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID разминки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/WarmupWithWorkouts"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Разминка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin Warmups"
+                ],
+                "summary": "Обновить разминку",
+                "description": "Обновляет существующую разминку",
+                "operationId": "updateWarmup",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID разминки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateWarmupRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Разминка успешно обновлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Разминка успешно обновлена"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Warmup"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Разминка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin Warmups"
+                ],
+                "summary": "Удалить разминку",
+                "description": "Удаляет разминку, если она не используется в тренировках",
+                "operationId": "deleteWarmup",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID разминки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Разминка успешно удалена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Разминка успешно удалена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Разминка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Нельзя удалить разминку, которая используется в тренировках",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/register": {
             "post": {
                 "tags": [
@@ -5018,6 +5838,190 @@
                 },
                 "type": "object"
             },
+            "Equipment": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Гантели"
+                    }
+                },
+                "type": "object"
+            },
+            "Exercise": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Жим гантелей лежа"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Базовое упражнение для развития грудных мышц"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "/uploads/exercises/dumbbell-press.jpg"
+                    },
+                    "muscle_group": {
+                        "type": "string",
+                        "example": "Грудные"
+                    },
+                    "equipment": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Equipment"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "workouts_count": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "ExerciseWithWorkouts": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Exercise"
+                    },
+                    {
+                        "properties": {
+                            "workouts": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "title": {
+                                            "type": "string",
+                                            "example": "Силовая тренировка"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "Тренировка на все группы мышц"
+                                        },
+                                        "duration_minutes": {
+                                            "type": "string",
+                                            "example": "45-60 минут"
+                                        },
+                                        "is_active": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "pivot": {
+                                            "properties": {
+                                                "sets": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "reps": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "order_number": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "StoreExerciseRequest": {
+                "required": [
+                    "equipment_id",
+                    "title",
+                    "description",
+                    "image",
+                    "muscle_group"
+                ],
+                "properties": {
+                    "equipment_id": {
+                        "description": "ID оборудования",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "description": "Название упражнения",
+                        "type": "string",
+                        "example": "Жим гантелей лежа"
+                    },
+                    "description": {
+                        "description": "Описание упражнения",
+                        "type": "string",
+                        "example": "Базовое упражнение для развития грудных мышц"
+                    },
+                    "image": {
+                        "description": "Путь к изображению",
+                        "type": "string",
+                        "example": "/uploads/exercises/dumbbell-press.jpg"
+                    },
+                    "muscle_group": {
+                        "description": "Группа мышц",
+                        "type": "string",
+                        "example": "Грудные"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateExerciseRequest": {
+                "properties": {
+                    "equipment_id": {
+                        "description": "ID оборудования",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "description": "Название упражнения",
+                        "type": "string",
+                        "example": "Жим гантелей лежа"
+                    },
+                    "description": {
+                        "description": "Описание упражнения",
+                        "type": "string",
+                        "example": "Базовое упражнение для развития грудных мышц"
+                    },
+                    "image": {
+                        "description": "Путь к изображению",
+                        "type": "string",
+                        "example": "/uploads/exercises/dumbbell-press.jpg"
+                    },
+                    "muscle_group": {
+                        "description": "Группа мышц",
+                        "type": "string",
+                        "example": "Грудные"
+                    }
+                },
+                "type": "object"
+            },
             "ForgotPasswordRequest": {
                 "required": [
                     "email"
@@ -5443,6 +6447,135 @@
                         "type": "object"
                     }
                 ]
+            },
+            "Warmup": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Суставная гимнастика"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Разминка для подготовки суставов к нагрузке"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "/uploads/warmups/joint-gymnastics.jpg"
+                    },
+                    "workouts_count": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "WarmupWithWorkouts": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Warmup"
+                    },
+                    {
+                        "properties": {
+                            "workouts": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "title": {
+                                            "type": "string",
+                                            "example": "Силовая тренировка"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "Тренировка на все группы мышц"
+                                        },
+                                        "duration_minutes": {
+                                            "type": "string",
+                                            "example": "45-60 минут"
+                                        },
+                                        "is_active": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "pivot": {
+                                            "properties": {
+                                                "order_number": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "StoreWarmupRequest": {
+                "required": [
+                    "name",
+                    "description",
+                    "image"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Название разминки",
+                        "type": "string",
+                        "example": "Суставная гимнастика"
+                    },
+                    "description": {
+                        "description": "Описание разминки",
+                        "type": "string",
+                        "example": "Разминка для подготовки суставов к нагрузке"
+                    },
+                    "image": {
+                        "description": "Путь к изображению",
+                        "type": "string",
+                        "example": "/uploads/warmups/joint-gymnastics.jpg"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateWarmupRequest": {
+                "properties": {
+                    "name": {
+                        "description": "Название разминки",
+                        "type": "string",
+                        "example": "Суставная гимнастика"
+                    },
+                    "description": {
+                        "description": "Описание разминки",
+                        "type": "string",
+                        "example": "Разминка для подготовки суставов к нагрузке"
+                    },
+                    "image": {
+                        "description": "Путь к изображению",
+                        "type": "string",
+                        "example": "/uploads/warmups/joint-gymnastics.jpg"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -5460,6 +6593,10 @@
             "description": "Admin Categories"
         },
         {
+            "name": "Admin Exercises",
+            "description": "Admin Exercises"
+        },
+        {
             "name": "Admin Subscriptions",
             "description": "Admin Subscriptions"
         },
@@ -5470,6 +6607,10 @@
         {
             "name": "Admin Testing Exercises",
             "description": "Admin Testing Exercises"
+        },
+        {
+            "name": "Admin Warmups",
+            "description": "Admin Warmups"
         },
         {
             "name": "Authentication",
