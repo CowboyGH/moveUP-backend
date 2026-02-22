@@ -29,9 +29,9 @@ class TestingExerciseController extends Controller
             'id' => $exercise->id,
             'description' => $exercise->description,
             'image' => $exercise->image,
-            'testings_count' => 0,
             'created_at' => $exercise->created_at,
             'updated_at' => $exercise->updated_at,
+            'testings_count' => 0,
         ];
         return ApiResponse::success('Тестовое упражнение успешно создано', $data, 201);
     }
@@ -59,7 +59,7 @@ class TestingExerciseController extends Controller
                 404
             );
         }
-        $exercise->update([$request->only(['description', 'image'])]);
+        $exercise->update($request->only(['description', 'image']));
         return ApiResponse::success('Тестовое упражнение успешно обновлено', $exercise);
     }
 

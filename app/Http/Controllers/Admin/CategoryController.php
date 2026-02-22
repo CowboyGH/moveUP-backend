@@ -25,9 +25,9 @@ class CategoryController extends Controller
         $data = [
             'id' => $category->id,
             'name' => $category->name,
-            'testings_count' => 0,
             'created_at' => $category->created_at,
             'updated_at' => $category->updated_at,
+            'testings_count' => 0,
         ];
         return ApiResponse::success('Категория успешно создана',$data, 201);
     }
@@ -42,9 +42,9 @@ class CategoryController extends Controller
                 404
             );
         }
+        $category->loadCount('testings');
         return ApiResponse::data($category);
     }
-    //НУЖНО ПОДУМАТЬ ПО ПОВОДУ ЭТОЙ ФУНКЦИИ, ЕСТЬ ЛИ СМЫСЛ ЕЕ ОСТАВЛЯТЬ
     public function update(UpdateCategoryRequest $request, int $id): JsonResponse
     {
         $category = Category::find($id);

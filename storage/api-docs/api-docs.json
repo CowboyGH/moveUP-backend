@@ -12,6 +12,590 @@
         }
     ],
     "paths": {
+        "/api/admin/categories": {
+            "get": {
+                "tags": [
+                    "Admin Categories"
+                ],
+                "summary": "Получить список всех категорий тестов",
+                "description": "Возвращает список всех категорий с количеством привязанных тестов",
+                "operationId": "getCategoriesList",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Бокс и единоборства"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "datetime",
+                                                        "example": "2026-02-20T08:20:35.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "datetime",
+                                                        "example": "2026-02-20T08:20:35.000000Z"
+                                                    },
+                                                    "testings_count": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin Categories"
+                ],
+                "summary": "Создать новую категорию тестов",
+                "description": "Создает новую категорию для тестов",
+                "operationId": "createCategory",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Название категории",
+                                        "type": "string",
+                                        "example": "Бокс и единоборства"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Категория успешно создана",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Категория успешно создана"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Бокс и единоборства"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                },
+                                                "testings_count": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/categories/{id}": {
+            "get": {
+                "tags": [
+                    "Admin Categories"
+                ],
+                "summary": "Получить категорию по ID",
+                "description": "Возвращает информацию о конкретной категории с привязанными тестами",
+                "operationId": "getCategoryById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID категории",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Бокс и единоборства"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                },
+                                                "testings_count": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "testings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 72
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Базовая диагностика"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Тест для определения базового уровня физической подготовки"
+                                                            },
+                                                            "duration_minutes": {
+                                                                "type": "string",
+                                                                "example": "15-20 минут"
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "/uploads/tests/basic-diagnostic.jpg"
+                                                            },
+                                                            "is_active": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:37:48.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:37:48.000000Z"
+                                                            },
+                                                            "pivot": {
+                                                                "properties": {
+                                                                    "category_id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "testing_id": {
+                                                                        "type": "integer",
+                                                                        "example": 72
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                                    },
+                                                                    "updated_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Категория не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin Categories"
+                ],
+                "summary": "Обновить категорию",
+                "description": "Обновляет существующую категорию",
+                "operationId": "updateCategory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID категории",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "Название категории",
+                                        "type": "string",
+                                        "example": "Бокс и единоборства (обновлено)"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Категория успешно обновлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Категория успешно обновлена"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Бокс и единоборства (обновлено)"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-22T10:00:00.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Категория не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin Categories"
+                ],
+                "summary": "Удалить категорию",
+                "description": "Удаляет категорию, если к ней не привязаны тесты",
+                "operationId": "deleteCategory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID категории",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Категория успешно удалена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Категория успешно удалена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Категория не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Нельзя удалить категорию, к которой привязаны тесты",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/subscriptions": {
             "get": {
                 "tags": [
@@ -606,6 +1190,1837 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/testings": {
+            "get": {
+                "tags": [
+                    "Admin Testings"
+                ],
+                "summary": "Получить список всех тестов",
+                "description": "Возвращает список всех тестов с категориями, упражнениями и количеством результатов",
+                "operationId": "getTestingsList",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 72
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "Базовая диагностика"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Тест для определения базового уровня физической подготовки"
+                                                    },
+                                                    "duration_minutes": {
+                                                        "type": "string",
+                                                        "example": "15-20 минут"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "/uploads/tests/basic-diagnostic.jpg"
+                                                    },
+                                                    "is_active": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    },
+                                                    "test_results_count": {
+                                                        "type": "integer",
+                                                        "example": 0
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "datetime",
+                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "datetime",
+                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                    },
+                                                    "categories": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "Бокс и единоборства"
+                                                                },
+                                                                "created_at": {
+                                                                    "type": "string",
+                                                                    "format": "datetime",
+                                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                                },
+                                                                "updated_at": {
+                                                                    "type": "string",
+                                                                    "format": "datetime",
+                                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                                },
+                                                                "pivot": {
+                                                                    "properties": {
+                                                                        "testing_id": {
+                                                                            "type": "integer",
+                                                                            "example": 72
+                                                                        },
+                                                                        "category_id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "created_at": {
+                                                                            "type": "string",
+                                                                            "format": "datetime",
+                                                                            "example": "2026-02-20T08:37:48.000000Z"
+                                                                        },
+                                                                        "updated_at": {
+                                                                            "type": "string",
+                                                                            "format": "datetime",
+                                                                            "example": "2026-02-20T08:37:48.000000Z"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "test_exercises": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "description": {
+                                                                    "type": "string",
+                                                                    "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                                                },
+                                                                "image": {
+                                                                    "type": "string",
+                                                                    "example": "/uploads/exercises/pushups.jpg"
+                                                                },
+                                                                "created_at": {
+                                                                    "type": "string",
+                                                                    "format": "datetime",
+                                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                                },
+                                                                "updated_at": {
+                                                                    "type": "string",
+                                                                    "format": "datetime",
+                                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                                },
+                                                                "pivot": {
+                                                                    "properties": {
+                                                                        "testing_id": {
+                                                                            "type": "integer",
+                                                                            "example": 72
+                                                                        },
+                                                                        "testing_exercise_id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "order_number": {
+                                                                            "type": "integer",
+                                                                            "example": 0
+                                                                        },
+                                                                        "created_at": {
+                                                                            "type": "string",
+                                                                            "format": "datetime",
+                                                                            "example": "2026-02-20T08:37:48.000000Z"
+                                                                        },
+                                                                        "updated_at": {
+                                                                            "type": "string",
+                                                                            "format": "datetime",
+                                                                            "example": "2026-02-20T08:37:48.000000Z"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin Testings"
+                ],
+                "summary": "Создать новый тест",
+                "description": "Создает новый тест с категориями и упражнениями",
+                "operationId": "createTesting",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "description",
+                                    "duration_minutes",
+                                    "image"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Название теста",
+                                        "type": "string",
+                                        "example": "Базовая диагностика"
+                                    },
+                                    "description": {
+                                        "description": "Описание теста",
+                                        "type": "string",
+                                        "example": "Тест для определения базового уровня физической подготовки"
+                                    },
+                                    "duration_minutes": {
+                                        "description": "Длительность теста",
+                                        "type": "string",
+                                        "example": "15-20 минут"
+                                    },
+                                    "image": {
+                                        "description": "Путь к изображению",
+                                        "type": "string",
+                                        "example": "/uploads/tests/basic-diagnostic.jpg"
+                                    },
+                                    "is_active": {
+                                        "description": "Активен ли тест",
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "category_ids": {
+                                        "description": "ID категорий теста",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    },
+                                    "exercise_ids": {
+                                        "description": "ID упражнений теста (порядок определяется индексом в массиве)",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Тест успешно создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тест успешно создан"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Базовая диагностика 2"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Тест для определения базового уровня физической подготовки"
+                                                },
+                                                "duration_minutes": {
+                                                    "type": "string",
+                                                    "example": "15-20 минут"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "/uploads/tests/basic-diagnostic.jpg"
+                                                },
+                                                "is_active": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Бокс и единоборства"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                            },
+                                                            "pivot": {
+                                                                "properties": {
+                                                                    "testing_id": {
+                                                                        "type": "integer",
+                                                                        "example": 75
+                                                                    },
+                                                                    "category_id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-02-22T06:29:58.000000Z"
+                                                                    },
+                                                                    "updated_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-02-22T06:29:58.000000Z"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "exercises": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 24
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Отжимания от пола - обновленное описание"
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "/uploads/exercises/pushups-updkjfhjkfhsdfjkhsdfjkdshfkjdshfdsjklfhafbsfdmnsbfjhsfhgfhdasjddajhfgsdjkadhjadhaskjdhajkdhafjguwrhdfghkfdsghefrwhousbdshkdfhjfdhjhbdbhbyrwiybdsbdsjhbjkdfsjkbhdfsjkbfsdhjkbfsdsojweyated.jpg"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-22T05:16:17.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-22T05:19:44.000000Z"
+                                                            },
+                                                            "pivot": {
+                                                                "properties": {
+                                                                    "testing_id": {
+                                                                        "type": "integer",
+                                                                        "example": 75
+                                                                    },
+                                                                    "testing_exercise_id": {
+                                                                        "type": "integer",
+                                                                        "example": 24
+                                                                    },
+                                                                    "order_number": {
+                                                                        "type": "integer",
+                                                                        "example": 0
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-02-22T06:29:58.000000Z"
+                                                                    },
+                                                                    "updated_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-02-22T06:29:58.000000Z"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-22T06:29:58.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-22T06:29:58.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера при создании теста",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/testings/{id}": {
+            "get": {
+                "tags": [
+                    "Admin Testings"
+                ],
+                "summary": "Получить тест по ID",
+                "description": "Возвращает информацию о конкретном тесте с категориями, упражнениями и результатами пользователей",
+                "operationId": "getTestingById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID теста",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 72
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 72
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Базовая диагностика"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Тест для определения базового уровня физической подготовки"
+                                                },
+                                                "duration_minutes": {
+                                                    "type": "string",
+                                                    "example": "15-20 минут"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "/uploads/tests/basic-diagnostic.jpg"
+                                                },
+                                                "is_active": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "test_results_count": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-20T08:37:48.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-20T08:37:48.000000Z"
+                                                },
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Бокс и единоборства"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "exercises": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "/uploads/exercises/pushups.jpg"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                            },
+                                                            "pivot": {
+                                                                "properties": {
+                                                                    "testing_id": {
+                                                                        "type": "integer",
+                                                                        "example": 72
+                                                                    },
+                                                                    "testing_exercise_id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "order_number": {
+                                                                        "type": "integer",
+                                                                        "example": 0
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                                    },
+                                                                    "updated_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "test_results": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "user_id": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "testing_id": {
+                                                                "type": "integer",
+                                                                "example": 72
+                                                            },
+                                                            "exercise_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "result_value": {
+                                                                "type": "integer",
+                                                                "example": 25
+                                                            },
+                                                            "pulse": {
+                                                                "type": "integer",
+                                                                "example": 120,
+                                                                "nullable": true
+                                                            },
+                                                            "test_date": {
+                                                                "type": "string",
+                                                                "format": "date",
+                                                                "example": "2026-02-20"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:37:48.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:37:48.000000Z"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тест не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin Testings"
+                ],
+                "summary": "Обновить тест",
+                "description": "Обновляет существующий тест, категории и упражнения",
+                "operationId": "updateTesting",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID теста",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 72
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "description": "Название теста",
+                                        "type": "string",
+                                        "example": "Базовая диагностика (обновлено)"
+                                    },
+                                    "description": {
+                                        "description": "Описание теста",
+                                        "type": "string",
+                                        "example": "Обновленное описание теста"
+                                    },
+                                    "duration_minutes": {
+                                        "description": "Длительность теста",
+                                        "type": "string",
+                                        "example": "20-25 минут"
+                                    },
+                                    "image": {
+                                        "description": "Путь к изображению",
+                                        "type": "string",
+                                        "example": "/uploads/tests/basic-diagnostic-updated.jpg"
+                                    },
+                                    "is_active": {
+                                        "description": "Активен ли тест",
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "category_ids": {
+                                        "description": "ID категорий теста",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    },
+                                    "exercise_ids": {
+                                        "description": "ID упражнений теста (порядок определяется индексом в массиве)",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Тест успешно обновлен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тест успешно обновлен"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 72
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Базовая диагностика (обновлено)"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Обновленное описание теста"
+                                                },
+                                                "duration_minutes": {
+                                                    "type": "string",
+                                                    "example": "20-25 минут"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "/uploads/tests/basic-diagnostic-updated.jpg"
+                                                },
+                                                "is_active": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-20T08:37:48.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-22T10:00:00.000000Z"
+                                                },
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Бокс и единоборства"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "exercises": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "/uploads/exercises/pushups.jpg"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                            },
+                                                            "pivot": {
+                                                                "properties": {
+                                                                    "testing_id": {
+                                                                        "type": "integer",
+                                                                        "example": 72
+                                                                    },
+                                                                    "testing_exercise_id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "order_number": {
+                                                                        "type": "integer",
+                                                                        "example": 0
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                                    },
+                                                                    "updated_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тест не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера при обновлении теста",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin Testings"
+                ],
+                "summary": "Удалить тест",
+                "description": "Удаляет тест и все связанные с ним данные (категории и упражнения отвязываются)",
+                "operationId": "deleteTesting",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID теста",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 72
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Тест успешно удален",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тест успешно удален"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тест не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/testings/{id}/toggle-active": {
+            "patch": {
+                "tags": [
+                    "Admin Testings"
+                ],
+                "summary": "Переключить активность теста",
+                "description": "Переключает статус is_active теста на противоположный",
+                "operationId": "toggleTestingActive",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID теста",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 72
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Тест успешно активирован/деактивирован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тест успешно активирован"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 72
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Базовая диагностика"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Тест для определения базового уровня физической подготовки"
+                                                },
+                                                "duration_minutes": {
+                                                    "type": "string",
+                                                    "example": "15-20 минут"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "/uploads/tests/basic-diagnostic.jpg"
+                                                },
+                                                "is_active": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "test_results_count": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-20T08:37:48.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-22T10:00:00.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тест не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/testing-exercises": {
+            "get": {
+                "tags": [
+                    "Admin Testing Exercises"
+                ],
+                "summary": "Получить список всех тестовых упражнений",
+                "description": "Возвращает список всех тестовых упражнений с количеством тестов, в которых они используются",
+                "operationId": "getTestingExercisesList",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "/uploads/exercises/pushups.jpg"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "datetime",
+                                                        "example": "2026-02-20T08:20:35.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "datetime",
+                                                        "example": "2026-02-20T08:20:35.000000Z"
+                                                    },
+                                                    "testings_count": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin Testing Exercises"
+                ],
+                "summary": "Создать новое тестовое упражнение",
+                "description": "Создает новое тестовое упражнение",
+                "operationId": "createTestingExercise",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "description",
+                                    "image"
+                                ],
+                                "properties": {
+                                    "description": {
+                                        "description": "Описание упражнения",
+                                        "type": "string",
+                                        "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                    },
+                                    "image": {
+                                        "description": "Путь к изображению",
+                                        "type": "string",
+                                        "example": "/uploads/exercises/pushups.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Тестовое упражнение успешно создано",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тестовое упражнение успешно создано"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "/uploads/exercises/pushups.jpg"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-22T10:00:00.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-22T10:00:00.000000Z"
+                                                },
+                                                "testings_count": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/testing-exercises/{id}": {
+            "get": {
+                "tags": [
+                    "Admin Testing Exercises"
+                ],
+                "summary": "Получить тестовое упражнение по ID",
+                "description": "Возвращает информацию о конкретном тестовом упражнении с тестами, в которых оно используется",
+                "operationId": "getTestingExerciseById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID тестового упражнения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "/uploads/exercises/pushups.jpg"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                },
+                                                "testings_count": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "testings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 72
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Базовая диагностика"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Тест для определения базового уровня физической подготовки"
+                                                            },
+                                                            "duration_minutes": {
+                                                                "type": "string",
+                                                                "example": "15-20 минут"
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "/uploads/tests/basic-diagnostic.jpg"
+                                                            },
+                                                            "is_active": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:37:48.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "type": "string",
+                                                                "format": "datetime",
+                                                                "example": "2026-02-20T08:37:48.000000Z"
+                                                            },
+                                                            "pivot": {
+                                                                "properties": {
+                                                                    "testing_exercise_id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "testing_id": {
+                                                                        "type": "integer",
+                                                                        "example": 72
+                                                                    },
+                                                                    "order_number": {
+                                                                        "type": "integer",
+                                                                        "example": 0
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                                    },
+                                                                    "updated_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тестовое упражнение не найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin Testing Exercises"
+                ],
+                "summary": "Обновить тестовое упражнение",
+                "description": "Обновляет существующее тестовое упражнение",
+                "operationId": "updateTestingExercise",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID тестового упражнения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "description": {
+                                        "description": "Описание упражнения",
+                                        "type": "string",
+                                        "example": "Отжимания от пола - обновленное описание"
+                                    },
+                                    "image": {
+                                        "description": "Путь к изображению",
+                                        "type": "string",
+                                        "example": "/uploads/exercises/pushups-updated.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Тестовое упражнение успешно обновлено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тестовое упражнение успешно обновлено"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Отжимания от пола - обновленное описание"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "/uploads/exercises/pushups-updated.jpg"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-02-22T10:00:00.000000Z"
+                                                },
+                                                "testings_count": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тестовое упражнение не найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin Testing Exercises"
+                ],
+                "summary": "Удалить тестовое упражнение",
+                "description": "Удаляет тестовое упражнение, если оно не используется в тестах",
+                "operationId": "deleteTestingExercise",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID тестового упражнения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Тестовое упражнение успешно удалено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тестовое упражнение успешно удалено"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тестовое упражнение не найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Нельзя удалить упражнение, которое используется в тестах",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictResponse"
                                 }
                             }
                         }
@@ -3041,8 +5456,20 @@
     },
     "tags": [
         {
+            "name": "Admin Categories",
+            "description": "Admin Categories"
+        },
+        {
             "name": "Admin Subscriptions",
             "description": "Admin Subscriptions"
+        },
+        {
+            "name": "Admin Testings",
+            "description": "Admin Testings"
+        },
+        {
+            "name": "Admin Testing Exercises",
+            "description": "Admin Testing Exercises"
         },
         {
             "name": "Authentication",
