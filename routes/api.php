@@ -24,12 +24,19 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 Route::get('/subscriptions', [SubscriptionController::class, 'index']);
 Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
 
+Route::get('/testings', [App\Http\Controllers\TestingController::class, 'index']);
+Route::get('/testings/{id}', [App\Http\Controllers\TestingController::class, 'show']);
+Route::get('/workouts', [App\Http\Controllers\WorkoutController::class, 'index']);
+Route::get('/workouts/{id}', [App\Http\Controllers\WorkoutController::class, 'show']);
+
 
 Route::middleware(['auth:api', 'track.activity'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::get('/my-subscriptions', [App\Http\Controllers\SubscriptionController::class, 'mySubscriptions']);
+    Route::get('/my-test-history', [App\Http\Controllers\TestingController::class, 'myTestHistory']);
+    Route::get('/my-workout-history', [App\Http\Controllers\WorkoutController::class, 'myWorkoutHistory']);
 });
 
 Route::middleware(['auth:api', 'track.activity'])->prefix('payment')->group(function () {

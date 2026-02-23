@@ -5184,6 +5184,765 @@
                     }
                 ]
             }
+        },
+        "/api/testings": {
+            "get": {
+                "tags": [
+                    "Testings"
+                ],
+                "summary": "Получить список всех активных тестов",
+                "operationId": "8585e38921a9918754d3e5cf1f8332f7",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ. Список доступных тестов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "Функциональный тест"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Оценка функциональной подготовки"
+                                                    },
+                                                    "duration_minutes": {
+                                                        "type": "string",
+                                                        "example": "30 минут"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "test.jpg"
+                                                    },
+                                                    "categories": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "Сила"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "exercises_count": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/testings/{id}": {
+            "get": {
+                "tags": [
+                    "Testings"
+                ],
+                "summary": "Получить информацию о конкретном тесте",
+                "operationId": "b750eb8e45aa8b31aba3c895f6b250a2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID теста",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ. Информация о тесте",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Функциональный тест"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Оценка функциональной подготовки"
+                                                },
+                                                "duration_minutes": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "test.jpg"
+                                                },
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Сила"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "exercises": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Приседания"
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "exercise.jpg"
+                                                            },
+                                                            "order_number": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тест не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/my-test-history": {
+            "get": {
+                "tags": [
+                    "Testings"
+                ],
+                "summary": "Получить историю пройденных тестов текущего пользователя",
+                "operationId": "08f910fa1b12e22862e58fe3e015e8ef",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ. История тестов пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "statistics": {
+                                                    "properties": {
+                                                        "total_tests_completed": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "unique_tests_completed": {
+                                                            "type": "integer",
+                                                            "example": 5
+                                                        },
+                                                        "last_test_date": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2024-01-15T14:30:00Z"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "history": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "testing_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "testing_title": {
+                                                                "type": "string",
+                                                                "example": "Функциональный тест"
+                                                            },
+                                                            "last_completed_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2024-01-15T14:30:00Z"
+                                                            },
+                                                            "total_attempts": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "exercises_results": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "exercise_id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "exercise_description": {
+                                                                            "type": "string",
+                                                                            "example": "Приседания"
+                                                                        },
+                                                                        "result_value": {
+                                                                            "type": "integer",
+                                                                            "example": 4
+                                                                        },
+                                                                        "pulse": {
+                                                                            "type": "integer",
+                                                                            "example": 120
+                                                                        },
+                                                                        "test_date": {
+                                                                            "type": "string",
+                                                                            "format": "date-time",
+                                                                            "example": "2024-01-15T14:30:00Z"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/workouts": {
+            "get": {
+                "tags": [
+                    "Workouts"
+                ],
+                "summary": "Получить список всех активных тренировок",
+                "operationId": "5774be4d4b0098a157a33d4c33753e72",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ. Список доступных тренировок",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "Функциональный тренинг"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Accusamus enim placeat nihil ad ex ipsum iste animi. Facilis ut laudantium fuga ex fugiat. Occaecati non laboriosam facere."
+                                                    },
+                                                    "duration_minutes": {
+                                                        "type": "string",
+                                                        "example": "59"
+                                                    },
+                                                    "phase": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Базовая фаза"
+                                                            }
+                                                        },
+                                                        "type": "object",
+                                                        "nullable": true
+                                                    },
+                                                    "exercises_count": {
+                                                        "type": "integer",
+                                                        "example": 0
+                                                    },
+                                                    "warmups_count": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/workouts/{id}": {
+            "get": {
+                "tags": [
+                    "Workouts"
+                ],
+                "summary": "Получить информацию о конкретной тренировке",
+                "operationId": "7314a47a79649074c8fa86587e7dceb7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID тренировки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ. Информация о тренировке",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Функциональный тренинг"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Accusamus enim placeat nihil ad ex ipsum iste animi. Facilis ut laudantium fuga ex fugiat. Occaecati non laboriosam facere."
+                                                },
+                                                "duration_minutes": {
+                                                    "type": "integer",
+                                                    "example": 59
+                                                },
+                                                "phase": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Базовая фаза"
+                                                        }
+                                                    },
+                                                    "type": "object",
+                                                    "nullable": true
+                                                },
+                                                "exercises": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Приседания"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Техника приседаний"
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "exercise.jpg",
+                                                                "nullable": true
+                                                            },
+                                                            "sets": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "reps": {
+                                                                "type": "integer",
+                                                                "example": 12
+                                                            },
+                                                            "order_number": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "warmups": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Разминка"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Общая разминка"
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "warmup.jpg",
+                                                                "nullable": true
+                                                            },
+                                                            "order_number": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тренировка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/my-workout-history": {
+            "get": {
+                "tags": [
+                    "Workouts"
+                ],
+                "summary": "Получить историю пройденных тренировок текущего пользователя",
+                "operationId": "0e1af1ff4b76f358f31dd81a760e8cc1",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ. История тренировок пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "active": {
+                                                    "description": "Текущая активная тренировка (если есть)",
+                                                    "type": "object",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "statistics": {
+                                                    "properties": {
+                                                        "total_workouts_started": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "total_workouts_completed": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "total_workouts_in_progress": {
+                                                            "type": "integer",
+                                                            "example": 0
+                                                        },
+                                                        "last_workout_date": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2026-02-18 08:46:59"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "history": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "workout": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 41
+                                                                    },
+                                                                    "title": {
+                                                                        "type": "string",
+                                                                        "example": "Йога для гибкости и релаксации"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "started_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2026-02-08 01:31:49"
+                                                            },
+                                                            "completed_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2026-02-18 08:46:59"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "enum": [
+                                                                    "in_progress",
+                                                                    "completed",
+                                                                    "cancelled"
+                                                                ],
+                                                                "example": "completed"
+                                                            },
+                                                            "duration": {
+                                                                "type": "integer",
+                                                                "example": 14835
+                                                            },
+                                                            "progress": {
+                                                                "properties": {
+                                                                    "exercises_completed": {
+                                                                        "type": "integer",
+                                                                        "example": 0
+                                                                    },
+                                                                    "exercises_total": {
+                                                                        "type": "integer",
+                                                                        "example": 0
+                                                                    },
+                                                                    "warmups_completed": {
+                                                                        "type": "integer",
+                                                                        "example": 0
+                                                                    },
+                                                                    "warmups_total": {
+                                                                        "type": "integer",
+                                                                        "example": 0
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -6635,6 +7394,14 @@
         {
             "name": "Subscriptions",
             "description": "Subscriptions"
+        },
+        {
+            "name": "Testings",
+            "description": "Testings"
+        },
+        {
+            "name": "Workouts",
+            "description": "Workouts"
         }
     ]
 }
