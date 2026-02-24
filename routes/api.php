@@ -9,6 +9,7 @@ use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Payment\SavedCardController;
+use App\Http\Controllers\UserParameterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ExerciseController;
 use App\Http\Controllers\Admin\WarmupController;
@@ -29,6 +30,15 @@ Route::get('/testings/{id}', [App\Http\Controllers\TestingController::class, 'sh
 Route::get('/workouts', [App\Http\Controllers\WorkoutController::class, 'index']);
 Route::get('/workouts/{id}', [App\Http\Controllers\WorkoutController::class, 'show']);
 
+Route::post('/user-parameters/goal', [UserParameterController::class, 'saveGoal']);
+Route::post('/user-parameters/anthropometry', [UserParameterController::class, 'saveAnthropometry']);
+Route::post('/user-parameters/level', [UserParameterController::class, 'saveLevel']);
+Route::get('/user-parameters/guest', [UserParameterController::class, 'getGuestData']);
+Route::delete('/user-parameters/guest', [UserParameterController::class, 'clearGuestData']);
+Route::get('/user-parameters/onboarding-status', [UserParameterController::class, 'checkOnboardingStatus']);
+
+Route::get('/user-parameters/reference', [UserParameterController::class, 'getReferenceData']);
+
 
 Route::middleware(['auth:api', 'track.activity'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -37,6 +47,14 @@ Route::middleware(['auth:api', 'track.activity'])->group(function () {
     Route::get('/my-subscriptions', [App\Http\Controllers\SubscriptionController::class, 'mySubscriptions']);
     Route::get('/my-test-history', [App\Http\Controllers\TestingController::class, 'myTestHistory']);
     Route::get('/my-workout-history', [App\Http\Controllers\WorkoutController::class, 'myWorkoutHistory']);
+
+    // Перенос данных из кэша в профиль
+    Route::post('/user-parameters/transfer-from-guest', [UserParameterController::class, 'transferFromGuest']);
+
+    // Получение и обновление параметров из БД
+    Route::get('/user-parameters/me', [UserParameterController::class, 'getMyParameters']);
+    Route::put('/user-parameters', [UserParameterController::class, 'update']);
+
 });
 
 Route::middleware(['auth:api', 'track.activity'])->prefix('payment')->group(function () {

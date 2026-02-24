@@ -5,26 +5,34 @@ namespace App\Http\Controllers;
 use App\Http\Responses\ErrorResponse;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\UserParameter;
+use App\Services\GuestDataService;
 use App\Jobs\SendVerificationEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\VerificationCodeMail;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\LoginRequest;
 
 class AuthController extends Controller
 {
+    private GuestDataService $guestService;
+    public function __construct(GuestDataService $guestService)
+    {
+        $this->guestService = $guestService;
+    }
+
     public function register(RegisterRequest $request)
     {
         $validated = $request->validated();
-
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role_id' => Role::where('name', 'user')->first()->id,
         ]);
+        $guestId = $this->guestService->getGuestId($request);
+        $this->transferGuestDataToUser($user, $guestId);
+
         SendVerificationEmail::dispatch($user);
 
         return response()->json([
@@ -37,7 +45,6 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
-
         if (!$token = Auth::attempt($credentials)) {
             return ErrorResponse::make(
                 ErrorResponse::INVALID_CREDENTIALS,
@@ -45,7 +52,6 @@ class AuthController extends Controller
                 401
             );
         }
-
         $user = Auth::user();
 
         if (!$user->email_verified_at) {
@@ -55,6 +61,8 @@ class AuthController extends Controller
                 403
             );
         }
+        $guestId = $this->guestService->getGuestId($request);
+        $this->transferGuestDataToUser($user, $guestId);
 
         return response()->json([
             'success' => true,
@@ -74,7 +82,6 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-
         return response()->json([
             'success' => true,
             'message' => 'Успешный выход из системы.'
@@ -113,5 +120,31 @@ class AuthController extends Controller
             'success' => true,
             'user' => Auth::user()
         ]);
+    }
+
+    private function transferGuestDataToUser(User $user, ?string $guestId): void
+    {
+        if (!$guestId || !$this->guestService->hasGuestData($guestId)) {
+            return;
+        }
+        $guestData = $this->guestService->getGuestData($guestId);
+
+        if (empty($guestData)) {
+            return;
+        }
+        $parameters = UserParameter::firstOrNew(['user_id' => $user->id]);
+        $fillableFields = ['goal_id', 'level_id', 'equipment_id', 'height', 'weight', 'age', 'gender'];
+        $updated = false;
+
+        foreach ($fillableFields as $field) {
+            if (isset($guestData[$field]) && empty($parameters->$field)) {
+                $parameters->$field = $guestData[$field];
+                $updated = true;
+            }
+        }
+        if ($updated) {
+            $parameters->save();
+        }
+        $this->guestService->clearGuestData($guestId);
     }
 }
