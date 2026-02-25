@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "darkaonline/l5-swagger": "^8.0",
+        "devkandil/notifire": "*",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.44",
         "laravel/tinker": "^2.10.1",

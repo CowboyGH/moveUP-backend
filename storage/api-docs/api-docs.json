@@ -4700,6 +4700,138 @@
                 }
             }
         },
+        "/api/fcm/token": {
+            "post": {
+                "tags": [
+                    "FCM"
+                ],
+                "summary": "Сохранить FCM токен",
+                "description": "Сохраняет или обновляет FCM токен текущего пользователя",
+                "operationId": "22e10004ce55333b0fc92577e680c21b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FcmTokenRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Токен успешно сохранен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FcmTokenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "FCM"
+                ],
+                "summary": "Удалить FCM токен",
+                "description": "Удаляет FCM токен текущего пользователя (при выходе из приложения)",
+                "operationId": "d3b9f73d5537fd14147d7b3c17a126a7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FcmTokenDeleteRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Токен удален",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FcmTokenDeleteResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/forgot-password": {
             "post": {
                 "tags": [
@@ -7989,6 +8121,83 @@
                 },
                 "type": "object"
             },
+            "FcmTokenRequest": {
+                "title": "Запрос на сохранение FCM токена",
+                "required": [
+                    "fcm_token"
+                ],
+                "properties": {
+                    "fcm_token": {
+                        "description": "FCM токен от устройства",
+                        "type": "string",
+                        "example": "cP6Ks-XyZ123...abc"
+                    },
+                    "device_type": {
+                        "description": "Тип устройства",
+                        "type": "string",
+                        "enum": [
+                            "ios",
+                            "android",
+                            "web"
+                        ],
+                        "example": "android"
+                    },
+                    "device_name": {
+                        "description": "Название устройства",
+                        "type": "string",
+                        "example": "Xiaomi Redmi Note 10"
+                    }
+                },
+                "type": "object"
+            },
+            "FcmTokenResponse": {
+                "title": "Ответ на сохранение FCM токена",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "message": {
+                                "example": "FCM токен успешно сохранен"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "FcmTokenDeleteRequest": {
+                "title": "Запрос на удаление FCM токена",
+                "required": [
+                    "fcm_token"
+                ],
+                "properties": {
+                    "fcm_token": {
+                        "description": "FCM токен для удаления",
+                        "type": "string",
+                        "example": "cP6Ks-XyZ123...abc"
+                    }
+                },
+                "type": "object"
+            },
+            "FcmTokenDeleteResponse": {
+                "title": "Ответ на удаление FCM токена",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "message": {
+                                "example": "FCM токен удален"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
             "ForgotPasswordRequest": {
                 "required": [
                     "email"
@@ -8921,6 +9130,10 @@
         {
             "name": "Email Verification",
             "description": "Email Verification"
+        },
+        {
+            "name": "FCM",
+            "description": "FCM"
         },
         {
             "name": "Password Reset",

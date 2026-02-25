@@ -11,10 +11,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Cache;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use DevKandil\NotiFire\Traits\HasFcm;
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasFcm;
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +28,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'role_id',
         'avatar',
+        'fcm_token',
     ];
 
     /**

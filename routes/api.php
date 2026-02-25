@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\TestingController;
 use App\Http\Controllers\Admin\TestingExerciseController;
+use App\Http\Controllers\Api\FcmTokenController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\PasswordResetController;
@@ -48,6 +49,9 @@ Route::middleware(['auth:api', 'track.activity'])->group(function () {
 
     Route::get('/user-parameters/me', [UserParameterController::class, 'getMyParameters']);
     Route::put('/user-parameters', [UserParameterController::class, 'update']);
+
+    Route::post('/fcm/token', [FcmTokenController::class, 'update']);
+    Route::delete('/fcm/token', [FcmTokenController::class, 'destroy']);
 
 });
 
