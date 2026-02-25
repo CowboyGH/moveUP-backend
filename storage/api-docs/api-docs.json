@@ -3853,6 +3853,474 @@
                 ]
             }
         },
+        "/api/admin/workouts": {
+            "get": {
+                "tags": [
+                    "Admin Workouts"
+                ],
+                "summary": "Получить список всех тренировок",
+                "description": "Возвращает список всех тренировок с детальной информацией",
+                "operationId": "getWorkoutsList",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "Утренняя зарядка"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Комплекс упражнений для пробуждения"
+                                                    },
+                                                    "duration_minutes": {
+                                                        "type": "integer",
+                                                        "example": 30
+                                                    },
+                                                    "is_active": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    },
+                                                    "phase": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Начальный уровень"
+                                                            }
+                                                        },
+                                                        "type": "object",
+                                                        "nullable": true
+                                                    },
+                                                    "exercises_count": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "warmups_count": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "user_workouts_count": {
+                                                        "type": "integer",
+                                                        "example": 15
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-01-01T12:00:00Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-01-01T12:00:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin Workouts"
+                ],
+                "summary": "Создать новую тренировку",
+                "description": "Создает новую тренировку с упражнениями и разминками",
+                "operationId": "createWorkout",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreWorkoutRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Тренировка успешно создана",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тренировка успешно создана"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Workout"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/workouts/{id}": {
+            "get": {
+                "tags": [
+                    "Admin Workouts"
+                ],
+                "summary": "Получить тренировку по ID",
+                "description": "Возвращает детальную информацию о тренировке с упражнениями и разминками",
+                "operationId": "getWorkoutById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID тренировки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Workout"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тренировка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin Workouts"
+                ],
+                "summary": "Обновить тренировку",
+                "description": "Обновляет существующую тренировку",
+                "operationId": "updateWorkout",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID тренировки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateWorkoutRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Тренировка успешно обновлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тренировка успешно обновлена"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Workout"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тренировка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin Workouts"
+                ],
+                "summary": "Удалить тренировку",
+                "description": "Удаляет тренировку, если она не была назначена пользователям",
+                "operationId": "deleteWorkout",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID тренировки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Тренировка успешно удалена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тренировка успешно удалена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тренировка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Нельзя удалить тренировку, которая уже была назначена пользователям",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/register": {
             "post": {
                 "tags": [
@@ -8075,6 +8543,337 @@
                     }
                 },
                 "type": "object"
+            },
+            "Phase": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Начальный уровень"
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutExercise": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Приседания"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Техника выполнения приседаний"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "/uploads/exercises/squat.jpg"
+                    },
+                    "muscle_group": {
+                        "type": "string",
+                        "example": "Ноги"
+                    },
+                    "equipment": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Штанга"
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "pivot": {
+                        "properties": {
+                            "sets": {
+                                "type": "integer",
+                                "example": 3
+                            },
+                            "reps": {
+                                "type": "string",
+                                "example": "12"
+                            },
+                            "order_number": {
+                                "type": "integer",
+                                "example": 1
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutWarmup": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Разминка суставов"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Подготовка суставов к нагрузке"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "/uploads/warmups/joint-warmup.jpg"
+                    },
+                    "pivot": {
+                        "properties": {
+                            "order_number": {
+                                "type": "integer",
+                                "example": 1
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "Workout": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Утренняя зарядка"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Комплекс упражнений для пробуждения"
+                    },
+                    "duration_minutes": {
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "phase": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Phase"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "exercises": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WorkoutExercise"
+                        }
+                    },
+                    "warmups": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WorkoutWarmup"
+                        }
+                    },
+                    "user_workouts_count": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreWorkoutRequest": {
+                "required": [
+                    "title",
+                    "description",
+                    "duration_minutes"
+                ],
+                "properties": {
+                    "phase_id": {
+                        "description": "ID фазы",
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "title": {
+                        "description": "Название тренировки",
+                        "type": "string",
+                        "example": "Утренняя зарядка"
+                    },
+                    "description": {
+                        "description": "Описание тренировки",
+                        "type": "string",
+                        "example": "Комплекс упражнений для пробуждения"
+                    },
+                    "duration_minutes": {
+                        "description": "Длительность в минутах",
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "is_active": {
+                        "description": "Активность тренировки",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "exercises": {
+                        "description": "Список упражнений",
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "exercise_id",
+                                "sets",
+                                "reps",
+                                "order_number"
+                            ],
+                            "properties": {
+                                "exercise_id": {
+                                    "description": "ID упражнения",
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "sets": {
+                                    "description": "Количество подходов",
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "reps": {
+                                    "description": "Количество повторений",
+                                    "type": "string",
+                                    "example": "12"
+                                },
+                                "order_number": {
+                                    "description": "Порядковый номер",
+                                    "type": "integer",
+                                    "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "warmups": {
+                        "description": "Список разминок",
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "warmup_id",
+                                "order_number"
+                            ],
+                            "properties": {
+                                "warmup_id": {
+                                    "description": "ID разминки",
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "order_number": {
+                                    "description": "Порядковый номер",
+                                    "type": "integer",
+                                    "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateWorkoutRequest": {
+                "properties": {
+                    "phase_id": {
+                        "description": "ID фазы",
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "title": {
+                        "description": "Название тренировки",
+                        "type": "string",
+                        "example": "Утренняя зарядка"
+                    },
+                    "description": {
+                        "description": "Описание тренировки",
+                        "type": "string",
+                        "example": "Комплекс упражнений для пробуждения"
+                    },
+                    "duration_minutes": {
+                        "description": "Длительность в минутах",
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "is_active": {
+                        "description": "Активность тренировки",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "exercises": {
+                        "description": "Список упражнений",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "exercise_id": {
+                                    "description": "ID упражнения",
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "sets": {
+                                    "description": "Количество подходов",
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "reps": {
+                                    "description": "Количество повторений",
+                                    "type": "string",
+                                    "example": "12"
+                                },
+                                "order_number": {
+                                    "description": "Порядковый номер",
+                                    "type": "integer",
+                                    "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "warmups": {
+                        "description": "Список разминок",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "warmup_id": {
+                                    "description": "ID разминки",
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "order_number": {
+                                    "description": "Порядковый номер",
+                                    "type": "integer",
+                                    "example": 1
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -8110,6 +8909,10 @@
         {
             "name": "Admin Warmups",
             "description": "Admin Warmups"
+        },
+        {
+            "name": "Admin Workouts",
+            "description": "Admin Workouts"
         },
         {
             "name": "Authentication",

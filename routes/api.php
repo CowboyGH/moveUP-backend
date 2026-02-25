@@ -13,6 +13,7 @@ use App\Http\Controllers\UserParameterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ExerciseController;
 use App\Http\Controllers\Admin\WarmupController;
+use App\Http\Controllers\Admin\WorkoutController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -95,5 +96,11 @@ Route::middleware(['auth:api', 'admin', 'track.activity'])->prefix('admin')->gro
     Route::get('/warmups/{id}', [WarmupController::class, 'show']);
     Route::put('/warmups/{id}', [WarmupController::class, 'update']);
     Route::delete('/warmups/{id}', [WarmupController::class, 'destroy']);
+
+    Route::get('/workouts', [WorkoutController::class, 'index']);
+    Route::post('/workouts', [WorkoutController::class, 'store']);
+    Route::get('/workouts/{id}', [WorkoutController::class, 'show']);
+    Route::put('/workouts/{id}', [WorkoutController::class, 'update']);
+    Route::delete('/workouts/{id}', [WorkoutController::class, 'destroy']);
 
 });
