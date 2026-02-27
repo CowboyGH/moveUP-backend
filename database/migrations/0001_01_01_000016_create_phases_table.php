@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->integer('duration_days');
+            $table->integer('min_workouts')->default(0);
             $table->integer('order_number');
             $table->timestamps();
         });

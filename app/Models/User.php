@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -118,6 +117,33 @@ class User extends Authenticatable implements JWTSubject
     {
         $key = "password_reset:{$this->email}";
         Cache::forget($key);
+    }
+
+    /**
+     * Получить текущий прогресс пользователя
+     */
+    public function currentProgress(): ?UserProgress
+    {
+        return $this->userProgress()->latest()->first();
+    }
+
+    /**
+     * Получить текущую фазу пользователя
+     */
+    public function currentPhase(): ?Phase
+    {
+        return $this->currentProgress()?->phase;
+    }
+
+    /**
+     * Получить последнюю завершенную тренировку
+     */
+    public function lastCompletedWorkout(): ?UserWorkout
+    {
+        return $this->userWorkouts()
+            ->where('status', 'completed')
+            ->latest('completed_at')
+            ->first();
     }
 
 

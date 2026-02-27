@@ -17,5 +17,6 @@ class PhaseSeeder extends Seeder
         Phase::factory()->basic()->create();
         Phase::factory()->intense()->create();
         Phase::factory()->rest()->create();
+        Phase::factory()->advanced()->create();
     }
 }

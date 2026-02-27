@@ -14,8 +14,22 @@ class Phase extends Model
         'name',
         'description',
         'duration_days',
-        'order_number',
+        'min_workouts',
+        'order_number'
     ];
+
+
+
+    public function nextPhase(): ?Phase
+    {
+        return Phase::where('order_number', '>', $this->order_number)
+            ->orderBy('order_number')->first();
+    }
+
+    public static function getFirstPhase(): ?Phase
+    {
+        return Phase::orderBy('order_number')->first();
+    }
 
     public function userProgress(): HasMany
     {
@@ -26,4 +40,5 @@ class Phase extends Model
     {
         return $this->hasMany(Workout::class);
     }
+
 }

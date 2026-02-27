@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('phase_id')->constrained()->onDelete('cascade');
-            $table->integer('streak_days');
+            $table->integer('streak_days')->default(0);
+            $table->integer('completed_workouts')->default(0);
             $table->timestamps();
         });
     }
