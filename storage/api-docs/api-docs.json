@@ -4579,7 +4579,7 @@
                                             "properties": {
                                                 "code": {
                                                     "type": "string",
-                                                    "example": "conflict"
+                                                    "example": "email_already_verified"
                                                 },
                                                 "message": {
                                                     "type": "string",
@@ -4662,7 +4662,17 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ConflictResponse"
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "email_already_verified"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email уже подтвержден."
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -4869,7 +4879,7 @@
                                     "properties": {
                                         "code": {
                                             "type": "string",
-                                            "example": "conflict"
+                                            "example": "email_not_verified"
                                         },
                                         "message": {
                                             "type": "string",
@@ -4943,7 +4953,7 @@
                                             "properties": {
                                                 "code": {
                                                     "type": "string",
-                                                    "example": "conflict"
+                                                    "example": "email_not_verified"
                                                 },
                                                 "message": {
                                                     "type": "string",
@@ -4960,20 +4970,7 @@
                                                 },
                                                 "message": {
                                                     "type": "string",
-                                                    "example": "Неверный код."
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        {
-                                            "properties": {
-                                                "code": {
-                                                    "type": "string",
-                                                    "example": "validation_failed"
-                                                },
-                                                "message": {
-                                                    "type": "string",
-                                                    "example": "Код истек или не был запрошен."
+                                                    "example": "Неверный или истекший код."
                                                 }
                                             },
                                             "type": "object"
@@ -5045,7 +5042,7 @@
                                             "properties": {
                                                 "code": {
                                                     "type": "string",
-                                                    "example": "conflict"
+                                                    "example": "email_not_verified"
                                                 },
                                                 "message": {
                                                     "type": "string",
@@ -7814,6 +7811,78 @@
                             },
                             "message": {
                                 "example": "Внутренняя ошибка сервера."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "EmailAlreadyVerifiedResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "email_already_verified"
+                            },
+                            "message": {
+                                "example": "Email уже подтвержден."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "InvalidVerificationCodeResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "invalid_verification_code"
+                            },
+                            "message": {
+                                "example": "Неверный или истекший код подтверждения."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "EmailNotVerifiedForResetResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "email_not_verified_for_reset"
+                            },
+                            "message": {
+                                "example": "Email не подтвержден. Сначала подтвердите email."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "InvalidResetCodeResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "invalid_reset_code"
+                            },
+                            "message": {
+                                "example": "Неверный или истекший код."
                             }
                         },
                         "type": "object"

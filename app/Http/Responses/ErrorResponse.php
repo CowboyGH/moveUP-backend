@@ -42,6 +42,7 @@ class ErrorResponse
     const SESSION_EXPIRED_ABSOLUTE = 'session_expired_absolute';
     const UNAUTHORIZED = 'unauthorized';
     const EMAIL_NOT_VERIFIED = 'email_not_verified';
+    const EMAIL_ALREADY_VERIFIED = 'email_already_verified';
     const FORBIDDEN = 'forbidden';
 
     /**

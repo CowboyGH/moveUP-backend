@@ -26,10 +26,9 @@ class PasswordResetController extends Controller
             );
         }
 
-        // Добавляем проверку на подтвержденный email
         if (!$user->email_verified_at) {
             return ApiResponse::error(
-                ErrorResponse::CONFLICT,
+                ErrorResponse::EMAIL_NOT_VERIFIED, // Изменено с CONFLICT на существующий код
                 'Email не подтвержден. Сначала подтвердите email.',
                 400
             );
@@ -53,10 +52,9 @@ class PasswordResetController extends Controller
             );
         }
 
-        // Добавляем проверку на подтвержденный email
         if (!$user->email_verified_at) {
             return ApiResponse::error(
-                ErrorResponse::CONFLICT,
+                ErrorResponse::EMAIL_NOT_VERIFIED,
                 'Email не подтвержден. Сначала подтвердите email.',
                 400
             );
@@ -86,10 +84,9 @@ class PasswordResetController extends Controller
             );
         }
 
-        // Добавляем проверку на подтвержденный email
         if (!$user->email_verified_at) {
             return ApiResponse::error(
-                ErrorResponse::CONFLICT,
+                ErrorResponse::EMAIL_NOT_VERIFIED,
                 'Email не подтвержден. Сначала подтвердите email.',
                 400
             );

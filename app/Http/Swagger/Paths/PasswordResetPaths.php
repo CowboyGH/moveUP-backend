@@ -21,7 +21,7 @@ namespace App\Http\Swagger\Paths;
  *         response=400,
  *         description="Email не подтвержден",
  *         @OA\JsonContent(
- *             @OA\Property(property="code", type="string", example="conflict"),
+ *             @OA\Property(property="code", type="string", example="email_not_verified"),
  *             @OA\Property(property="message", type="string", example="Email не подтвержден. Сначала подтвердите email.")
  *         )
  *     ),
@@ -60,16 +60,12 @@ class PasswordResetPaths {}
  *         @OA\JsonContent(
  *             oneOf={
  *                 @OA\Schema(
- *                     @OA\Property(property="code", type="string", example="conflict"),
+ *                     @OA\Property(property="code", type="string", example="email_not_verified"),
  *                     @OA\Property(property="message", type="string", example="Email не подтвержден. Сначала подтвердите email.")
  *                 ),
  *                 @OA\Schema(
  *                     @OA\Property(property="code", type="string", example="validation_failed"),
- *                     @OA\Property(property="message", type="string", example="Неверный код.")
- *                 ),
- *                 @OA\Schema(
- *                     @OA\Property(property="code", type="string", example="validation_failed"),
- *                     @OA\Property(property="message", type="string", example="Код истек или не был запрошен.")
+ *                     @OA\Property(property="message", type="string", example="Неверный или истекший код.")
  *                 )
  *             }
  *         )
@@ -109,7 +105,7 @@ class VerifyResetCodePath {}
  *         @OA\JsonContent(
  *             oneOf={
  *                 @OA\Schema(
- *                     @OA\Property(property="code", type="string", example="conflict"),
+ *                     @OA\Property(property="code", type="string", example="email_not_verified"),
  *                     @OA\Property(property="message", type="string", example="Email не подтвержден. Сначала подтвердите email.")
  *                 ),
  *                 @OA\Schema(

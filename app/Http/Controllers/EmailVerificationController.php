@@ -8,8 +8,6 @@ use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\User;
 use App\Jobs\SendVerificationEmail;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\VerificationCodeMail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class EmailVerificationController extends Controller
@@ -20,9 +18,17 @@ class EmailVerificationController extends Controller
 
         $user = User::where('email', $validated['email'])->first();
 
+        if (!$user) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Пользователь с таким email не найден.',
+                404
+            );
+        }
+
         if ($user->email_verified_at) {
             return ApiResponse::error(
-                ErrorResponse::CONFLICT,
+                ErrorResponse::EMAIL_ALREADY_VERIFIED,
                 'Email уже подтвержден.',
                 400
             );
@@ -69,11 +75,12 @@ class EmailVerificationController extends Controller
 
         if ($user->email_verified_at) {
             return ApiResponse::error(
-                ErrorResponse::CONFLICT,
+                ErrorResponse::EMAIL_ALREADY_VERIFIED,
                 'Email уже подтвержден.',
                 400
             );
         }
+
         SendVerificationEmail::dispatch($user);
 
         return ApiResponse::success('Новый код подтверждения отправлен на вашу почту.');

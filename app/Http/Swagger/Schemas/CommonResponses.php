@@ -201,3 +201,59 @@ class RateLimitedResponseSchema {}
  * )
  */
 class ServerErrorResponseSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="EmailAlreadyVerifiedResponse",
+ *     allOf={
+ *         @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *         @OA\Schema(
+ *             @OA\Property(property="code", example="email_already_verified"),
+ *             @OA\Property(property="message", example="Email уже подтвержден.")
+ *         )
+ *     }
+ * )
+ */
+class EmailAlreadyVerifiedResponseSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="InvalidVerificationCodeResponse",
+ *     allOf={
+ *         @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *         @OA\Schema(
+ *             @OA\Property(property="code", example="invalid_verification_code"),
+ *             @OA\Property(property="message", example="Неверный или истекший код подтверждения.")
+ *         )
+ *     }
+ * )
+ */
+class InvalidVerificationCodeResponseSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="EmailNotVerifiedForResetResponse",
+ *     allOf={
+ *         @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *         @OA\Schema(
+ *             @OA\Property(property="code", example="email_not_verified_for_reset"),
+ *             @OA\Property(property="message", example="Email не подтвержден. Сначала подтвердите email.")
+ *         )
+ *     }
+ * )
+ */
+class EmailNotVerifiedForResetResponseSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="InvalidResetCodeResponse",
+ *     allOf={
+ *         @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *         @OA\Schema(
+ *             @OA\Property(property="code", example="invalid_reset_code"),
+ *             @OA\Property(property="message", example="Неверный или истекший код.")
+ *         )
+ *     }
+ * )
+ */
+class InvalidResetCodeResponseSchema {}

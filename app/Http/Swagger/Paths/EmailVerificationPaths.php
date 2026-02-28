@@ -22,7 +22,7 @@ namespace App\Http\Swagger\Paths;
  *         @OA\JsonContent(
  *             oneOf={
  *                 @OA\Schema(
- *                     @OA\Property(property="code", type="string", example="conflict"),
+ *                     @OA\Property(property="code", type="string", example="email_already_verified"),
  *                     @OA\Property(property="message", type="string", example="Email уже подтвержден.")
  *                 ),
  *                 @OA\Schema(
@@ -63,7 +63,10 @@ class EmailVerificationPaths {}
  *     @OA\Response(
  *         response=400,
  *         description="Email уже подтвержден",
- *         @OA\JsonContent(ref="#/components/schemas/ConflictResponse")
+ *         @OA\JsonContent(
+ *             @OA\Property(property="code", type="string", example="email_already_verified"),
+ *             @OA\Property(property="message", type="string", example="Email уже подтвержден.")
+ *         )
  *     ),
  *     @OA\Response(
  *         response=404,
