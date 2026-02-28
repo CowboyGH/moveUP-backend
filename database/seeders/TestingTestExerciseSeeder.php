@@ -2,16 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\TestResult;
+use App\Models\TestingTestExercise;
 use Illuminate\Database\Seeder;
 
-class TestResultSeeder extends Seeder
+class TestingTestExerciseSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        TestResult::factory(30)->create();
+        TestingTestExercise::factory(20)->create();
     }
 }

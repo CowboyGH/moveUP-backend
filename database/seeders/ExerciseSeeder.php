@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Exercise;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ExerciseSeeder extends Seeder
@@ -13,14 +12,20 @@ class ExerciseSeeder extends Seeder
      */
     public function run(): void
     {
-        Exercise::factory(5)->forGym()->create();
-        Exercise::factory(5)->forMixed()->create();
+        Exercise::factory(3)->forGym()->create();
+        Exercise::factory(3)->forMixed()->create();
 
         Exercise::factory()->chest()->create();
+        Exercise::factory()->back()->create();
+        Exercise::factory()->shoulders()->create();
         Exercise::factory()->legs()->create();
+        Exercise::factory()->glutes()->create();
+        Exercise::factory()->abs()->create();
         Exercise::factory()->cardio()->create();
+        Exercise::factory()->fullBody()->create();
 
         Exercise::factory()->forGym()->strength()->create();
         Exercise::factory()->forMixed()->endurance()->create();
+        Exercise::factory()->stretching()->create();
     }
 }

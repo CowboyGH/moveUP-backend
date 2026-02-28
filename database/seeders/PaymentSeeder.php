@@ -2,16 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\TestResult;
+use App\Models\Payment;
 use Illuminate\Database\Seeder;
 
-class TestResultSeeder extends Seeder
+class PaymentSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        TestResult::factory(30)->create();
+        Payment::factory(25)->create();
     }
 }

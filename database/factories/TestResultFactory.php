@@ -2,72 +2,44 @@
 
 namespace Database\Factories;
 
-use App\Models\Exercise;
-use App\Models\Testing;
 use App\Models\User;
-
+use App\Models\Testing;
+use App\Models\TestingExercise;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TestResult>
- */
 class TestResultFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
+        static $userTestCounts = [];
+
+        $user = User::whereHas('role', function($q) {
+            $q->where('name', 'user');
+        })->inRandomOrder()->first() ?? User::factory()->user()->create();
+
+        $testCount = $userTestCounts[$user->id] ?? 0;
+        if ($testCount >= 3) {
+            $user = User::whereHas('role', function($q) {
+                $q->where('name', 'user');
+            })->whereDoesntHave('testResults', function($q) {
+                $q->groupBy('user_id')
+                    ->havingRaw('COUNT(*) < 3');
+            })->inRandomOrder()->first() ?? User::factory()->user()->create();
+
+            $userTestCounts[$user->id] = $userTestCounts[$user->id] ?? 0;
+        }
+
+        $userTestCounts[$user->id] = ($userTestCounts[$user->id] ?? 0) + 1;
+
         return [
-            'user_id' => User::factory(),
-            'exercise_id' => Exercise::factory(),
-            'testing_id' => Testing::factory(),
+            'user_id' => $user->id,
+            'exercise_id' => TestingExercise::inRandomOrder()->first()->id
+                ?? TestingExercise::factory()->create()->id,
+            'testing_id' => Testing::inRandomOrder()->first()->id
+                ?? Testing::factory()->create()->id,
             'result_value' => fake()->numberBetween(1, 4),
             'pulse' => fake()->numberBetween(60, 180),
             'test_date' => fake()->dateTimeBetween('-30 days', 'now'),
         ];
-    }
-
-    public function recent(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'test_date' => fake()->dateTimeBetween('-7 days', 'now'),
-        ]);
-    }
-
-    public function excellent(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'result_value' => fake()->numberBetween(85, 100),
-        ]);
-    }
-
-    public function good(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'result_value' => 4,
-        ]);
-    }
-
-    public function normal(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'result_value' => 3,
-        ]);
-    }
-
-    public function medium(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'result_value' => 2,
-        ]);
-    }
-    public function bad(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'result_value' => 1,
-        ]);
     }
 }

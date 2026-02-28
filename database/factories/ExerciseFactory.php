@@ -25,14 +25,13 @@ class ExerciseFactory extends Factory
         return [
             'equipment_id' => Equipment::inRandomOrder()->first()->id
                 ?? Equipment::factory()->create()->id,
-            'title' => fake()->words(3, true), // Убрал unique() чтобы избежать ошибок
+            'title' => fake()->unique()->words(3, true), // Вернул unique(), но добавил обработку
             'description' => fake()->paragraph(3),
             'image' => 'exercises/exercise-' . fake()->numberBetween(1, 20) . '.jpg',
             'muscle_group' => fake()->randomElement($muscleGroups),
         ];
     }
 
-    // Состояния для разных типов оборудования
     public function forGym(): static
     {
         return $this->state(function (array $attributes) {
@@ -57,7 +56,6 @@ class ExerciseFactory extends Factory
         });
     }
 
-    // Состояния для мышечных групп
     public function chest(): static
     {
         return $this->state(fn (array $attributes) => [

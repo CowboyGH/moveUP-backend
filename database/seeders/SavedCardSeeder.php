@@ -2,16 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\TestResult;
+use App\Models\SavedCard;
 use Illuminate\Database\Seeder;
 
-class TestResultSeeder extends Seeder
+class SavedCardSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        TestResult::factory(30)->create();
+        SavedCard::factory(15)->create();
     }
 }

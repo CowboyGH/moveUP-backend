@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\TestingCategory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class TestingCategorySeeder extends Seeder
@@ -13,6 +12,6 @@ class TestingCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        TestingCategory::factory(20)->create();
+        TestingCategory::factory(15)->create();
     }
 }
