@@ -1,6 +1,8 @@
 <?php
 
+use App\Console\Commands\CheckPhasesProgress;
 use App\Console\Commands\ProcessAutoPayments;
+use App\Console\Commands\TestPushNotification;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withCommands([
         ProcessAutoPayments::class,
+        TestPushNotification::class,
+        CheckPhasesProgress::class
     ])
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([

@@ -6,7 +6,9 @@ use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\Workout;
 use App\Models\UserWorkout;
+use App\Services\PhaseService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class WorkoutController extends Controller
 {
@@ -153,5 +155,27 @@ class WorkoutController extends Controller
     private function getWorkoutStatus(UserWorkout $userWorkout): string
     {
         return $userWorkout->status;
+    }
+    //Эта функция для раздумывания, может нужно будет ее изменить для пользователя
+    public function completeWorkout(Request $request, $workoutId, PhaseService $phaseService)
+    {
+        $userWorkout = UserWorkout::where('user_id', $request->user()->id)
+            ->where('workout_id', $workoutId)
+            ->where('status', 'started')
+            ->first();
+
+        if ($userWorkout) {
+            $userWorkout->update([
+                'status' => 'completed',
+                'completed_at' => now()
+            ]);
+
+            $phaseService->handleWorkoutCompletion($userWorkout);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Workout completed successfully'
+            ]);
+        }
     }
 }

@@ -4,12 +4,13 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\TestingController;
 use App\Http\Controllers\Admin\TestingExerciseController;
-use App\Http\Controllers\Api\FcmTokenController;
+use App\Http\Controllers\FcmTokenController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Payment\SavedCardController;
+use App\Http\Controllers\PhaseController;
 use App\Http\Controllers\UserParameterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ExerciseController;
@@ -53,6 +54,9 @@ Route::middleware(['auth:api', 'track.activity'])->group(function () {
     Route::post('/fcm/token', [FcmTokenController::class, 'update']);
     Route::delete('/fcm/token', [FcmTokenController::class, 'destroy']);
 
+    Route::get('/user/current-phase', [PhaseController::class, 'getCurrentPhase']);
+    Route::get('/phases', [PhaseController::class, 'getAllPhases']);
+    Route::get('/phases/{phase}', [PhaseController::class, 'getPhaseDetails']);
 });
 
 Route::middleware(['auth:api', 'track.activity'])->prefix('payment')->group(function () {
@@ -106,5 +110,4 @@ Route::middleware(['auth:api', 'admin', 'track.activity'])->prefix('admin')->gro
     Route::get('/workouts/{id}', [WorkoutController::class, 'show']);
     Route::put('/workouts/{id}', [WorkoutController::class, 'update']);
     Route::delete('/workouts/{id}', [WorkoutController::class, 'destroy']);
-
 });

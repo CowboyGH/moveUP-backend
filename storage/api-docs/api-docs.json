@@ -5178,6 +5178,196 @@
                 ]
             }
         },
+        "/api/user/current-phase": {
+            "get": {
+                "tags": [
+                    "Phases"
+                ],
+                "summary": "Получить текущую фазу пользователя с прогрессом",
+                "operationId": "6961c77bb9cb49f289d057ba027773c6",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ. Данные о текущей фазе и прогрессе",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserPhaseProgress"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/phases": {
+            "get": {
+                "tags": [
+                    "Phases"
+                ],
+                "summary": "Получить список всех фаз",
+                "operationId": "c367551f60bffcae262e36a1ef2889b7",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ. Список всех фаз",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PhaseDetails"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/phases/{phase}": {
+            "get": {
+                "tags": [
+                    "Phases"
+                ],
+                "summary": "Получить детальную информацию о фазе",
+                "operationId": "bfb8cc412610bb1a63d1ca07e0701c17",
+                "parameters": [
+                    {
+                        "name": "phase",
+                        "in": "path",
+                        "description": "ID фазы",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ. Детальная информация о фазе с привязанными тренировками",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/PhaseDetails"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Фаза не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/payment/cards": {
             "get": {
                 "tags": [
@@ -8623,6 +8813,145 @@
                 },
                 "type": "object"
             },
+            "PhaseSimple": {
+                "title": "Фаза (кратко)",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Подготовительная фаза"
+                    },
+                    "order_number": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "PhaseDetails": {
+                "title": "Детальная информация о фазе",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Phase"
+                    },
+                    {
+                        "properties": {
+                            "description": {
+                                "type": "string",
+                                "example": "Начальный этап для адаптации к тренировкам"
+                            },
+                            "duration_days": {
+                                "type": "integer",
+                                "example": 7
+                            },
+                            "min_workouts": {
+                                "type": "integer",
+                                "example": 3
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "UserPhaseProgress": {
+                "title": "Прогресс пользователя по фазам",
+                "properties": {
+                    "has_progress": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "current_phase": {
+                        "$ref": "#/components/schemas/PhaseDetails"
+                    },
+                    "progress": {
+                        "properties": {
+                            "streak_days": {
+                                "type": "integer",
+                                "example": 3
+                            },
+                            "completed_workouts": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "days_passed": {
+                                "type": "integer",
+                                "example": 4
+                            },
+                            "days_left": {
+                                "type": "integer",
+                                "example": 3
+                            },
+                            "workouts_left": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "phase_started_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2026-02-25T10:00:00Z"
+                            },
+                            "last_workout_date": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2026-02-28T15:30:00Z"
+                            },
+                            "has_workout_today": {
+                                "type": "boolean",
+                                "example": false
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "next_phase": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Phase"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "recent_workouts": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 42
+                                },
+                                "workout_name": {
+                                    "type": "string",
+                                    "example": "Утренняя зарядка"
+                                },
+                                "completed_at": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "example": "2026-02-28T08:00:00Z"
+                                },
+                                "duration": {
+                                    "type": "integer",
+                                    "example": 35
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "can_advance": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "PhaseList": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/PhaseDetails"
+                }
+            },
             "User": {
                 "title": "Пользователь",
                 "properties": {
@@ -9211,6 +9540,10 @@
         {
             "name": "Payments",
             "description": "Payments"
+        },
+        {
+            "name": "Phases",
+            "description": "Phases"
         },
         {
             "name": "Cards",
