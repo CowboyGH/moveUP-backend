@@ -23,3 +23,5 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+../client/public/firebase-messaging-sw.js
+../client/src/firebase.js
