@@ -150,8 +150,12 @@ class WorkoutGeneratorService
                 }
             }
 
+            // Адаптируем сеты и повторения
             $adaptedExercise->pivot->sets = $this->adjustSetsByLevel($exercise);
             $adaptedExercise->pivot->reps = $this->adjustRepsByLevel($exercise);
+
+            // Добавляем вес пользователя
+            $adaptedExercise->user_weight = $this->getUserExerciseWeight($exercise);
 
             return $adaptedExercise;
         });
@@ -249,5 +253,14 @@ class WorkoutGeneratorService
                 ]);
             }
         });
+    }
+
+    protected function getUserExerciseWeight(Exercise $exercise): ?float
+    {
+        $userWeight = \App\Models\UserExerciseWeight::where('user_id', $this->user->id)
+            ->where('exercise_id', $exercise->id)
+            ->first();
+
+        return $userWeight?->weight;
     }
 }

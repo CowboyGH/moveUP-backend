@@ -22,7 +22,7 @@ class ExercisePerformanceFactory extends Factory
         return [
             'user_workout_id' => UserWorkout::factory(),
             'exercise_id' => Exercise::factory(),
-            'reaction' => $this->faker->randomElement(['bad', 'normally', 'good']),
+            'reaction' => $this->faker->randomElement(['bad', 'normal', 'good']),
         ];
     }
 
@@ -33,7 +33,7 @@ class ExercisePerformanceFactory extends Factory
 
     public function normalReaction(): self
     {
-        return $this->state(['reaction' => 'normally']);
+        return $this->state(['reaction' => 'normal']);
     }
 
     public function goodReaction(): self

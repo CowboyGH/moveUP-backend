@@ -10,6 +10,8 @@ use App\Models\UserWorkout;
 use App\Services\PhaseService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Services\ExerciseLoadService;
+use App\Http\Requests\Workout\CompleteWorkoutWithReactionsRequest;
 
 class WorkoutController extends Controller
 {
@@ -190,6 +192,104 @@ class WorkoutController extends Controller
                 $phaseService->assignPhaseToUser($user, $nextPhase);
                 $phaseService->assignWorkoutsForNewPhase($user, $nextPhase);
             }
+        }
+    }
+    public function completeWorkoutWithReactions(
+        CompleteWorkoutWithReactionsRequest $request,
+        PhaseService $phaseService,
+        ExerciseLoadService $exerciseLoadService
+    ) {
+        $userWorkout = UserWorkout::where('user_id', $request->user()->id)
+            ->where('workout_id', $request->workout_id)
+            ->where('status', 'started')
+            ->first();
+
+        if (!$userWorkout) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Активная тренировка не найдена',
+                404
+            );
+        }
+
+        // Обрабатываем все оценки упражнений
+        $reactionsResults = [];
+        foreach ($request->reactions as $reaction) {
+            $result = $exerciseLoadService->processReaction(
+                $request->user(),
+                $reaction['exercise_id'],
+                $reaction['reaction'],
+                $userWorkout->id,
+                $reaction['performance'] ?? null
+            );
+            $reactionsResults[] = $result;
+        }
+
+        // Завершаем тренировку
+        $userWorkout->update([
+            'status' => 'completed',
+            'completed_at' => now()
+        ]);
+
+        // Обрабатываем завершение тренировки в PhaseService
+        $phaseService->handleWorkoutCompletion($userWorkout);
+
+        // Проверяем и назначаем следующую фазу
+        $this->checkAndAssignNextPhase($request->user(), $phaseService);
+
+        // Анализируем общий прогресс на основе всех оценок
+        $overallAnalysis = $this->analyzeOverallProgress($reactionsResults);
+
+        return ApiResponse::success('Тренировка успешно завершена', [
+            'workout_id' => $userWorkout->id,
+            'completed_at' => $userWorkout->completed_at,
+            'reactions_processed' => count($reactionsResults),
+            'overall_analysis' => $overallAnalysis,
+            'phase_progress' => $request->user()->currentProgress(),
+        ]);
+    }
+
+    private function analyzeOverallProgress(array $reactionsResults): array
+    {
+        $goodCount = 0;
+        $badCount = 0;
+        $adjustmentsCount = 0;
+        $restPhasesCount = 0;
+
+        foreach ($reactionsResults as $result) {
+            if ($result['reaction']->reaction === 'good') $goodCount++;
+            if ($result['reaction']->reaction === 'bad') $badCount++;
+            if ($result['adjustments']['applied']) $adjustmentsCount++;
+            if ($result['rest_phase']) $restPhasesCount++;
+        }
+
+        $total = count($reactionsResults);
+
+        return [
+            'summary' => [
+                'good_percentage' => $total > 0 ? round(($goodCount / $total) * 100) : 0,
+                'bad_percentage' => $total > 0 ? round(($badCount / $total) * 100) : 0,
+                'adjustments_applied' => $adjustmentsCount,
+                'rest_phases_recommended' => $restPhasesCount,
+            ],
+            'message' => $this->getOverallMessage($goodCount, $badCount, $total),
+        ];
+    }
+
+    private function getOverallMessage(int $good, int $bad, int $total): string
+    {
+        if ($total === 0) return 'Нет данных для анализа';
+
+        $goodRatio = $good / $total;
+
+        if ($goodRatio >= 0.8) {
+            return 'Отличная тренировка! Прогресс налицо.';
+        } elseif ($goodRatio >= 0.6) {
+            return 'Хорошая тренировка. Продолжайте в том же духе.';
+        } elseif ($goodRatio >= 0.4) {
+            return 'Неплохая тренировка. Есть куда расти.';
+        } else {
+            return 'Тренировка была тяжелой. Не отчаивайтесь, завтра будет лучше!';
         }
     }
 }

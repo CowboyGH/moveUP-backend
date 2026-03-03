@@ -4710,6 +4710,561 @@
                 }
             }
         },
+        "/api/exercise/reaction": {
+            "post": {
+                "tags": [
+                    "Exercise Reactions"
+                ],
+                "summary": "Оценить выполненное упражнение",
+                "description": "Сохраняет оценку пользователя за упражнение и автоматически корректирует нагрузку",
+                "operationId": "469368b1b8ab3ac2e06efe3d9f4d682c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReactToExerciseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Оценка успешно сохранена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReactToExerciseResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Тренировка не принадлежит пользователю",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тренировка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Уже оценивали это упражнение сегодня",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/exercise/{exerciseId}/reactions/history": {
+            "get": {
+                "tags": [
+                    "Exercise Reactions"
+                ],
+                "summary": "Получить историю оценок для упражнения",
+                "description": "Возвращает все оценки пользователя для конкретного упражнения",
+                "operationId": "8fe405fca8904d904ade648f6866b970",
+                "parameters": [
+                    {
+                        "name": "exerciseId",
+                        "in": "path",
+                        "description": "ID упражнения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 999
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "История оценок",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReactionHistoryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Упражнение не найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/exercise/reactions/statistics": {
+            "get": {
+                "tags": [
+                    "Exercise Reactions"
+                ],
+                "summary": "Получить статистику по всем оценкам",
+                "description": "Возвращает сводную статистику по всем оценкам пользователя",
+                "operationId": "0506140419c777a7120ec761b32abb01",
+                "responses": {
+                    "200": {
+                        "description": "Статистика оценок",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReactionStatisticsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/exercise/load-recommendation": {
+            "post": {
+                "tags": [
+                    "Exercise Reactions"
+                ],
+                "summary": "Получить рекомендацию по нагрузке",
+                "description": "Возвращает рекомендуемые параметры нагрузки на основе истории оценок",
+                "operationId": "19801fc1e9b6d61261ea44237b28b68b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GetLoadRecommendationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Рекомендация по нагрузке",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetLoadRecommendationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/workouts/complete-with-adjustments": {
+            "post": {
+                "tags": [
+                    "Workouts"
+                ],
+                "summary": "Завершить тренировку с корректировкой нагрузки",
+                "description": "Завершает тренировку, обрабатывает все оценки и обновляет веса упражнений",
+                "operationId": "bbfe61c8608ea45852d95fd80a3809f1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "workout_id",
+                                    "reactions"
+                                ],
+                                "properties": {
+                                    "workout_id": {
+                                        "type": "integer",
+                                        "example": 999
+                                    },
+                                    "reactions": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "exercise_id",
+                                                "reaction"
+                                            ],
+                                            "properties": {
+                                                "exercise_id": {
+                                                    "type": "integer",
+                                                    "example": 999
+                                                },
+                                                "reaction": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "good",
+                                                        "normal",
+                                                        "bad"
+                                                    ],
+                                                    "example": "good"
+                                                },
+                                                "performance": {
+                                                    "properties": {
+                                                        "sets_completed": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "reps_completed": {
+                                                            "type": "integer",
+                                                            "example": 12
+                                                        },
+                                                        "weight_used": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 50
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Тренировка успешно завершена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тренировка успешно завершена. Нагрузка скорректирована для следующих тренировок."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user_workout": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 121
+                                                        },
+                                                        "completed_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "exercises_processed": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "adjustments_summary": {
+                                                    "properties": {
+                                                        "increases": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "decreases": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "rest_phases": {
+                                                            "type": "integer",
+                                                            "example": 0
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "exercise_results": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "exercise_id": {
+                                                                "type": "integer",
+                                                                "example": 999
+                                                            },
+                                                            "reaction": {
+                                                                "type": "string",
+                                                                "example": "good"
+                                                            },
+                                                            "adjustment_applied": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "adjustment_type": {
+                                                                "type": "string",
+                                                                "example": "increase"
+                                                            },
+                                                            "old_weight": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 50
+                                                            },
+                                                            "new_weight": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 55
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "updated_weights": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/UserExerciseWeight"
+                                                    }
+                                                },
+                                                "next_workout_recommendations": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Увеличен вес на 2 упражнениях"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Активная тренировка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/workouts/start": {
+            "post": {
+                "tags": [
+                    "Workouts"
+                ],
+                "summary": "Начать тренировку",
+                "description": "Создает запись о начале тренировки",
+                "operationId": "e448881a4a7f98099d316b4ea035897f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "workout_id"
+                                ],
+                                "properties": {
+                                    "workout_id": {
+                                        "type": "integer",
+                                        "example": 999
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Тренировка начата",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тренировка начата"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user_workout_id": {
+                                                    "type": "integer",
+                                                    "example": 121
+                                                },
+                                                "started_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Уже есть активная тренировка",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/fcm/token": {
             "post": {
                 "tags": [
@@ -8196,6 +8751,474 @@
                 },
                 "type": "object"
             },
+            "ExerciseReaction": {
+                "title": "Оценка упражнения",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "exercise_id": {
+                        "type": "integer",
+                        "example": 999
+                    },
+                    "user_workout_id": {
+                        "type": "integer",
+                        "example": 121
+                    },
+                    "reaction": {
+                        "type": "string",
+                        "enum": [
+                            "good",
+                            "normal",
+                            "bad"
+                        ],
+                        "example": "good"
+                    },
+                    "reaction_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-04"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "ReactionAnalysis": {
+                "title": "Анализ оценок",
+                "properties": {
+                    "pattern": {
+                        "type": "string",
+                        "enum": [
+                            "no_data",
+                            "consistently_good",
+                            "consistently_bad",
+                            "mostly_good",
+                            "mostly_bad",
+                            "mixed"
+                        ],
+                        "example": "consistently_good"
+                    },
+                    "consecutive_good": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "consecutive_bad": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "last_reaction": {
+                        "type": "string",
+                        "enum": [
+                            "good",
+                            "normal",
+                            "bad"
+                        ],
+                        "example": "good"
+                    },
+                    "trend": {
+                        "type": "string",
+                        "enum": [
+                            "neutral",
+                            "positive_streak",
+                            "negative",
+                            "negative_critical"
+                        ],
+                        "example": "positive_streak"
+                    },
+                    "stats": {
+                        "properties": {
+                            "good": {
+                                "type": "integer",
+                                "example": 3
+                            },
+                            "normal": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "bad": {
+                                "type": "integer",
+                                "example": 0
+                            },
+                            "total": {
+                                "type": "integer",
+                                "example": 4
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "LoadAdjustment": {
+                "title": "Корректировка нагрузки",
+                "properties": {
+                    "applied": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "increase",
+                            "decrease"
+                        ],
+                        "example": "increase"
+                    },
+                    "percent": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "old_weight": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 50
+                    },
+                    "new_weight": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 55
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Увеличьте вес с 50кг до 55кг"
+                    }
+                },
+                "type": "object"
+            },
+            "RestPhase": {
+                "title": "Фаза отдыха",
+                "properties": {
+                    "required": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "duration_days": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Рекомендуется фаза отдыха от этого упражнения на 3 дня"
+                    }
+                },
+                "type": "object"
+            },
+            "ExerciseLoad": {
+                "title": "Параметры нагрузки упражнения",
+                "properties": {
+                    "weight": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 50
+                    },
+                    "sets": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "reps": {
+                        "type": "integer",
+                        "example": 12
+                    },
+                    "difficulty": {
+                        "type": "string",
+                        "enum": [
+                            "beginner",
+                            "medium",
+                            "advanced",
+                            "expert"
+                        ],
+                        "example": "medium"
+                    }
+                },
+                "type": "object"
+            },
+            "ReactToExerciseRequest": {
+                "required": [
+                    "user_workout_id",
+                    "exercise_id",
+                    "reaction"
+                ],
+                "properties": {
+                    "user_workout_id": {
+                        "description": "ID активной тренировки",
+                        "type": "integer",
+                        "example": 121
+                    },
+                    "exercise_id": {
+                        "description": "ID упражнения",
+                        "type": "integer",
+                        "example": 999
+                    },
+                    "reaction": {
+                        "description": "Оценка выполнения",
+                        "type": "string",
+                        "enum": [
+                            "good",
+                            "normal",
+                            "bad"
+                        ],
+                        "example": "good"
+                    },
+                    "sets_completed": {
+                        "description": "Выполнено подходов",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "reps_completed": {
+                        "description": "Выполнено повторений",
+                        "type": "integer",
+                        "example": 12
+                    },
+                    "weight_used": {
+                        "description": "Использованный вес (кг)",
+                        "type": "number",
+                        "format": "float",
+                        "example": 50
+                    }
+                },
+                "type": "object"
+            },
+            "ReactToExerciseResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Оценка упражнения сохранена"
+                    },
+                    "data": {
+                        "properties": {
+                            "reaction": {
+                                "$ref": "#/components/schemas/ExerciseReaction"
+                            },
+                            "analysis": {
+                                "$ref": "#/components/schemas/ReactionAnalysis"
+                            },
+                            "adjustments": {
+                                "$ref": "#/components/schemas/LoadAdjustment"
+                            },
+                            "rest_phase": {
+                                "oneOf": [
+                                    {
+                                        "$ref": "#/components/schemas/RestPhase"
+                                    }
+                                ],
+                                "nullable": true
+                            },
+                            "current_weight": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 50
+                            },
+                            "recommendations": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "Увеличьте вес с 50кг до 55кг"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "GetLoadRecommendationRequest": {
+                "required": [
+                    "exercise_id"
+                ],
+                "properties": {
+                    "exercise_id": {
+                        "description": "ID упражнения",
+                        "type": "integer",
+                        "example": 999
+                    }
+                },
+                "type": "object"
+            },
+            "GetLoadRecommendationResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "properties": {
+                            "exercise_id": {
+                                "type": "integer",
+                                "example": 999
+                            },
+                            "current_load": {
+                                "$ref": "#/components/schemas/ExerciseLoad"
+                            },
+                            "recommended_load": {
+                                "$ref": "#/components/schemas/ExerciseLoad"
+                            },
+                            "explanation": {
+                                "type": "string",
+                                "example": "Рекомендуется увеличить вес на 10%"
+                            },
+                            "analysis": {
+                                "$ref": "#/components/schemas/ReactionAnalysis"
+                            },
+                            "rest_phase_needed": {
+                                "type": "boolean",
+                                "example": false
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ReactionHistoryResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "properties": {
+                            "history": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ExerciseReaction"
+                                }
+                            },
+                            "analysis": {
+                                "$ref": "#/components/schemas/ReactionAnalysis"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ReactionStatisticsResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "properties": {
+                            "summary": {
+                                "properties": {
+                                    "total_reactions": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "good_percentage": {
+                                        "type": "integer",
+                                        "example": 70
+                                    },
+                                    "normal_percentage": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "bad_percentage": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "exercises_with_reactions": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "exercises": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "exercise_id": {
+                                            "type": "integer",
+                                            "example": 999
+                                        },
+                                        "exercise_name": {
+                                            "type": "string",
+                                            "example": "Приседания"
+                                        },
+                                        "total_reactions": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "last_reaction": {
+                                            "type": "string",
+                                            "enum": [
+                                                "good",
+                                                "normal",
+                                                "bad"
+                                            ],
+                                            "example": "good"
+                                        },
+                                        "last_reaction_date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2026-03-04"
+                                        },
+                                        "analysis": {
+                                            "$ref": "#/components/schemas/ReactionAnalysis"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UserExerciseWeight": {
+                "properties": {
+                    "exercise_id": {
+                        "type": "integer",
+                        "example": 999
+                    },
+                    "exercise_name": {
+                        "type": "string",
+                        "example": "Приседания"
+                    },
+                    "current_weight": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 55
+                    },
+                    "adjustment_factor": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1.1
+                    }
+                },
+                "type": "object"
+            },
             "Equipment": {
                 "properties": {
                     "id": {
@@ -9530,6 +10553,14 @@
             "description": "Email Verification"
         },
         {
+            "name": "Exercise Reactions",
+            "description": "Exercise Reactions"
+        },
+        {
+            "name": "Workouts",
+            "description": "Workouts"
+        },
+        {
             "name": "FCM",
             "description": "FCM"
         },
@@ -9560,10 +10591,6 @@
         {
             "name": "User Parameters",
             "description": "User Parameters"
-        },
-        {
-            "name": "Workouts",
-            "description": "Workouts"
         }
     ]
 }

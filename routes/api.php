@@ -60,6 +60,13 @@ Route::middleware(['auth:api', 'track.activity'])->group(function () {
     Route::get('/phases/{phase}', [PhaseController::class, 'getPhaseDetails']);
 
 //    Route::post('/workouts/generate-for-user/{userId}', [WorkoutGeneratorController::class, 'generateForUser']);
+
+    Route::post('/exercise/reaction', [App\Http\Controllers\ExerciseReactionController::class, 'react']);
+    Route::get('/exercise/{exerciseId}/reactions/history', [App\Http\Controllers\ExerciseReactionController::class, 'history']);
+    Route::get('/exercise/reactions/statistics', [App\Http\Controllers\ExerciseReactionController::class, 'statistics']);
+    Route::post('/exercise/load-recommendation', [App\Http\Controllers\ExerciseReactionController::class, 'recommendation']);
+    Route::post('/workouts/complete-with-adjustments', [App\Http\Controllers\WorkoutCompletionController::class, 'completeWithAdjustments']);
+    Route::post('/workouts/start', [App\Http\Controllers\WorkoutStartController::class, 'start']);
 });
 
 Route::middleware(['auth:api', 'track.activity'])->prefix('payment')->group(function () {

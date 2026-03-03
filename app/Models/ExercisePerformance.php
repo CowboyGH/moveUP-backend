@@ -1,4 +1,5 @@
 <?php
+// app/Models/ExercisePerformance.php
 
 namespace App\Models;
 
@@ -14,11 +15,33 @@ class ExercisePerformance extends Model
         'user_workout_id',
         'exercise_id',
         'reaction',
+        'sets_completed',
+        'reps_completed',
+        'weight_used',
+        'sets_planned',
+        'reps_planned',
+        'weight_planned',
+        'adjustment_factor',
     ];
 
     protected $casts = [
-        'reaction' => 'string',
+        'adjustment_factor' => 'decimal:2',
     ];
+
+    /**
+     * Get the user through user_workout
+     */
+    public function user()
+    {
+        return $this->hasOneThrough(
+            User::class,
+            UserWorkout::class,
+            'id',
+            'id',
+            'user_workout_id',
+            'user_id'
+        );
+    }
 
     public function userWorkout(): BelongsTo
     {
