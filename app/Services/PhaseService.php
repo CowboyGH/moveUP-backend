@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Services;
-
+use App\Services\WorkoutGeneratorService;
 use App\Models\User;
 use App\Models\Phase;
 use App\Models\UserProgress;
@@ -11,6 +11,16 @@ use Illuminate\Support\Facades\Log;
 
 class PhaseService
 {
+
+    public function assignPhaseToUser(User $user, Phase $phase): UserProgress
+    {
+        return UserProgress::create([
+            'user_id' => $user->id,
+            'phase_id' => $phase->id,
+            'streak_days' => 0,
+            'completed_workouts' => 0,
+        ]);
+    }
     /**
      * Назначить начальную фазу для нового пользователя
      */
@@ -152,5 +162,15 @@ class PhaseService
             'recent_workouts' => $recentWorkouts,
             'can_advance' => $currentProgress->canAdvanceToNextPhase(),
         ];
+    }
+
+    public function assignWorkoutsForNewPhase(User $user, Phase $phase): void
+    {
+        $generator = app(WorkoutGeneratorService::class);
+        $workouts = $generator->generateForPhase($user, $phase);
+        if ($workouts->isNotEmpty()) {
+            $generator->assignWorkoutsToUser($user, $workouts);
+            Log::info("Назначено {$workouts->count()} тренировок пользователю {$user->id} для фазы {$phase->id}");
+        }
     }
 }

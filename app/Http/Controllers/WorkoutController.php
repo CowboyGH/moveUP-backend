@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
+use App\Models\User;
 use App\Models\Workout;
 use App\Models\UserWorkout;
 use App\Services\PhaseService;
@@ -96,7 +97,7 @@ class WorkoutController extends Controller
             ->where('user_id', $user->id)
             ->orderBy('started_at', 'desc')->get();
 
-        $activeWorkout = $userWorkouts->where('status', 'in_progress')->first();
+        $activeWorkout = $userWorkouts->where('status', 'started')->first();
 
         $formattedHistory = $userWorkouts->map(function ($userWorkout) {
             $workout = $userWorkout->workout;
@@ -156,7 +157,7 @@ class WorkoutController extends Controller
     {
         return $userWorkout->status;
     }
-    //Эта функция для раздумывания, может нужно будет ее изменить для пользователя
+
     public function completeWorkout(Request $request, $workoutId, PhaseService $phaseService)
     {
         $userWorkout = UserWorkout::where('user_id', $request->user()->id)
@@ -169,13 +170,26 @@ class WorkoutController extends Controller
                 'status' => 'completed',
                 'completed_at' => now()
             ]);
-
             $phaseService->handleWorkoutCompletion($userWorkout);
+            $this->checkAndAssignNextPhase($request->user(), $phaseService);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Workout completed successfully'
             ]);
+        }
+    }
+    protected function checkAndAssignNextPhase(User $user, PhaseService $phaseService)
+    {
+        $currentProgress = $user->currentProgress();
+
+        if ($currentProgress && $currentProgress->canAdvanceToNextPhase()) {
+            $nextPhase = $currentProgress->phase->nextPhase();
+
+            if ($nextPhase) {
+                $phaseService->assignPhaseToUser($user, $nextPhase);
+                $phaseService->assignWorkoutsForNewPhase($user, $nextPhase);
+            }
         }
     }
 }

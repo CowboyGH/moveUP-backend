@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Responses\ApiResponse;
+use App\Models\User;
 use App\Models\UserParameter;
 use App\Services\GuestDataService;
 use App\Http\Requests\UserParameter\SaveGoalRequest;
@@ -28,6 +29,8 @@ class UserParameterController extends Controller
             $parameters->goal_id = $request->goal_id;
             $parameters->save();
 
+            $this->generateWorkoutsIfNeeded($user);
+
             return ApiResponse::success('Цель сохранена', $parameters);
         }
 
@@ -49,6 +52,8 @@ class UserParameterController extends Controller
             $parameters = UserParameter::firstOrNew(['user_id' => $user->id]);
             $parameters->fill($data);
             $parameters->save();
+
+            $this->generateWorkoutsIfNeeded($user);
 
             return ApiResponse::success('Антропометрия сохранена', $parameters);
         }
@@ -80,6 +85,28 @@ class UserParameterController extends Controller
             'guest_id' => $guestId,
             'guest_data' => $guestData
         ])->withCookie(cookie('guest_id', $guestId, 60 * 24 * 30));
+    }
+    private function generateWorkoutsIfNeeded(User $user): void
+    {
+        $params = $user->userParameters;
+        if (!$params || !$params->goal_id || !$params->level_id || !$params->equipment_id) {
+            return;
+        }
+        $hasActiveWorkouts = $user->userWorkouts()
+            ->whereIn('status', ['pending', 'started'])
+            ->exists();
+
+        if (!$hasActiveWorkouts) {
+            $currentProgress = $user->currentProgress();
+            if (!$currentProgress) {
+                $currentProgress = $this->phaseService->assignInitialPhase($user);
+            }
+            $workouts = $this->workoutGenerator->generateForPhase($user, $currentProgress->phase);
+
+            if ($workouts->isNotEmpty()) {
+                $this->workoutGenerator->assignWorkoutsToUser($user, $workouts);
+            }
+        }
     }
 
     public function clearGuestData(Request $request)
@@ -113,6 +140,8 @@ class UserParameterController extends Controller
         $parameters = UserParameter::firstOrNew(['user_id' => $user->id]);
         $parameters->fill($request->getFillableData());
         $parameters->save();
+
+        $this->generateWorkoutsIfNeeded($user);
 
         return ApiResponse::success('Параметры обновлены', $parameters);
     }

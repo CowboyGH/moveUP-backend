@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Services\GuestDataService;
+use App\Services\PhaseService;
+use App\Services\WorkoutGeneratorService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,6 +16,12 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(GuestDataService::class, function ($app) {
             return new GuestDataService();
+        });
+        $this->app->singleton(WorkoutGeneratorService::class, function ($app) {
+            return new WorkoutGeneratorService();
+        });
+        $this->app->singleton(PhaseService::class, function ($app) {
+            return new PhaseService();
         });
     }
 

@@ -12,6 +12,7 @@ use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Payment\SavedCardController;
 use App\Http\Controllers\PhaseController;
 use App\Http\Controllers\UserParameterController;
+use App\Http\Controllers\WorkoutGeneratorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ExerciseController;
 use App\Http\Controllers\Admin\WarmupController;
@@ -57,6 +58,8 @@ Route::middleware(['auth:api', 'track.activity'])->group(function () {
     Route::get('/user/current-phase', [PhaseController::class, 'getCurrentPhase']);
     Route::get('/phases', [PhaseController::class, 'getAllPhases']);
     Route::get('/phases/{phase}', [PhaseController::class, 'getPhaseDetails']);
+
+//    Route::post('/workouts/generate-for-user/{userId}', [WorkoutGeneratorController::class, 'generateForUser']);
 });
 
 Route::middleware(['auth:api', 'track.activity'])->prefix('payment')->group(function () {
@@ -110,4 +113,7 @@ Route::middleware(['auth:api', 'admin', 'track.activity'])->prefix('admin')->gro
     Route::get('/workouts/{id}', [WorkoutController::class, 'show']);
     Route::put('/workouts/{id}', [WorkoutController::class, 'update']);
     Route::delete('/workouts/{id}', [WorkoutController::class, 'destroy']);
+
+    Route::post('/workouts/generate-for-user/{userId}', [WorkoutGeneratorController::class, 'generateForUser']);
+    Route::post('/workouts/regenerate-for-user/{userId}', [WorkoutGeneratorController::class, 'regenerateForUser']);
 });

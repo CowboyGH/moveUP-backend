@@ -17,6 +17,7 @@ class Workout extends Model
         'title',
         'description',
         'duration_minutes',
+        'type',
         'is_active',
     ];
 

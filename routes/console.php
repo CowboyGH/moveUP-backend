@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\GenerateWorkoutsForUsers;
 use App\Console\Commands\ProcessAutoPayments;
 use App\Console\Commands\TestPushNotification;
 use Illuminate\Foundation\Inspiring;
@@ -27,3 +28,14 @@ Schedule::command('phases:check-progress')
 Artisan::command('push:test', function () {
     $this->call(TestPushNotification::class);
 })->purpose('Send test push notification to user(s)');
+
+Schedule::command('workouts:generate')
+    ->dailyAt('03:00')
+    ->withoutOverlapping()
+    ->appendOutputTo(storage_path('logs/workouts.log'));
+
+Artisan::command('workouts:generate', function () {
+    $this->call(GenerateWorkoutsForUsers::class);
+})->purpose('Generate workouts for users without active workouts');
+
+
