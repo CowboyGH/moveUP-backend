@@ -4541,6 +4541,180 @@
                 ]
             }
         },
+        "/api/profile/avatar": {
+            "post": {
+                "tags": [
+                    "Avatar"
+                ],
+                "summary": "Загрузка/обновление аватара",
+                "operationId": "73b058b5e48b7c7cc66a78d0458215cd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "avatar"
+                                ],
+                                "properties": {
+                                    "avatar": {
+                                        "description": "Файл изображения (jpeg, png, jpg, gif, webp, макс. 5MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Аватар успешно загружен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UploadAvatarResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибки валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Avatar"
+                ],
+                "summary": "Удаление аватара",
+                "operationId": "2b9d85055b80eb80e6950b0ad24daf4e",
+                "responses": {
+                    "200": {
+                        "description": "Аватар успешно удален",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeleteAvatarResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Аватар не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AvatarNotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/avatars/{userId}": {
+            "get": {
+                "tags": [
+                    "Avatar"
+                ],
+                "summary": "Публичное получение аватара пользователя",
+                "operationId": "0cb5eb932a7d79d5aefdbdaa74c520e7",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Изображение аватара",
+                        "content": {
+                            "image/*": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Аватар не найден, возвращается JSON ошибка (если нет дефолтного изображения)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AvatarNotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/verify-email": {
             "post": {
                 "tags": [
@@ -5901,6 +6075,282 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Получение полного профиля пользователя",
+                "operationId": "0b44da16723996714a97b4f80416257f",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProfileResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Обновление профиля (имя и email)",
+                "operationId": "c67b2fdf398f17a0bd10e63bcea69cfd",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateProfileRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Профиль успешно обновлен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateProfileResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибки валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Удаление профиля",
+                "operationId": "5a86b369a2ee2124ef88d4f34bdb5705",
+                "responses": {
+                    "200": {
+                        "description": "Профиль успешно удален",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeleteProfileResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/change-password": {
+            "post": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Смена пароля",
+                "operationId": "020148c66659011c1e7e30157291c3a6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangePasswordRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Пароль успешно изменен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChangePasswordResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный текущий пароль",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InvalidCurrentPasswordResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибки валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/statistics": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Получение статистики (заглушка)",
+                "operationId": "513f74cf4943dcfb218da633d3438e2d",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StatisticsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
@@ -8298,6 +8748,54 @@
                 },
                 "type": "object"
             },
+            "UploadAvatarResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Аватар успешно загружен"
+                    },
+                    "data": {
+                        "properties": {
+                            "avatar_url": {
+                                "type": "string",
+                                "example": "http://localhost/storage/avatars/avatar_1_1234567890.jpg"
+                            },
+                            "avatar_path": {
+                                "type": "string",
+                                "example": "avatars/avatar_1_1234567890.jpg"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "DeleteAvatarResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Аватар удален"
+                    },
+                    "data": {
+                        "properties": {
+                            "avatar_url": {
+                                "type": "null",
+                                "example": null
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "SuccessResponse": {
                 "title": "Успешный ответ",
                 "properties": {
@@ -8628,6 +9126,26 @@
                             },
                             "message": {
                                 "example": "Неверный или истекший код."
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "AvatarNotFoundResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "example": "not_found"
+                            },
+                            "message": {
+                                "type": "string",
+                                "example": "Аватар не найден"
                             }
                         },
                         "type": "object"
@@ -9975,6 +10493,437 @@
                     "$ref": "#/components/schemas/PhaseDetails"
                 }
             },
+            "UpdateProfileRequest": {
+                "properties": {
+                    "name": {
+                        "description": "Только буквы и пробелы",
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "Иван Петров"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 255,
+                        "example": "newemail@example.com"
+                    }
+                },
+                "type": "object"
+            },
+            "ChangePasswordRequest": {
+                "required": [
+                    "old_password",
+                    "new_password",
+                    "new_password_confirmation"
+                ],
+                "properties": {
+                    "old_password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "oldpass123"
+                    },
+                    "new_password": {
+                        "description": "Только латинские буквы и цифры",
+                        "type": "string",
+                        "format": "password",
+                        "maxLength": 12,
+                        "minLength": 8,
+                        "example": "newpass123"
+                    },
+                    "new_password_confirmation": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "newpass123"
+                    }
+                },
+                "type": "object"
+            },
+            "UserInProfile": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Иван Иванов"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "avatar_url": {
+                        "type": "string",
+                        "example": "http://localhost/storage/avatars/avatar_1_1234567890.jpg",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01 12:00:00"
+                    },
+                    "email_verified": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "UserParametersInProfile": {
+                "properties": {
+                    "goal": {
+                        "type": "string",
+                        "example": "Рост силовых показателей"
+                    },
+                    "level": {
+                        "type": "string",
+                        "example": "Средний"
+                    },
+                    "equipment": {
+                        "type": "string",
+                        "example": "Зал"
+                    },
+                    "height": {
+                        "type": "integer",
+                        "example": 175
+                    },
+                    "weight": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 70.5
+                    },
+                    "age": {
+                        "type": "integer",
+                        "example": 25
+                    },
+                    "gender": {
+                        "type": "string",
+                        "enum": [
+                            "male",
+                            "female"
+                        ],
+                        "example": "male"
+                    }
+                },
+                "type": "object",
+                "nullable": true
+            },
+            "ActiveSubscriptionInProfile": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Премиум"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 29.99
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-01-01"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-02-01"
+                    },
+                    "days_left": {
+                        "type": "integer",
+                        "example": 15
+                    }
+                },
+                "type": "object",
+                "nullable": true
+            },
+            "CardInProfile": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "card_holder": {
+                        "type": "string",
+                        "example": "IVAN IVANOV"
+                    },
+                    "card_last_four": {
+                        "type": "string",
+                        "example": "4242"
+                    },
+                    "expiry_month": {
+                        "type": "string",
+                        "example": "12"
+                    },
+                    "expiry_year": {
+                        "type": "string",
+                        "example": "2025"
+                    },
+                    "expiry_formatted": {
+                        "type": "string",
+                        "example": "12/2025"
+                    },
+                    "is_default": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "StatisticsVolumeMonth": {
+                "properties": {
+                    "month": {
+                        "type": "string",
+                        "example": "2024-01"
+                    },
+                    "value": {
+                        "type": "integer",
+                        "example": 320
+                    }
+                },
+                "type": "object"
+            },
+            "StatisticsVolume": {
+                "properties": {
+                    "total": {
+                        "type": "integer",
+                        "example": 1250
+                    },
+                    "by_month": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/StatisticsVolumeMonth"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "StatisticsFrequency": {
+                "properties": {
+                    "total_workouts": {
+                        "type": "integer",
+                        "example": 24
+                    },
+                    "average_per_week": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 3.2
+                    },
+                    "current_streak": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "max_streak": {
+                        "type": "integer",
+                        "example": 12
+                    }
+                },
+                "type": "object"
+            },
+            "StatisticsTrend": {
+                "properties": {
+                    "direction": {
+                        "type": "string",
+                        "enum": [
+                            "up",
+                            "down",
+                            "stable"
+                        ],
+                        "example": "up"
+                    },
+                    "percentage": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "compared_to": {
+                        "type": "string",
+                        "example": "last_month"
+                    }
+                },
+                "type": "object"
+            },
+            "StatisticsCategory": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Силовые"
+                    },
+                    "count": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "percentage": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 62.5
+                    }
+                },
+                "type": "object"
+            },
+            "StatisticsData": {
+                "properties": {
+                    "volume": {
+                        "$ref": "#/components/schemas/StatisticsVolume"
+                    },
+                    "frequency": {
+                        "$ref": "#/components/schemas/StatisticsFrequency"
+                    },
+                    "trend": {
+                        "$ref": "#/components/schemas/StatisticsTrend"
+                    },
+                    "categories": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/StatisticsCategory"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Профиль получен"
+                    },
+                    "data": {
+                        "properties": {
+                            "user": {
+                                "$ref": "#/components/schemas/UserInProfile"
+                            },
+                            "parameters": {
+                                "$ref": "#/components/schemas/UserParametersInProfile"
+                            },
+                            "subscriptions": {
+                                "properties": {
+                                    "active": {
+                                        "$ref": "#/components/schemas/ActiveSubscriptionInProfile"
+                                    },
+                                    "history": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "phase": {
+                                "description": "Данные о текущей фазе",
+                                "type": "object"
+                            },
+                            "cards": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/CardInProfile"
+                                }
+                            },
+                            "statistics": {
+                                "$ref": "#/components/schemas/StatisticsData"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateProfileResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Профиль успешно обновлен"
+                    },
+                    "data": {
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "example": "Иван Петров"
+                            },
+                            "email": {
+                                "type": "string",
+                                "format": "email",
+                                "example": "newemail@example.com"
+                            },
+                            "avatar": {
+                                "type": "string",
+                                "example": "http://localhost/storage/avatars/avatar_1_1234567890.jpg",
+                                "nullable": true
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ChangePasswordResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Пароль успешно изменен"
+                    }
+                },
+                "type": "object"
+            },
+            "DeleteProfileResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Профиль успешно удален"
+                    }
+                },
+                "type": "object"
+            },
+            "StatisticsResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/StatisticsData"
+                    }
+                },
+                "type": "object"
+            },
+            "InvalidCurrentPasswordResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "validation_failed"
+                            },
+                            "message": {
+                                "example": "Неверный текущий пароль"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
             "User": {
                 "title": "Пользователь",
                 "properties": {
@@ -10549,6 +11498,10 @@
             "description": "Authentication"
         },
         {
+            "name": "Avatar",
+            "description": "Avatar"
+        },
+        {
             "name": "Email Verification",
             "description": "Email Verification"
         },
@@ -10575,6 +11528,10 @@
         {
             "name": "Phases",
             "description": "Phases"
+        },
+        {
+            "name": "Profile",
+            "description": "Profile"
         },
         {
             "name": "Cards",

@@ -181,4 +181,14 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(SavedCard::class);
     }
 
+    protected $appends = ['avatar_url'];
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        if (!$this->avatar) {
+            return null;
+        }
+        return asset('storage/' . $this->avatar);
+    }
+
 }

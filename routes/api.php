@@ -39,6 +39,16 @@ Route::post('/user-parameters/anthropometry', [UserParameterController::class, '
 Route::post('/user-parameters/level', [UserParameterController::class, 'saveLevel']);
 Route::delete('/user-parameters/guest', [UserParameterController::class, 'clearGuestData']);
 
+Route::get('/avatars/{userId}', [App\Http\Controllers\ProfileController::class, 'getAvatar']);
+Route::middleware(['jwt.custom', 'track.activity'])->prefix('profile')->group(function () {
+    Route::get('/', [App\Http\Controllers\ProfileController::class, 'show']);
+    Route::put('/', [App\Http\Controllers\ProfileController::class, 'update']);
+    Route::post('/avatar', [App\Http\Controllers\ProfileController::class, 'updateAvatar']);
+    Route::delete('/avatar', [App\Http\Controllers\ProfileController::class, 'deleteAvatar']);
+    Route::post('/change-password', [App\Http\Controllers\ProfileController::class, 'changePassword']);
+    Route::delete('/', [App\Http\Controllers\ProfileController::class, 'destroy']);
+    Route::get('/statistics', [App\Http\Controllers\ProfileController::class, 'statistics']);
+});
 
 Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -75,7 +85,7 @@ Route::middleware(['jwt.custom', 'track.activity'])->prefix('payment')->group(fu
     Route::post('cards/{cardId}/default', [SavedCardController::class, 'setDefaultCard']);
 });
 
-Route::middleware(['auth:api', 'admin', 'track.activity'])->prefix('admin')->group(function () {
+Route::middleware(['jwt.custom', 'admin', 'track.activity'])->prefix('admin')->group(function () {
     Route::get('/subscriptions', [SubscriptionController::class, 'index']);
     Route::post('/subscriptions', [SubscriptionController::class, 'store']);
     Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
