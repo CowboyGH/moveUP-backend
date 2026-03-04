@@ -39,6 +39,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call(UserWorkoutSeeder::class);
         $this->call(ExercisePerformanceSeeder::class);
+        $this->call(ExerciseReactionSeeder::class);
+        $this->call(UserExerciseWeightSeeder::class);
         $this->call(UserWarmupPerformanceSeeder::class);
 
         $this->call(SavedCardSeeder::class);

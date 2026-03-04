@@ -40,7 +40,7 @@ Route::post('/user-parameters/level', [UserParameterController::class, 'saveLeve
 Route::delete('/user-parameters/guest', [UserParameterController::class, 'clearGuestData']);
 
 
-Route::middleware(['auth:api', 'track.activity'])->group(function () {
+Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
 
@@ -59,8 +59,6 @@ Route::middleware(['auth:api', 'track.activity'])->group(function () {
     Route::get('/phases', [PhaseController::class, 'getAllPhases']);
     Route::get('/phases/{phase}', [PhaseController::class, 'getPhaseDetails']);
 
-//    Route::post('/workouts/generate-for-user/{userId}', [WorkoutGeneratorController::class, 'generateForUser']);
-
     Route::post('/exercise/reaction', [App\Http\Controllers\ExerciseReactionController::class, 'react']);
     Route::get('/exercise/{exerciseId}/reactions/history', [App\Http\Controllers\ExerciseReactionController::class, 'history']);
     Route::get('/exercise/reactions/statistics', [App\Http\Controllers\ExerciseReactionController::class, 'statistics']);
@@ -69,7 +67,7 @@ Route::middleware(['auth:api', 'track.activity'])->group(function () {
     Route::post('/workouts/start', [App\Http\Controllers\WorkoutStartController::class, 'start']);
 });
 
-Route::middleware(['auth:api', 'track.activity'])->prefix('payment')->group(function () {
+Route::middleware(['jwt.custom', 'track.activity'])->prefix('payment')->group(function () {
     Route::post('subscription', [PaymentController::class, 'processPayment']);
     Route::get('cards', [SavedCardController::class, 'getSavedCards']);
     Route::post('cards/save', [SavedCardController::class, 'simpleSaveCard']);
