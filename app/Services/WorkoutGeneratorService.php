@@ -239,7 +239,7 @@ class WorkoutGeneratorService
         DB::transaction(function () use ($user, $workouts) {
             // Сначала удаляем старые незавершенные тренировки
             $user->userWorkouts()
-                ->whereIn('status', ['pending', 'started'])
+                ->where('status', 'started')
                 ->delete();
 
             // Создаем новые
