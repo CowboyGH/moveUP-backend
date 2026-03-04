@@ -61,7 +61,7 @@ class WorkoutGeneratorController extends Controller
             return ApiResponse::error('User not found', 404);
         }
         $user->userWorkouts()
-            ->whereIn('status', ['pending', 'started'])
+            ->where('status', 'started')
             ->delete();
 
         return $this->generateForUser($userId);
