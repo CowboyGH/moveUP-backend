@@ -20,6 +20,7 @@ class ExerciseSchemas {}
  *     @OA\Property(property="title", type="string", example="Жим гантелей лежа"),
  *     @OA\Property(property="description", type="string", example="Базовое упражнение для развития грудных мышц"),
  *     @OA\Property(property="image", type="string", example="/uploads/exercises/dumbbell-press.jpg"),
+ *     @OA\Property(property="image_url", type="string", example="http://localhost/storage/exercises/dumbbell-press.jpg"),
  *     @OA\Property(property="muscle_group", type="string", example="Грудные"),
  *     @OA\Property(
  *         property="equipment",
