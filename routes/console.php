@@ -29,13 +29,13 @@ Artisan::command('push:test', function () {
     $this->call(TestPushNotification::class);
 })->purpose('Send test push notification to user(s)');
 
-Schedule::command('workouts:generate')
+Schedule::command('workouts:generate-for-all-users')
     ->dailyAt('03:00')
     ->withoutOverlapping()
     ->appendOutputTo(storage_path('logs/workouts.log'));
 
 Artisan::command('workouts:generate', function () {
     $this->call(GenerateWorkoutsForUsers::class);
-})->purpose('Generate workouts for users without active workouts');
+})->purpose('Generate workouts for users (alias for workouts:generate-for-all-users)');
 
 

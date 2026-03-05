@@ -46,8 +46,7 @@ class PhasePaths {}
  *             @OA\Property(property="success", type="boolean", example=true),
  *             @OA\Property(
  *                 property="data",
- *                 type="array",
- *                 @OA\Items(ref="#/components/schemas/PhaseDetails")
+ *                 ref="#/components/schemas/PhaseList"
  *             )
  *         )
  *     ),
@@ -68,7 +67,7 @@ class GetAllPhases {}
 /**
  * @OA\Get(
  *     path="/api/phases/{phase}",
- *     summary="Получить детальную информацию о фазе",
+ *     summary="Получить детальную информацию о фазе с тренировками",
  *     tags={"Phases"},
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
@@ -85,7 +84,7 @@ class GetAllPhases {}
  *             @OA\Property(property="success", type="boolean", example=true),
  *             @OA\Property(
  *                 property="data",
- *                 ref="#/components/schemas/PhaseDetails"
+ *                 ref="#/components/schemas/PhaseWithWorkouts"
  *             )
  *         )
  *     ),
@@ -107,3 +106,45 @@ class GetAllPhases {}
  * )
  */
 class GetPhaseDetails {}
+
+/**
+ * @OA\Post(
+ *     path="/api/user/weekly-goal",
+ *     summary="Обновить недельную цель тренировок",
+ *     tags={"Phases"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(ref="#/components/schemas/UpdateWeeklyGoalRequest")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Цель успешно обновлена",
+ *         @OA\JsonContent(ref="#/components/schemas/UpdateWeeklyGoalResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Ошибка валидации",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorWeeklyGoal")
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Не авторизован",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="У пользователя нет активной фазы",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=false),
+ *             @OA\Property(property="message", type="string", example="У пользователя нет активной фазы")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Внутренняя ошибка сервера",
+ *         @OA\JsonContent(ref="#/components/schemas/ServerErrorResponse")
+ *     )
+ * )
+ */
+class UpdateWeeklyGoal {}

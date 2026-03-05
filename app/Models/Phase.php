@@ -14,7 +14,6 @@ class Phase extends Model
         'name',
         'description',
         'duration_days',
-        'min_workouts',
         'order_number'
     ];
 

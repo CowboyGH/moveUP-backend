@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('phase_id')->constrained()->onDelete('cascade');
             $table->integer('streak_days')->default(0);
             $table->integer('completed_workouts')->default(0);
+            $table->integer('weekly_workout_goal')->default(4);
             $table->timestamps();
         });
     }

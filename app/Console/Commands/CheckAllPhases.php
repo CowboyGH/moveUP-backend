@@ -22,6 +22,10 @@ class CheckAllPhases extends Command
             return 1;
         }
 
+        // Получаем недельную цель пользователя (из прогресса или по умолчанию 4)
+        $currentProgress = $user->currentProgress();
+        $weeklyGoal = $currentProgress->weekly_workout_goal ?? 4;
+
         $phases = Phase::orderBy('order_number')->get();
 
         $this->info("🧪 Проверка генерации для пользователя ID: {$userId} – {$user->name}");
@@ -29,20 +33,29 @@ class CheckAllPhases extends Command
         $this->line("  Цель: " . ($user->userParameters->goal->name ?? 'Не указана'));
         $this->line("  Уровень: " . ($user->userParameters->level->name ?? 'Не указан'));
         $this->line("  Оборудование ID: " . ($user->userParameters->equipment_id ?? 'Не указано'));
+        $this->line("  Недельная цель тренировок: {$weeklyGoal}");
         $this->newLine();
 
         $tableData = [];
 
         foreach ($phases as $phase) {
             $this->info("📌 Фаза {$phase->order_number}: {$phase->name}");
-            $this->line("  Длительность: {$phase->duration_days} дней, минимум тренировок: {$phase->min_workouts}");
+            $expectedTotal = (int) ceil($phase->duration_days / 7 * $weeklyGoal);
+            $this->line("  Длительность: {$phase->duration_days} дней, ожидаемое кол-во тренировок за фазу: {$expectedTotal}");
 
             // Генерация (без сохранения)
             $workouts = $generator->generateForPhase($user, $phase);
 
             if ($workouts->isEmpty()) {
                 $this->warn("  ⚠️ Нет тренировок для этой фазы");
-                $tableData[] = [$phase->order_number, $phase->name, '0', '-'];
+                $tableData[] = [
+                    $phase->order_number,
+                    $phase->name,
+                    '0/' . $phase->duration_days,
+                    $expectedTotal,
+                    '-',
+                    '-'
+                ];
                 $this->newLine();
                 continue;
             }
@@ -89,6 +102,7 @@ class CheckAllPhases extends Command
                 $phase->order_number,
                 $phase->name,
                 $workouts->count() . '/' . $phase->duration_days,
+                $expectedTotal,
                 implode(', ', array_map(fn($t, $c) => "$t:$c", array_keys($types), $types)),
                 "{$adaptPercent}%"
             ];
@@ -97,7 +111,7 @@ class CheckAllPhases extends Command
         }
 
         $this->table(
-            ['Фаза', 'Название', 'Тренировок/Дней', 'Типы', 'Замен'],
+            ['Фаза', 'Название', 'Сгенер/Дней', 'Ожид всего', 'Типы', 'Замен'],
             $tableData
         );
 

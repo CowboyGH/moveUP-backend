@@ -23,7 +23,7 @@ class CheckPhasesProgress extends Command
     {
         $this->info('Проверка прогресса фаз пользователей...');
 
-        $users = User::whereHas('userProgress')->with('currentProgress.phase')->get();
+        $users = User::whereHas('userProgress')->get();
         $this->info("Найдено пользователей с прогрессом: {$users->count()}");
 
         $bar = $this->output->createProgressBar($users->count());

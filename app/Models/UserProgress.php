@@ -15,6 +15,7 @@ class UserProgress extends Model
         'phase_id',
         'streak_days',
         'completed_workouts',
+        'weekly_workout_goal',
     ];
 
     /**
@@ -72,9 +73,15 @@ class UserProgress extends Model
     public function canAdvanceToNextPhase(): bool
     {
         $daysPassed = now()->diffInDays($this->created_at);
+        $phaseDuration = $this->phase->duration_days;
 
-        return $daysPassed >= $this->phase->duration_days ||
-            $this->completed_workouts >= $this->phase->min_workouts;
+        if ($daysPassed >= $phaseDuration) {
+            return true;
+        }
+        $weeksPassed = $daysPassed / 7;
+        $expectedWorkouts = ceil($weeksPassed * $this->weekly_workout_goal);
+
+        return $this->completed_workouts >= $expectedWorkouts;
     }
 
     /**

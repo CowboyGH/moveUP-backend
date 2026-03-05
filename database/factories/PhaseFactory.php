@@ -12,7 +12,6 @@ class PhaseFactory extends Factory
             'name' => fake()->unique()->words(3, true) . ' фаза',
             'description' => fake()->paragraphs(3, true),
             'duration_days' => fake()->randomElement([7, 14, 21, 28, 30]),
-            'min_workouts' => fake()->randomElement([3, 4, 6, 8, 10, 12]),
             'order_number' => fake()->unique()->numberBetween(1, 10),
         ];
     }
@@ -24,7 +23,6 @@ class PhaseFactory extends Factory
             'description' => 'Начальный этап для адаптации к тренировкам. В этой фазе вы освоите базовые движения и подготовите тело к более интенсивным нагрузкам.',
             'order_number' => 1,
             'duration_days' => 7,
-            'min_workouts' => 3,
         ]);
     }
 
@@ -35,7 +33,6 @@ class PhaseFactory extends Factory
             'description' => 'Формирование базовых навыков и силы. Увеличение рабочих весов и освоение правильной техники выполнения упражнений.',
             'order_number' => 2,
             'duration_days' => 14,
-            'min_workouts' => 6,
         ]);
     }
 
@@ -46,7 +43,6 @@ class PhaseFactory extends Factory
             'description' => 'Максимальные нагрузки и прогресс. Работа на пределе возможностей для достижения максимальных результатов.',
             'order_number' => 3,
             'duration_days' => 21,
-            'min_workouts' => 9,
         ]);
     }
 
@@ -57,7 +53,6 @@ class PhaseFactory extends Factory
             'description' => 'Восстановление и легкие тренировки. Активное восстановление, растяжка и работа над техникой.',
             'order_number' => 4,
             'duration_days' => 7,
-            'min_workouts' => 2,
         ]);
     }
 
@@ -68,7 +63,6 @@ class PhaseFactory extends Factory
             'description' => 'Сложные комплексы и специализированные тренировки для опытных спортсменов.',
             'order_number' => 5,
             'duration_days' => 30,
-            'min_workouts' => 12,
         ]);
     }
 

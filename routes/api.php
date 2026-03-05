@@ -12,6 +12,7 @@ use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Payment\SavedCardController;
 use App\Http\Controllers\PhaseController;
 use App\Http\Controllers\UserParameterController;
+use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\WorkoutGeneratorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ExerciseController;
@@ -61,6 +62,7 @@ Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
 
     Route::get('/user-parameters/me', [UserParameterController::class, 'getMyParameters']);
     Route::put('/user-parameters', [UserParameterController::class, 'update']);
+    Route::post('/user/weekly-goal', [UserProgressController::class, 'updateWeeklyGoal']);
 
     Route::post('/fcm/token', [FcmTokenController::class, 'update']);
     Route::delete('/fcm/token', [FcmTokenController::class, 'destroy']);

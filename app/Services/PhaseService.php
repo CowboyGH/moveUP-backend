@@ -19,6 +19,7 @@ class PhaseService
             'phase_id' => $phase->id,
             'streak_days' => 0,
             'completed_workouts' => 0,
+            'weekly_workout_goal' => 4,
         ]);
     }
     /**
@@ -36,6 +37,7 @@ class PhaseService
             'phase_id' => $firstPhase->id,
             'streak_days' => 0,
             'completed_workouts' => 0,
+            'weekly_workout_goal' => 4,
         ]);
     }
 
@@ -73,6 +75,7 @@ class PhaseService
             'phase_id' => $nextPhase->id,
             'streak_days' => 0,
             'completed_workouts' => 0,
+            'weekly_workout_goal' => $currentProgress->weekly_workout_goal,
         ]);
 
         Log::info("Пользователь {$user->id} перешел с фазы {$currentPhase->id} на фазу {$nextPhase->id}");
@@ -118,6 +121,11 @@ class PhaseService
         $daysLeft = max(0, $currentPhase->duration_days - $daysPassed);
         $nextPhase = $currentPhase->nextPhase() ?? Phase::getFirstPhase();
 
+        $weeksPassed = $daysPassed / 7;
+        $expectedWorkouts = ceil($weeksPassed * $currentProgress->weekly_workout_goal);
+
+        $totalExpectedWorkouts = ceil($currentPhase->duration_days / 7 * $currentProgress->weekly_workout_goal);
+
         $recentWorkouts = $user->userWorkouts()
             ->with('workout')
             ->where('status', 'completed')
@@ -134,6 +142,7 @@ class PhaseService
                         : null,
                 ];
             });
+
         return [
             'has_progress' => true,
             'current_phase' => [
@@ -141,15 +150,16 @@ class PhaseService
                 'name' => $currentPhase->name,
                 'description' => $currentPhase->description,
                 'duration_days' => $currentPhase->duration_days,
-                'min_workouts' => $currentPhase->min_workouts,
                 'order_number' => $currentPhase->order_number,
             ],
             'progress' => [
                 'streak_days' => $currentProgress->streak_days,
                 'completed_workouts' => $currentProgress->completed_workouts,
                 'days_passed' => $daysPassed,
-                'days_left' => max(0, $currentPhase->duration_days - $daysPassed),
-                'workouts_left' => max(0, $currentPhase->min_workouts - $currentProgress->completed_workouts),
+                'days_left' => $daysLeft,
+                'expected_workouts' => $expectedWorkouts,
+                'total_expected_workouts' => $totalExpectedWorkouts,
+                'weekly_goal' => $currentProgress->weekly_workout_goal,
                 'phase_started_at' => $currentProgress->created_at,
                 'last_workout_date' => $currentProgress->getLastWorkoutDateAttribute(),
                 'has_workout_today' => $currentProgress->hasWorkoutToday(),

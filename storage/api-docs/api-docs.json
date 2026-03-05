@@ -6151,10 +6151,7 @@
                                             "example": true
                                         },
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/PhaseDetails"
-                                            }
+                                            "$ref": "#/components/schemas/PhaseList"
                                         }
                                     },
                                     "type": "object"
@@ -6195,7 +6192,7 @@
                 "tags": [
                     "Phases"
                 ],
-                "summary": "Получить детальную информацию о фазе",
+                "summary": "Получить детальную информацию о фазе с тренировками",
                 "operationId": "bfb8cc412610bb1a63d1ca07e0701c17",
                 "parameters": [
                     {
@@ -6221,7 +6218,7 @@
                                             "example": true
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/PhaseDetails"
+                                            "$ref": "#/components/schemas/PhaseWithWorkouts"
                                         }
                                     },
                                     "type": "object"
@@ -6245,6 +6242,92 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/user/weekly-goal": {
+            "post": {
+                "tags": [
+                    "Phases"
+                ],
+                "summary": "Обновить недельную цель тренировок",
+                "operationId": "7d710bd251bd0f64230781ded3a133be",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateWeeklyGoalRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Цель успешно обновлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateWeeklyGoalResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorWeeklyGoal"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "У пользователя нет активной фазы",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "У пользователя нет активной фазы"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -10533,7 +10616,7 @@
                 "type": "object"
             },
             "PhaseSimple": {
-                "title": "Фаза (кратко)",
+                "title": "Фаза (полная)",
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -10543,33 +10626,131 @@
                         "type": "string",
                         "example": "Подготовительная фаза"
                     },
+                    "description": {
+                        "type": "string",
+                        "example": "Начальный этап для адаптации к тренировкам."
+                    },
+                    "duration_days": {
+                        "type": "integer",
+                        "example": 7
+                    },
                     "order_number": {
                         "type": "integer",
                         "example": 1
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-05T07:29:11.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-05T07:29:11.000000Z"
                     }
                 },
                 "type": "object"
             },
-            "PhaseDetails": {
-                "title": "Детальная информация о фазе",
-                "type": "object",
+            "PhaseBrief": {
+                "title": "Фаза (кратко, для текущей фазы)",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Фаза отдыха"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Восстановление и легкие тренировки."
+                    },
+                    "duration_days": {
+                        "type": "integer",
+                        "example": 7
+                    },
+                    "order_number": {
+                        "type": "integer",
+                        "example": 4
+                    }
+                },
+                "type": "object"
+            },
+            "PhaseNext": {
+                "title": "Следующая фаза",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Продвинутая фаза"
+                    },
+                    "order_number": {
+                        "type": "integer",
+                        "example": 5
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutSimple": {
+                "title": "Тренировка (кратко)",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "phase_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "ОФП тренировка"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Жимы, тяги и подтягивания для верхней части тела"
+                    },
+                    "duration_minutes": {
+                        "type": "string",
+                        "example": "32"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "general"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-05T07:29:23.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-05T07:29:23.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "PhaseWithWorkouts": {
                 "allOf": [
                     {
-                        "$ref": "#/components/schemas/Phase"
+                        "$ref": "#/components/schemas/PhaseSimple"
                     },
                     {
                         "properties": {
-                            "description": {
-                                "type": "string",
-                                "example": "Начальный этап для адаптации к тренировкам"
-                            },
-                            "duration_days": {
-                                "type": "integer",
-                                "example": 7
-                            },
-                            "min_workouts": {
-                                "type": "integer",
-                                "example": 3
+                            "workouts": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/WorkoutSimple"
+                                }
                             }
                         },
                         "type": "object"
@@ -10584,7 +10765,7 @@
                         "example": true
                     },
                     "current_phase": {
-                        "$ref": "#/components/schemas/PhaseDetails"
+                        "$ref": "#/components/schemas/PhaseBrief"
                     },
                     "progress": {
                         "properties": {
@@ -10604,19 +10785,28 @@
                                 "type": "integer",
                                 "example": 3
                             },
-                            "workouts_left": {
+                            "expected_workouts": {
                                 "type": "integer",
-                                "example": 1
+                                "example": 3
+                            },
+                            "total_expected_workouts": {
+                                "type": "integer",
+                                "example": 6
+                            },
+                            "weekly_goal": {
+                                "type": "integer",
+                                "example": 6
                             },
                             "phase_started_at": {
                                 "type": "string",
                                 "format": "date-time",
-                                "example": "2026-02-25T10:00:00Z"
+                                "example": "2026-03-05T07:45:30.000000Z"
                             },
                             "last_workout_date": {
                                 "type": "string",
                                 "format": "date-time",
-                                "example": "2026-02-28T15:30:00Z"
+                                "example": null,
+                                "nullable": true
                             },
                             "has_workout_today": {
                                 "type": "boolean",
@@ -10628,7 +10818,7 @@
                     "next_phase": {
                         "oneOf": [
                             {
-                                "$ref": "#/components/schemas/Phase"
+                                "$ref": "#/components/schemas/PhaseNext"
                             }
                         ],
                         "nullable": true
@@ -10660,7 +10850,7 @@
                     },
                     "can_advance": {
                         "type": "boolean",
-                        "example": false
+                        "example": true
                     }
                 },
                 "type": "object"
@@ -10668,8 +10858,69 @@
             "PhaseList": {
                 "type": "array",
                 "items": {
-                    "$ref": "#/components/schemas/PhaseDetails"
+                    "$ref": "#/components/schemas/PhaseSimple"
                 }
+            },
+            "UpdateWeeklyGoalRequest": {
+                "required": [
+                    "weekly_goal"
+                ],
+                "properties": {
+                    "weekly_goal": {
+                        "type": "integer",
+                        "maximum": 7,
+                        "minimum": 1,
+                        "example": 5
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateWeeklyGoalResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Недельная цель обновлена"
+                    },
+                    "data": {
+                        "properties": {
+                            "weekly_goal": {
+                                "type": "integer",
+                                "example": 5
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ValidationErrorWeeklyGoal": {
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "example": "validation_failed"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Ошибка валидации"
+                    },
+                    "errors": {
+                        "properties": {
+                            "weekly_goal": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "The weekly goal field is required."
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
             },
             "UpdateProfileRequest": {
                 "properties": {
