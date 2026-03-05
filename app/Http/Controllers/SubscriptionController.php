@@ -18,6 +18,7 @@ class SubscriptionController extends Controller
                     'id' => $subscription->id,
                     'name' => $subscription->name,
                     'description' => $subscription->description,
+                    'image' => $subscription->image,
                     'price' => $subscription->price,
                     'duration_days' => $subscription->duration_days,
                 ];

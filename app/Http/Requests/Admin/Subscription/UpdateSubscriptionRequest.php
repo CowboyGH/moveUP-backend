@@ -27,7 +27,7 @@ class UpdateSubscriptionRequest extends FormRequest
             'description' => 'sometimes|string',
             'price' => 'sometimes|numeric|min:0',
             'duration_days' => 'sometimes|integer|in:30,90,180,365',
-            'is_active' => 'sometimes|boolean'
+            'is_active' => 'sometimes|boolean',
         ];
     }
 

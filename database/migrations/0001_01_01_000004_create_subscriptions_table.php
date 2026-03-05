@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
+            $table->string('image')->nullable();
             $table->decimal('price');
             $table->integer('duration_days');
             $table->boolean('is_active')->default(false);

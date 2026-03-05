@@ -13,6 +13,7 @@ class Subscription extends Model
     protected $fillable = [
         'name',
         'description',
+        'image',
         'price',
         'duration_days',
         'is_active',
@@ -22,6 +23,14 @@ class Subscription extends Model
         'price' => 'decimal:2',
         'is_active' => 'boolean',
     ];
+
+    public function getImageAttribute($value)
+    {
+        if ($value) {
+            return asset('storage/' . $value);
+        }
+        return asset('images/default-subscription.jpg');
+    }
 
     public function userSubscriptions(): HasMany
     {

@@ -20,6 +20,7 @@ namespace App\Http\Swagger\Paths;
  *                     @OA\Property(property="id", type="integer", example=1),
  *                     @OA\Property(property="name", type="string", example="1 month"),
  *                     @OA\Property(property="description", type="string", example="Full access for 1 month"),
+ *                     @OA\Property(property="image", type="string", example="http://localhost/storage/subscriptions/abc.jpg"),
  *                     @OA\Property(property="price", type="string", example="9.99"),
  *                     @OA\Property(property="duration_days", type="integer", example=30)
  *                 )
@@ -58,6 +59,7 @@ class SubscriptionPaths {}
  *                 @OA\Property(property="id", type="integer", example=1),
  *                 @OA\Property(property="name", type="string", example="1 month"),
  *                 @OA\Property(property="description", type="string", example="Full access for 1 month"),
+ *                 @OA\Property(property="image", type="string", example="http://localhost/storage/subscriptions/abc.jpg"),
  *                 @OA\Property(property="price", type="string", example="9.99"),
  *                 @OA\Property(property="duration_days", type="integer", example=30),
  *                 @OA\Property(property="is_active", type="boolean", example=true),

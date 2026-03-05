@@ -90,6 +90,7 @@ Route::middleware(['jwt.custom', 'admin', 'track.activity'])->prefix('admin')->g
     Route::post('/subscriptions', [SubscriptionController::class, 'store']);
     Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
     Route::put('/subscriptions/{id}', [SubscriptionController::class, 'update']);
+    Route::post('/subscriptions/{id}/image', [SubscriptionController::class, 'updateImage'])->name('admin.subscriptions.updateImage');
     Route::delete('/subscriptions/{id}', [SubscriptionController::class, 'destroy']);
 
     Route::get('/categories', [CategoryController::class, 'index']);

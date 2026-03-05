@@ -26,7 +26,8 @@ class StoreSubscriptionRequest extends FormRequest
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'duration_days' => 'required|integer|in:30,90,180,365',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 
@@ -40,6 +41,9 @@ class StoreSubscriptionRequest extends FormRequest
             'price.min' => 'Цена не может быть отрицательной',
             'duration_days.required' => 'Длительность подписки обязательна',
             'duration_days.in' => 'Длительность должна быть 30, 90, 180 или 365 дней',
+            'image.image' => 'Файл должен быть изображением',
+            'image.mimes' => 'Допустимые форматы: jpeg, png, jpg, gif',
+            'image.max' => 'Максимальный размер изображения 2MB',
         ];
     }
 }

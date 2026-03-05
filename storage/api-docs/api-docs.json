@@ -1044,6 +1044,10 @@
                                                         "type": "string",
                                                         "example": "Full access for 1 month"
                                                     },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "http://localhost/storage/subscriptions/abc.jpg"
+                                                    },
                                                     "price": {
                                                         "type": "string",
                                                         "example": "9.99"
@@ -1112,7 +1116,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "name",
@@ -1147,6 +1151,11 @@
                                     "is_active": {
                                         "type": "boolean",
                                         "example": true
+                                    },
+                                    "image": {
+                                        "description": "Изображение (jpg, png, gif, до 2MB)",
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -1182,6 +1191,10 @@
                                                 "description": {
                                                     "type": "string",
                                                     "example": "Full access to all premium features"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/storage/subscriptions/abc.jpg"
                                                 },
                                                 "price": {
                                                     "type": "string",
@@ -1298,6 +1311,10 @@
                                                     "type": "string",
                                                     "example": "Full access for 1 month"
                                                 },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/storage/subscriptions/abc.jpg"
+                                                },
                                                 "price": {
                                                     "type": "string",
                                                     "example": "9.99"
@@ -1370,7 +1387,7 @@
                 "tags": [
                     "Admin Subscriptions"
                 ],
-                "summary": "Обновить подписку",
+                "summary": "Обновить данные подписки (без изображения)",
                 "operationId": "7b17af9150b092a82d7470e998e12def",
                 "parameters": [
                     {
@@ -1448,6 +1465,10 @@
                                                 "description": {
                                                     "type": "string",
                                                     "example": "Updated description"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/storage/subscriptions/abc.jpg"
                                                 },
                                                 "price": {
                                                     "type": "string",
@@ -1596,6 +1617,155 @@
                     },
                     "422": {
                         "description": "Нельзя удалить используемую подписку",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/subscriptions/{id}/image": {
+            "post": {
+                "tags": [
+                    "Admin Subscriptions"
+                ],
+                "summary": "Загрузить/обновить изображение подписки",
+                "operationId": "23f7771521572a3b4d5eb57775d12905",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "image"
+                                ],
+                                "properties": {
+                                    "image": {
+                                        "description": "Изображение (jpg, png, gif, до 2MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Изображение обновлено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Изображение подписки обновлено"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "1 month"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Full access for 1 month"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/storage/subscriptions/new.jpg"
+                                                },
+                                                "price": {
+                                                    "type": "string",
+                                                    "example": "9.99"
+                                                },
+                                                "duration_days": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                },
+                                                "is_active": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-01-01T12:00:00Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-01-01T12:00:00Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Подписка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации (файл не загружен или не соответствует требованиям)",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -6707,6 +6877,10 @@
                                                         "type": "string",
                                                         "example": "Full access for 1 month"
                                                     },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "http://localhost/storage/subscriptions/abc.jpg"
+                                                    },
                                                     "price": {
                                                         "type": "string",
                                                         "example": "9.99"
@@ -6785,6 +6959,10 @@
                                                 "description": {
                                                     "type": "string",
                                                     "example": "Full access for 1 month"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/storage/subscriptions/abc.jpg"
                                                 },
                                                 "price": {
                                                     "type": "string",
