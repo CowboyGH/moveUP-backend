@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('testing_exercises', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('exercise_id')->constrained()->onDelete('cascade');
             $table->text('description');
             $table->string('image');
             $table->timestamps();

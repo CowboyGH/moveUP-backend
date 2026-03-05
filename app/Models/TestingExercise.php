@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -12,6 +13,7 @@ class TestingExercise extends Model
     use HasFactory;
 
     protected $fillable = [
+        'exercise_id',
         'description',
         'image',
     ];
@@ -26,5 +28,10 @@ class TestingExercise extends Model
     public function testingTestExercises(): HasMany
     {
         return $this->hasMany(TestingTestExercise::class);
+    }
+
+    public function exercise(): BelongsTo
+    {
+        return $this->belongsTo(Exercise::class);
     }
 }

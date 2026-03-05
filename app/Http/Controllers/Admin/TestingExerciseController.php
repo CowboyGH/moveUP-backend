@@ -21,12 +21,14 @@ class TestingExerciseController extends Controller
     public function store(StoreTestingExerciseRequest $request): JsonResponse
     {
         $exercise = TestingExercise::create([
+            'exercise_id' => $request->exercise_id,
             'description' => $request->description,
             'image' => $request->image,
         ]);
 
         $data = [
             'id' => $exercise->id,
+            'exercise_id' => $exercise->exercise_id,
             'description' => $exercise->description,
             'image' => $exercise->image,
             'created_at' => $exercise->created_at,
@@ -59,7 +61,7 @@ class TestingExerciseController extends Controller
                 404
             );
         }
-        $exercise->update($request->only(['description', 'image']));
+        $exercise->update($request->only(['exercise_id', 'description', 'image']));
         return ApiResponse::success('Тестовое упражнение успешно обновлено', $exercise);
     }
 

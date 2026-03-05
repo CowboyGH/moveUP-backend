@@ -3,8 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
-use App\Models\Testing;
-use App\Models\TestingExercise;
+use App\Models\TestingTestExercise;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TestResultFactory extends Factory
@@ -31,12 +30,13 @@ class TestResultFactory extends Factory
 
         $userTestCounts[$user->id] = ($userTestCounts[$user->id] ?? 0) + 1;
 
+        $testingTestExercise = TestingTestExercise::inRandomOrder()->first()
+            ?? TestingTestExercise::factory()->create();
+
         return [
             'user_id' => $user->id,
-            'exercise_id' => TestingExercise::inRandomOrder()->first()->id
-                ?? TestingExercise::factory()->create()->id,
-            'testing_id' => Testing::inRandomOrder()->first()->id
-                ?? Testing::factory()->create()->id,
+            'testing_id' => $testingTestExercise->testing_id,
+            'testing_exercise_id' => $testingTestExercise->testing_exercise_id,
             'result_value' => fake()->numberBetween(1, 4),
             'pulse' => fake()->numberBetween(60, 180),
             'test_date' => fake()->dateTimeBetween('-30 days', 'now'),

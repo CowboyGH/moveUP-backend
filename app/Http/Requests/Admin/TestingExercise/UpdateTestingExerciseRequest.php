@@ -15,6 +15,7 @@ class UpdateTestingExerciseRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'exercise_id' => 'sometimes|integer|exists:exercises,id',
             'description' => 'sometimes|string',
             'image' => 'sometimes|string|max:255',
         ];

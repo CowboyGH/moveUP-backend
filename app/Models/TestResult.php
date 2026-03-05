@@ -12,8 +12,8 @@ class TestResult extends Model
 
     protected $fillable = [
         'user_id',
-        'exercise_id',
         'testing_id',
+        'testing_exercise_id',
         'result_value',
         'pulse',
         'test_date',
@@ -27,14 +27,19 @@ class TestResult extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    public function exercise(): BelongsTo
+    public function testingExercise(): BelongsTo
     {
-        return $this->belongsTo(Exercise::class);
+        return $this->belongsTo(TestingExercise::class);
+    }
+    public function getExerciseAttribute()
+    {
+        return $this->testingExercise->exercise ?? null;
     }
 
     public function testing(): BelongsTo
     {
         return $this->belongsTo(Testing::class);
     }
+
+
 }

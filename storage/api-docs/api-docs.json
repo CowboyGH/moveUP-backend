@@ -3276,6 +3276,10 @@
                                                         "type": "integer",
                                                         "example": 1
                                                     },
+                                                    "exercise_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
                                                     "description": {
                                                         "type": "string",
                                                         "example": "Отжимания от пола - максимальное количество за 1 минуту"
@@ -3348,10 +3352,16 @@
                         "application/json": {
                             "schema": {
                                 "required": [
+                                    "exercise_id",
                                     "description",
                                     "image"
                                 ],
                                 "properties": {
+                                    "exercise_id": {
+                                        "description": "ID упражнения из таблицы exercises (основной каталог упражнений)",
+                                        "type": "integer",
+                                        "example": 5
+                                    },
                                     "description": {
                                         "description": "Описание упражнения",
                                         "type": "string",
@@ -3388,6 +3398,10 @@
                                                 "id": {
                                                     "type": "integer",
                                                     "example": 1
+                                                },
+                                                "exercise_id": {
+                                                    "type": "integer",
+                                                    "example": 5
                                                 },
                                                 "description": {
                                                     "type": "string",
@@ -3496,6 +3510,10 @@
                                         "data": {
                                             "properties": {
                                                 "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "exercise_id": {
                                                     "type": "integer",
                                                     "example": 1
                                                 },
@@ -3661,6 +3679,11 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
+                                    "exercise_id": {
+                                        "description": "ID упражнения из таблицы exercises (основной каталог упражнений)",
+                                        "type": "integer",
+                                        "example": 5
+                                    },
                                     "description": {
                                         "description": "Описание упражнения",
                                         "type": "string",
@@ -3697,6 +3720,10 @@
                                                 "id": {
                                                     "type": "integer",
                                                     "example": 1
+                                                },
+                                                "exercise_id": {
+                                                    "type": "integer",
+                                                    "example": 5
                                                 },
                                                 "description": {
                                                     "type": "string",
