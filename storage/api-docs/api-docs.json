@@ -5586,7 +5586,7 @@
                         }
                     },
                     "404": {
-                        "description": "Пользователь не найден",
+                        "description": "Пользователь с таким email не найден",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5657,7 +5657,7 @@
                         }
                     },
                     "404": {
-                        "description": "Пользователь не найден",
+                        "description": "Пользователь с таким email не найден",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -6426,7 +6426,7 @@
                         }
                     },
                     "404": {
-                        "description": "Пользователь не найден",
+                        "description": "Пользователь с таким email не найден",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10883,20 +10883,17 @@
             },
             "FcmTokenDeleteResponse": {
                 "title": "Ответ на удаление FCM токена",
-                "type": "object",
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/SuccessResponse"
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
                     },
-                    {
-                        "properties": {
-                            "message": {
-                                "example": "FCM токен удален"
-                            }
-                        },
-                        "type": "object"
+                    "message": {
+                        "type": "string",
+                        "example": "FCM токен удален"
                     }
-                ]
+                },
+                "type": "object"
             },
             "ImageNotFoundResponse": {
                 "allOf": [

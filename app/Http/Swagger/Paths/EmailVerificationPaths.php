@@ -34,7 +34,7 @@ namespace App\Http\Swagger\Paths;
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Пользователь не найден",
+ *         description="Пользователь с таким email не найден",
  *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
  *     ),
  *     @OA\Response(
@@ -70,7 +70,7 @@ class EmailVerificationPaths {}
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Пользователь не найден",
+ *         description="Пользователь с таким email не найден",
  *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
  *     ),
  *     @OA\Response(

@@ -34,25 +34,4 @@ class ResendVerificationRequest extends FormRequest
             'email.email' => 'Введите корректный адрес электронной почты.',
         ];
     }
-
-    /**
-     * Проверка существования email и что email еще не подтвержден
-     */
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            if (!$validator->errors()->any()) {
-                $user = User::where('email', $this->email)->first();
-
-                if (!$user) {
-                    $validator->errors()->add('email', 'Пользователь с таким email не найден.');
-                    return;
-                }
-
-                if ($user->email_verified_at) {
-                    $validator->errors()->add('email', 'Email уже подтвержден.');
-                }
-            }
-        });
-    }
 }

@@ -67,12 +67,8 @@ class FcmTokenDeleteRequestSchema {}
  *     schema="FcmTokenDeleteResponse",
  *     type="object",
  *     title="Ответ на удаление FCM токена",
- *     allOf={
- *         @OA\Schema(ref="#/components/schemas/SuccessResponse"),
- *         @OA\Schema(
- *             @OA\Property(property="message", example="FCM токен удален")
- *         )
- *     }
+ *     @OA\Property(property="success", type="boolean", example=true),
+ *     @OA\Property(property="message", type="string", example="FCM токен удален")
  * )
  */
 class FcmTokenDeleteResponseSchema {}
