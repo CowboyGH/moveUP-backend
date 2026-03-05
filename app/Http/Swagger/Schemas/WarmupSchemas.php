@@ -10,6 +10,7 @@ namespace App\Http\Swagger\Schemas;
  *     @OA\Property(property="name", type="string", example="Суставная гимнастика"),
  *     @OA\Property(property="description", type="string", example="Разминка для подготовки суставов к нагрузке"),
  *     @OA\Property(property="image", type="string", example="/uploads/warmups/joint-gymnastics.jpg"),
+ *     @OA\Property(property="image_url", type="string", example="http://localhost/storage/warmups/joint-gymnastics.jpg"),
  *     @OA\Property(property="workouts_count", type="integer", example=8),
  *     @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-01-01T12:00:00Z")

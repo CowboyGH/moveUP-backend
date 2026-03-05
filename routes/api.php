@@ -117,18 +117,24 @@ Route::middleware(['jwt.custom', 'admin', 'track.activity'])->prefix('admin')->g
     Route::get('/exercises/{id}', [ExerciseController::class, 'show']);
     Route::put('/exercises/{id}', [ExerciseController::class, 'update']);
     Route::delete('/exercises/{id}', [ExerciseController::class, 'destroy']);
+    Route::post('/exercises/{id}/image', [App\Http\Controllers\Admin\ExerciseController::class, 'uploadImage']);
+    Route::get('/exercises/{id}/image', [App\Http\Controllers\Admin\ExerciseController::class, 'getImage']);
 
     Route::get('/warmups', [WarmupController::class, 'index']);
     Route::post('/warmups', [WarmupController::class, 'store']);
     Route::get('/warmups/{id}', [WarmupController::class, 'show']);
     Route::put('/warmups/{id}', [WarmupController::class, 'update']);
     Route::delete('/warmups/{id}', [WarmupController::class, 'destroy']);
+    Route::post('/warmups/{id}/image', [App\Http\Controllers\Admin\WarmupController::class, 'uploadImage']);
+    Route::get('/warmups/{id}/image', [App\Http\Controllers\Admin\WarmupController::class, 'getImage']);
 
     Route::get('/workouts', [WorkoutController::class, 'index']);
-    Route::post('/workouts', [WorkoutController::class, 'store']);
+    #Route::post('/workouts', [WorkoutController::class, 'store']);
     Route::get('/workouts/{id}', [WorkoutController::class, 'show']);
     Route::put('/workouts/{id}', [WorkoutController::class, 'update']);
     Route::delete('/workouts/{id}', [WorkoutController::class, 'destroy']);
+    Route::post('/workouts/{id}/image', [App\Http\Controllers\Admin\WorkoutController::class, 'uploadImage']);
+    Route::get('/workouts/{id}/image', [App\Http\Controllers\Admin\WorkoutController::class, 'getImage']);
 
     Route::post('/workouts/generate-for-user/{userId}', [WorkoutGeneratorController::class, 'generateForUser']);
     Route::post('/workouts/regenerate-for-user/{userId}', [WorkoutGeneratorController::class, 'regenerateForUser']);

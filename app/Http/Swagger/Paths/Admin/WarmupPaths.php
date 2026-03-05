@@ -41,13 +41,26 @@ class WarmupPaths {}
  * @OA\Post(
  *     path="/api/admin/warmups",
  *     summary="Создать новую разминку",
- *     description="Создает новую разминку",
+ *     description="Создает новую разминку с изображением",
  *     operationId="createWarmup",
  *     tags={"Admin Warmups"},
  *     security={{"bearerAuth":{}}},
  *     @OA\RequestBody(
  *         required=true,
- *         @OA\JsonContent(ref="#/components/schemas/StoreWarmupRequest")
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 required={"name", "description", "image"},
+ *                 @OA\Property(property="name", type="string", example="Суставная гимнастика", description="Название разминки"),
+ *                 @OA\Property(property="description", type="string", example="Разминка для подготовки суставов к нагрузке", description="Описание разминки"),
+ *                 @OA\Property(
+ *                     property="image",
+ *                     type="string",
+ *                     format="binary",
+ *                     description="Файл изображения (jpeg, png, jpg, gif, webp, макс. 5MB)"
+ *                 )
+ *             )
+ *         )
  *     ),
  *     @OA\Response(
  *         response=201,
@@ -130,7 +143,7 @@ class WarmupShowPaths {}
  * @OA\Put(
  *     path="/api/admin/warmups/{id}",
  *     summary="Обновить разминку",
- *     description="Обновляет существующую разминку",
+ *     description="Обновляет существующую разминку. Для обновления изображения используйте multipart/form-data",
  *     operationId="updateWarmup",
  *     tags={"Admin Warmups"},
  *     security={{"bearerAuth":{}}},
@@ -143,7 +156,19 @@ class WarmupShowPaths {}
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         @OA\JsonContent(ref="#/components/schemas/UpdateWarmupRequest")
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 @OA\Property(property="name", type="string", example="Суставная гимнастика", description="Название разминки"),
+ *                 @OA\Property(property="description", type="string", example="Разминка для подготовки суставов к нагрузке", description="Описание разминки"),
+ *                 @OA\Property(
+ *                     property="image",
+ *                     type="string",
+ *                     format="binary",
+ *                     description="Новый файл изображения (опционально)"
+ *                 )
+ *             )
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
@@ -227,3 +252,113 @@ class WarmupUpdatePaths {}
  * )
  */
 class WarmupDestroyPaths {}
+
+/**
+ * @OA\Post(
+ *     path="/api/admin/warmups/{id}/image",
+ *     summary="Загрузить изображение для разминки",
+ *     description="Загружает новое изображение для существующей разминки (старое изображение удаляется)",
+ *     operationId="uploadWarmupImage",
+ *     tags={"Admin Warmups"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID разминки",
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 required={"image"},
+ *                 @OA\Property(
+ *                     property="image",
+ *                     type="string",
+ *                     format="binary",
+ *                     description="Файл изображения (jpeg, png, jpg, gif, webp, макс. 5MB)"
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Изображение успешно загружено",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Изображение успешно загружено"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 @OA\Property(property="image", type="string", example="warmups/warmup_1_1234567890.jpg"),
+ *                 @OA\Property(property="image_url", type="string", example="http://localhost/storage/warmups/warmup_1_1234567890.jpg")
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Неавторизован",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Доступ запрещен (только для администраторов)",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Разминка не найдена",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибка валидации",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+ *     )
+ * )
+ */
+class WarmupUploadImagePaths {}
+
+/**
+ * @OA\Get(
+ *     path="/api/admin/warmups/{id}/image",
+ *     summary="Получить изображение разминки",
+ *     description="Возвращает файл изображения разминки",
+ *     operationId="getWarmupImage",
+ *     tags={"Admin Warmups"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="ID разминки",
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Изображение разминки",
+ *         @OA\MediaType(
+ *             mediaType="image/*",
+ *             @OA\Schema(type="string", format="binary")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Неавторизован",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Доступ запрещен (только для администраторов)",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Изображение не найдено",
+ *         @OA\JsonContent(ref="#/components/schemas/ImageNotFoundResponse")
+ *     )
+ * )
+ */
+class WarmupGetImagePaths {}

@@ -20,6 +20,7 @@ class WorkoutSchemas {}
  *     @OA\Property(property="title", type="string", example="Приседания"),
  *     @OA\Property(property="description", type="string", example="Техника выполнения приседаний"),
  *     @OA\Property(property="image", type="string", example="/uploads/exercises/squat.jpg"),
+ *     @OA\Property(property="image_url", type="string", example="http://localhost/storage/exercises/squat.jpg"),
  *     @OA\Property(property="muscle_group", type="string", example="Ноги"),
  *     @OA\Property(
  *         property="equipment",
@@ -47,6 +48,7 @@ class WorkoutExerciseSchema {}
  *     @OA\Property(property="name", type="string", example="Разминка суставов"),
  *     @OA\Property(property="description", type="string", example="Подготовка суставов к нагрузке"),
  *     @OA\Property(property="image", type="string", example="/uploads/warmups/joint-warmup.jpg"),
+ *     @OA\Property(property="image_url", type="string", example="http://localhost/storage/warmups/joint-warmup.jpg"),
  *     @OA\Property(
  *         property="pivot",
  *         type="object",
@@ -64,6 +66,8 @@ class WorkoutWarmupSchema {}
  *     @OA\Property(property="title", type="string", example="Утренняя зарядка"),
  *     @OA\Property(property="description", type="string", example="Комплекс упражнений для пробуждения"),
  *     @OA\Property(property="duration_minutes", type="integer", example=30),
+ *     @OA\Property(property="image", type="string", nullable=true, example="workouts/morning-workout.jpg"),
+ *     @OA\Property(property="image_url", type="string", nullable=true, example="http://localhost/storage/workouts/morning-workout.jpg"),
  *     @OA\Property(property="is_active", type="boolean", example=true),
  *     @OA\Property(
  *         property="phase",

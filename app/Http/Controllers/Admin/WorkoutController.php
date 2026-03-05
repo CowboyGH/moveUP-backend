@@ -5,20 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Workout\StoreWorkoutRequest;
 use App\Http\Requests\Admin\Workout\UpdateWorkoutRequest;
+use App\Http\Requests\Admin\Workout\UploadWorkoutImageRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\Workout;
-use App\Models\WorkoutExercise;
-use App\Models\WorkoutWarmup;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class WorkoutController extends Controller
 {
     /**
      * Получить список всех тренировок
-     *
-     * @return JsonResponse
      */
     public function index(): JsonResponse
     {
@@ -32,6 +30,8 @@ class WorkoutController extends Controller
                     'title' => $workout->title,
                     'description' => $workout->description,
                     'duration_minutes' => $workout->duration_minutes,
+                    'image' => $workout->image,
+                    'image_url' => $workout->image_url,
                     'is_active' => $workout->is_active,
                     'phase' => $workout->phase ? [
                         'id' => $workout->phase->id,
@@ -50,22 +50,21 @@ class WorkoutController extends Controller
 
     /**
      * Создать новую тренировку
-     *
-     * @param StoreWorkoutRequest $request
-     * @return JsonResponse
      */
     public function store(StoreWorkoutRequest $request): JsonResponse
     {
         DB::beginTransaction();
 
         try {
-            $workout = Workout::create([
-                'phase_id' => $request->phase_id,
-                'title' => $request->title,
-                'description' => $request->description,
-                'duration_minutes' => $request->duration_minutes,
-                'is_active' => $request->is_active ?? true,
-            ]);
+            $data = $request->except(['image', 'exercises', 'warmups']);
+
+            // Сохраняем изображение, если есть
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('workouts', 'public');
+                $data['image'] = $path;
+            }
+
+            $workout = Workout::create($data);
 
             if ($request->has('exercises')) {
                 foreach ($request->exercises as $exercise) {
@@ -90,8 +89,15 @@ class WorkoutController extends Controller
             $workout->load(['phase', 'exercises', 'warmups']);
 
             return ApiResponse::success('Тренировка успешно создана', $this->formatWorkout($workout), 201);
+
         } catch (\Exception $e) {
             DB::rollBack();
+
+            // Удаляем загруженное изображение, если что-то пошло не так
+            if (isset($path) && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+
             return ApiResponse::error(
                 ErrorResponse::SERVER_ERROR,
                 'Ошибка при создании тренировки: ' . $e->getMessage(),
@@ -102,9 +108,6 @@ class WorkoutController extends Controller
 
     /**
      * Получить тренировку по ID
-     *
-     * @param int $id
-     * @return JsonResponse
      */
     public function show(int $id): JsonResponse
     {
@@ -123,10 +126,6 @@ class WorkoutController extends Controller
 
     /**
      * Обновить тренировку
-     *
-     * @param UpdateWorkoutRequest $request
-     * @param int $id
-     * @return JsonResponse
      */
     public function update(UpdateWorkoutRequest $request, int $id): JsonResponse
     {
@@ -143,13 +142,20 @@ class WorkoutController extends Controller
         DB::beginTransaction();
 
         try {
-            $workout->update($request->only([
-                'phase_id',
-                'title',
-                'description',
-                'duration_minutes',
-                'is_active'
-            ]));
+            $data = $request->except(['image', 'exercises', 'warmups']);
+
+            // Обрабатываем новое изображение
+            if ($request->hasFile('image')) {
+                // Удаляем старое изображение
+                if ($workout->image) {
+                    Storage::disk('public')->delete($workout->image);
+                }
+
+                $path = $request->file('image')->store('workouts', 'public');
+                $data['image'] = $path;
+            }
+
+            $workout->update($data);
 
             if ($request->has('exercises')) {
                 $workout->exercises()->detach();
@@ -176,8 +182,15 @@ class WorkoutController extends Controller
             $workout->load(['phase', 'exercises', 'warmups']);
 
             return ApiResponse::success('Тренировка успешно обновлена', $this->formatWorkout($workout));
+
         } catch (\Exception $e) {
             DB::rollBack();
+
+            // Удаляем новое изображение, если что-то пошло не так
+            if (isset($path) && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+
             return ApiResponse::error(
                 ErrorResponse::SERVER_ERROR,
                 'Ошибка при обновлении тренировки: ' . $e->getMessage(),
@@ -188,9 +201,6 @@ class WorkoutController extends Controller
 
     /**
      * Удалить тренировку
-     *
-     * @param int $id
-     * @return JsonResponse
      */
     public function destroy(int $id): JsonResponse
     {
@@ -215,6 +225,11 @@ class WorkoutController extends Controller
         DB::beginTransaction();
 
         try {
+            // Удаляем изображение
+            if ($workout->image) {
+                Storage::disk('public')->delete($workout->image);
+            }
+
             $workout->exercises()->detach();
             $workout->warmups()->detach();
             $workout->delete();
@@ -222,6 +237,7 @@ class WorkoutController extends Controller
             DB::commit();
 
             return ApiResponse::success('Тренировка успешно удалена');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponse::error(
@@ -234,9 +250,6 @@ class WorkoutController extends Controller
 
     /**
      * Форматирование данных тренировки для ответа
-     *
-     * @param Workout $workout
-     * @return array
      */
     private function formatWorkout(Workout $workout): array
     {
@@ -246,6 +259,7 @@ class WorkoutController extends Controller
                 'title' => $exercise->title,
                 'description' => $exercise->description,
                 'image' => $exercise->image,
+                'image_url' => $exercise->image_url,
                 'muscle_group' => $exercise->muscle_group,
                 'equipment' => $exercise->equipment ? [
                     'id' => $exercise->equipment->id,
@@ -265,6 +279,7 @@ class WorkoutController extends Controller
                 'name' => $warmup->name,
                 'description' => $warmup->description,
                 'image' => $warmup->image,
+                'image_url' => $warmup->image_url,
                 'pivot' => [
                     'order_number' => $warmup->pivot->order_number,
                 ],
@@ -276,6 +291,8 @@ class WorkoutController extends Controller
             'title' => $workout->title,
             'description' => $workout->description,
             'duration_minutes' => $workout->duration_minutes,
+            'image' => $workout->image,
+            'image_url' => $workout->image_url,
             'is_active' => $workout->is_active,
             'phase' => $workout->phase ? [
                 'id' => $workout->phase->id,
@@ -287,5 +304,90 @@ class WorkoutController extends Controller
             'created_at' => $workout->created_at?->toISOString(),
             'updated_at' => $workout->updated_at?->toISOString(),
         ];
+    }
+
+    /**
+     * Загрузить изображение для тренировки
+     */
+    public function uploadImage(UploadWorkoutImageRequest $request, int $id): JsonResponse
+    {
+        $workout = Workout::find($id);
+
+        if (!$workout) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Тренировка не найдена',
+                404
+            );
+        }
+
+        try {
+            // Удаляем старое изображение
+            if ($workout->image) {
+                Storage::disk('public')->delete($workout->image);
+            }
+
+            // Сохраняем новое изображение
+            $path = $request->file('image')->store('workouts', 'public');
+            $workout->update(['image' => $path]);
+
+            return ApiResponse::success('Изображение успешно загружено', [
+                'image' => $workout->image,
+                'image_url' => $workout->image_url,
+            ]);
+
+        } catch (\Exception $e) {
+            return ApiResponse::error(
+                ErrorResponse::SERVER_ERROR,
+                'Ошибка при загрузке изображения: ' . $e->getMessage(),
+                500
+            );
+        }
+    }
+
+    /**
+     * Получить изображение тренировки (публичный доступ)
+     */
+    public function getImage(int $id)
+    {
+        $workout = Workout::find($id);
+
+        // Если тренировка не найдена или изображение отсутствует
+        if (!$workout || !$workout->image) {
+            return $this->getDefaultImage();
+        }
+
+        // Проверяем, что путь к файлу не пустой
+        $path = Storage::disk('public')->path($workout->image);
+
+        // Проверяем существование файла
+        if (empty($workout->image) || !file_exists($path)) {
+            return $this->getDefaultImage();
+        }
+
+        return response()->file($path, [
+            'Content-Type' => mime_content_type($path),
+            'Cache-Control' => 'public, max-age=86400'
+        ]);
+    }
+
+    /**
+     * Получить дефолтное изображение
+     */
+    private function getDefaultImage()
+    {
+        $defaultPath = public_path('images/default-workout.png');
+
+        if (file_exists($defaultPath)) {
+            return response()->file($defaultPath, [
+                'Content-Type' => mime_content_type($defaultPath),
+                'Cache-Control' => 'public, max-age=86400'
+            ]);
+        }
+
+        return response()->json([
+            'code' => ErrorResponse::NOT_FOUND,
+            'message' => 'Изображение не найдено'
+        ], 404);
     }
 }

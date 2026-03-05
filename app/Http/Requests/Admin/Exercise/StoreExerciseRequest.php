@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Admin\Exercise;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\ApiFormRequest;
 
-class StoreExerciseRequest extends FormRequest
+class StoreExerciseRequest extends ApiFormRequest
 {
     public function authorize(): bool
     {
@@ -17,7 +17,7 @@ class StoreExerciseRequest extends FormRequest
             'equipment_id' => 'required|exists:equipments,id',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'required|string|max:255',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'muscle_group' => 'required|string|max:255',
         ];
     }
@@ -31,6 +31,9 @@ class StoreExerciseRequest extends FormRequest
             'title.max' => 'Название не может быть длиннее 255 символов',
             'description.required' => 'Описание упражнения обязательно',
             'image.required' => 'Изображение упражнения обязательно',
+            'image.image' => 'Файл должен быть изображением',
+            'image.mimes' => 'Допустимые форматы: jpeg, png, jpg, gif, webp',
+            'image.max' => 'Размер файла не должен превышать 5 МБ',
             'muscle_group.required' => 'Группа мышц обязательна',
         ];
     }

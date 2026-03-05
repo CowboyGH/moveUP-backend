@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Admin\Warmup;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\ApiFormRequest;
 
-class UpdateWarmupRequest extends FormRequest
+class UpdateWarmupRequest extends ApiFormRequest
 {
     public function authorize(): bool
     {
@@ -16,7 +16,7 @@ class UpdateWarmupRequest extends FormRequest
         return [
             'name' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
-            'image' => 'sometimes|string|max:255',
+            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ];
     }
 
@@ -24,6 +24,9 @@ class UpdateWarmupRequest extends FormRequest
     {
         return [
             'name.max' => 'Название не может быть длиннее 255 символов',
+            'image.image' => 'Файл должен быть изображением',
+            'image.mimes' => 'Допустимые форматы: jpeg, png, jpg, gif, webp',
+            'image.max' => 'Размер файла не должен превышать 5 МБ',
         ];
     }
 }
