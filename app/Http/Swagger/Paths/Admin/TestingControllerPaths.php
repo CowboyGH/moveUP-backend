@@ -27,9 +27,9 @@ namespace App\Http\Swagger\Paths\Admin;
  *                     @OA\Property(property="duration_minutes", type="string", example="15-20 минут"),
  *                     @OA\Property(property="image", type="string", example="/uploads/tests/basic-diagnostic.jpg"),
  *                     @OA\Property(property="is_active", type="boolean", example=true),
- *                     @OA\Property(property="test_results_count", type="integer", example=0),
  *                     @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z"),
  *                     @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z"),
+ *                     @OA\Property(property="test_results_count", type="integer", example=0),
  *                     @OA\Property(
  *                         property="categories",
  *                         type="array",
@@ -233,9 +233,9 @@ class CreateTesting {}
  *                 @OA\Property(property="duration_minutes", type="string", example="15-20 минут"),
  *                 @OA\Property(property="image", type="string", example="/uploads/tests/basic-diagnostic.jpg"),
  *                 @OA\Property(property="is_active", type="boolean", example=true),
- *                 @OA\Property(property="test_results_count", type="integer", example=0),
  *                 @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z"),
  *                 @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z"),
+ *                 @OA\Property(property="test_results_count", type="integer", example=0),
  *                 @OA\Property(
  *                     property="categories",
  *                     type="array",
@@ -496,7 +496,6 @@ class DeleteTesting {}
  *                 @OA\Property(property="duration_minutes", type="string", example="15-20 минут"),
  *                 @OA\Property(property="image", type="string", example="/uploads/tests/basic-diagnostic.jpg"),
  *                 @OA\Property(property="is_active", type="boolean", example=false),
- *                 @OA\Property(property="test_results_count", type="integer", example=0),
  *                 @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z"),
  *                 @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-22T10:00:00.000000Z")
  *             )

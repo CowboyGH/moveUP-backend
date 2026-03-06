@@ -44,4 +44,9 @@ class Testing extends Model
         return $this->belongsToMany(Category::class, 'testing_categories')
             ->withTimestamps();
     }
+
+    public function testAttempts(): HasMany
+    {
+        return $this->hasMany(TestAttempt::class);
+    }
 }

@@ -2084,10 +2084,6 @@
                                                         "type": "boolean",
                                                         "example": true
                                                     },
-                                                    "test_results_count": {
-                                                        "type": "integer",
-                                                        "example": 0
-                                                    },
                                                     "created_at": {
                                                         "type": "string",
                                                         "format": "datetime",
@@ -2097,6 +2093,10 @@
                                                         "type": "string",
                                                         "format": "datetime",
                                                         "example": "2026-02-20T08:37:48.000000Z"
+                                                    },
+                                                    "test_results_count": {
+                                                        "type": "integer",
+                                                        "example": 0
                                                     },
                                                     "categories": {
                                                         "type": "array",
@@ -2582,10 +2582,6 @@
                                                     "type": "boolean",
                                                     "example": true
                                                 },
-                                                "test_results_count": {
-                                                    "type": "integer",
-                                                    "example": 0
-                                                },
                                                 "created_at": {
                                                     "type": "string",
                                                     "format": "datetime",
@@ -2595,6 +2591,10 @@
                                                     "type": "string",
                                                     "format": "datetime",
                                                     "example": "2026-02-20T08:37:48.000000Z"
+                                                },
+                                                "test_results_count": {
+                                                    "type": "integer",
+                                                    "example": 0
                                                 },
                                                 "categories": {
                                                     "type": "array",
@@ -3183,10 +3183,6 @@
                                                 "is_active": {
                                                     "type": "boolean",
                                                     "example": false
-                                                },
-                                                "test_results_count": {
-                                                    "type": "integer",
-                                                    "example": 0
                                                 },
                                                 "created_at": {
                                                     "type": "string",
@@ -8117,12 +8113,471 @@
                 }
             }
         },
+        "/api/tests/{testing}/start": {
+            "post": {
+                "tags": [
+                    "Testings"
+                ],
+                "summary": "Начать прохождение теста",
+                "description": "Создаёт новую попытку прохождения теста и возвращает первое упражнение",
+                "operationId": "749e0ddbbfa0c2cc7a2d23f09b281312",
+                "parameters": [
+                    {
+                        "name": "testing",
+                        "in": "path",
+                        "description": "ID теста",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 4
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Тест успешно начат",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тест начат"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "attempt_id": {
+                                                    "type": "integer",
+                                                    "example": 11
+                                                },
+                                                "testing": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 4
+                                                        },
+                                                        "title": {
+                                                            "type": "string",
+                                                            "example": "impedit illum maiores aut"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Maiores occaecati repudiandae eos recusandae."
+                                                        },
+                                                        "duration_minutes": {
+                                                            "type": "string",
+                                                            "example": "38"
+                                                        },
+                                                        "image": {
+                                                            "type": "string",
+                                                            "example": "tests/"
+                                                        },
+                                                        "total_exercises": {
+                                                            "type": "integer",
+                                                            "example": 4
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "current_exercise": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 20
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Harum non est ea fugiat non magnam architecto."
+                                                        },
+                                                        "image": {
+                                                            "type": "string",
+                                                            "example": "testing_exercises/"
+                                                        },
+                                                        "order_number": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Тест недоступен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "В тесте нет упражнений",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/test-attempts/{attempt}/result": {
+            "post": {
+                "tags": [
+                    "Testings"
+                ],
+                "summary": "Сохранить результат выполнения упражнения",
+                "description": "Сохраняет результат текущего упражнения и возвращает следующее (или сигнал о завершении)",
+                "operationId": "5ad4318c7c5b4def1a04a34dec7db660",
+                "parameters": [
+                    {
+                        "name": "attempt",
+                        "in": "path",
+                        "description": "ID попытки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 11
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "testing_exercise_id",
+                                    "result_value"
+                                ],
+                                "properties": {
+                                    "testing_exercise_id": {
+                                        "description": "ID тестового упражнения",
+                                        "type": "integer",
+                                        "example": 18
+                                    },
+                                    "result_value": {
+                                        "description": "Оценка от 1 до 4",
+                                        "type": "integer",
+                                        "example": 4
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Результат сохранён. Возвращается следующее упражнение или признак завершения теста.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Результат сохранён"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "saved": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "result": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 12
+                                                        },
+                                                        "user_id": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "testing_id": {
+                                                            "type": "integer",
+                                                            "example": 4
+                                                        },
+                                                        "test_attempt_id": {
+                                                            "type": "integer",
+                                                            "example": 11
+                                                        },
+                                                        "testing_exercise_id": {
+                                                            "type": "integer",
+                                                            "example": 18
+                                                        },
+                                                        "result_value": {
+                                                            "type": "integer",
+                                                            "example": 4
+                                                        },
+                                                        "test_date": {
+                                                            "type": "string",
+                                                            "format": "date",
+                                                            "example": "2026-03-05"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "datetime",
+                                                            "example": "2026-03-06T03:30:15.000000Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "datetime",
+                                                            "example": "2026-03-06T03:30:15.000000Z"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "next_exercise": {
+                                                    "description": "Следующее упражнение (если есть)",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 20
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Harum non est ea fugiat non magnam architecto."
+                                                        },
+                                                        "image": {
+                                                            "type": "string",
+                                                            "example": "testing_exercises/"
+                                                        },
+                                                        "order_number": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        }
+                                                    },
+                                                    "type": "object",
+                                                    "nullable": true
+                                                },
+                                                "all_exercises_completed": {
+                                                    "description": "Флаг, что все упражнения выполнены",
+                                                    "type": "boolean",
+                                                    "example": true,
+                                                    "nullable": true
+                                                },
+                                                "message": {
+                                                    "description": "Сообщение для случая завершения теста",
+                                                    "type": "string",
+                                                    "example": "Все упражнения выполнены. Введите пульс для завершения теста.",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт (тест уже завершён, упражнение не принадлежит тесту, результат уже сохранён)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/test-attempts/{attempt}/complete": {
+            "post": {
+                "tags": [
+                    "Testings"
+                ],
+                "summary": "Завершить тест и сохранить пульс",
+                "description": "Завершает попытку, сохраняет пульс и проставляет дату завершения",
+                "operationId": "a89b009e91e2d9240996eb52d5487bd7",
+                "parameters": [
+                    {
+                        "name": "attempt",
+                        "in": "path",
+                        "description": "ID попытки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 11
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "pulse"
+                                ],
+                                "properties": {
+                                    "pulse": {
+                                        "description": "Пульс после выполнения теста",
+                                        "type": "integer",
+                                        "example": 172
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Тест успешно завершён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тест успешно завершён"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "attempt_id": {
+                                                    "type": "integer",
+                                                    "example": 11
+                                                },
+                                                "completed_at": {
+                                                    "type": "string",
+                                                    "format": "datetime",
+                                                    "example": "2026-03-06T03:31:30.000000Z"
+                                                },
+                                                "pulse": {
+                                                    "type": "integer",
+                                                    "example": 172
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт (тест уже завершён, не все упражнения выполнены)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "conflict"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Не все упражнения выполнены. Осталось: 3"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/my-test-history": {
             "get": {
                 "tags": [
                     "Testings"
                 ],
                 "summary": "Получить историю пройденных тестов текущего пользователя",
+                "description": "Возвращает статистику и список всех завершённых попыток с результатами упражнений",
                 "operationId": "08f910fa1b12e22862e58fe3e015e8ef",
                 "responses": {
                     "200": {
@@ -8143,18 +8598,18 @@
                                             "properties": {
                                                 "statistics": {
                                                     "properties": {
-                                                        "total_tests_completed": {
+                                                        "total_attempts": {
                                                             "type": "integer",
-                                                            "example": 10
+                                                            "example": 1
                                                         },
                                                         "unique_tests_completed": {
                                                             "type": "integer",
-                                                            "example": 5
+                                                            "example": 1
                                                         },
                                                         "last_test_date": {
                                                             "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2024-01-15T14:30:00Z"
+                                                            "format": "datetime",
+                                                            "example": "2026-03-06 10:31:30"
                                                         }
                                                     },
                                                     "type": "object"
@@ -8163,47 +8618,51 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
+                                                            "attempt_id": {
+                                                                "type": "integer",
+                                                                "example": 11
+                                                            },
                                                             "testing_id": {
                                                                 "type": "integer",
-                                                                "example": 1
+                                                                "example": 4
                                                             },
                                                             "testing_title": {
                                                                 "type": "string",
-                                                                "example": "Функциональный тест"
+                                                                "example": "impedit illum maiores aut"
                                                             },
-                                                            "last_completed_at": {
+                                                            "completed_at": {
                                                                 "type": "string",
-                                                                "format": "date-time",
-                                                                "example": "2024-01-15T14:30:00Z"
+                                                                "format": "datetime",
+                                                                "example": "2026-03-06 10:31:30"
                                                             },
-                                                            "total_attempts": {
+                                                            "pulse": {
                                                                 "type": "integer",
-                                                                "example": 3
+                                                                "example": 172
                                                             },
                                                             "exercises_results": {
                                                                 "type": "array",
                                                                 "items": {
                                                                     "properties": {
+                                                                        "testing_exercise_id": {
+                                                                            "type": "integer",
+                                                                            "example": 20
+                                                                        },
                                                                         "exercise_id": {
                                                                             "type": "integer",
-                                                                            "example": 1
+                                                                            "example": 10
                                                                         },
                                                                         "exercise_description": {
                                                                             "type": "string",
-                                                                            "example": "Приседания"
+                                                                            "example": "Eos id atque et nulla."
                                                                         },
                                                                         "result_value": {
                                                                             "type": "integer",
-                                                                            "example": 4
-                                                                        },
-                                                                        "pulse": {
-                                                                            "type": "integer",
-                                                                            "example": 120
+                                                                            "example": 3
                                                                         },
                                                                         "test_date": {
                                                                             "type": "string",
-                                                                            "format": "date-time",
-                                                                            "example": "2024-01-15T14:30:00Z"
+                                                                            "format": "date",
+                                                                            "example": "2026-03-06"
                                                                         }
                                                                     },
                                                                     "type": "object"

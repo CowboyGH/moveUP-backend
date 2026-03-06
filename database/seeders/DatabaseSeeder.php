@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
         $this->call(TestingExerciseSeeder::class);
         $this->call(TestingTestExerciseSeeder::class);
         $this->call(TestingCategorySeeder::class);
+        $this->call(TestAttemptSeeder::class);
         $this->call(TestResultSeeder::class);
 
         $this->call(UserWorkoutSeeder::class);

@@ -14,8 +14,8 @@ class TestResult extends Model
         'user_id',
         'testing_id',
         'testing_exercise_id',
+        'test_attempt_id',
         'result_value',
-        'pulse',
         'test_date',
     ];
 
@@ -27,18 +27,22 @@ class TestResult extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function testing(): BelongsTo
+    {
+        return $this->belongsTo(Testing::class);
+    }
     public function testingExercise(): BelongsTo
     {
         return $this->belongsTo(TestingExercise::class);
     }
+    public function testAttempt(): BelongsTo
+    {
+        return $this->belongsTo(TestAttempt::class);
+    }
+
     public function getExerciseAttribute()
     {
         return $this->testingExercise->exercise ?? null;
-    }
-
-    public function testing(): BelongsTo
-    {
-        return $this->belongsTo(Testing::class);
     }
 
 

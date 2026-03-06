@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
+use App\Models\TestAttempt;
 use App\Models\Testing;
 use App\Models\TestResult;
 use Illuminate\Http\JsonResponse;
@@ -79,50 +80,46 @@ class TestingController extends Controller
     {
         $user = auth()->user();
 
-        $testResults = TestResult::with(['testing', 'exercise'])
-            ->where('user_id', $user->id)
-            ->orderBy('test_date', 'desc')
-            ->get()
-            ->groupBy('testing_id');
+        $attempts = TestAttempt::whereHas('testResults', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->with(['testing', 'testResults.testingExercise.exercise'])
+            ->whereNotNull('completed_at')
+            ->orderBy('completed_at', 'desc')
+            ->get();
 
-        $formattedHistory = $testResults->map(function ($results, $testingId) {
-            $testing = $results->first()->testing;
-            $latestResult = $results->first();
+        $formattedHistory = $attempts->map(function ($attempt) {
+            $testing = $attempt->testing;
 
-            // Группируем результаты по упражнениям для этого теста
-            $exercisesResults = $results->map(function ($result) {
+            $exercisesResults = $attempt->testResults->map(function ($result) {
                 return [
-                    'exercise_id' => $result->exercise_id,
-                    'exercise_description' => $result->exercise ? $result->exercise->description : null,
+                    'testing_exercise_id' => $result->testing_exercise_id,
+                    'exercise_id' => $result->testingExercise->exercise_id,
+                    'exercise_description' => $result->testingExercise->exercise->description ?? null,
                     'result_value' => $result->result_value,
-                    'pulse' => $result->pulse,
-                    'test_date' => $result->test_date->format('Y-m-d H:i:s'),
+                    'test_date' => $result->test_date->format('Y-m-d'),
                 ];
             })->values();
 
             return [
-                'testing_id' => $testingId,
-                'testing_title' => $testing ? $testing->title : 'Тест удален',
-                'last_completed_at' => $latestResult->test_date->format('Y-m-d H:i:s'),
-                'total_attempts' => $results->count(),
+                'attempt_id' => $attempt->id,
+                'testing_id' => $testing->id,
+                'testing_title' => $testing->title,
+                'completed_at' => $attempt->completed_at->format('Y-m-d H:i:s'),
+                'pulse' => $attempt->pulse,
                 'exercises_results' => $exercisesResults,
             ];
         })->values();
 
-        // Также можно добавить статистику по тестам
         $statistics = [
-            'total_tests_completed' => $testResults->count(),
-            'unique_tests_completed' => $testResults->keys()->count(),
-            'last_test_date' => $testResults->isNotEmpty()
-                ? $testResults->flatten()->first()->test_date->format('Y-m-d H:i:s')
-                : null,
+            'total_attempts' => $attempts->count(),
+            'unique_tests_completed' => $attempts->pluck('testing_id')->unique()->count(),
+            'last_test_date' => $attempts->isNotEmpty() ? $attempts->first()->completed_at->format('Y-m-d H:i:s') : null,
         ];
 
-        $data = [
+        return ApiResponse::data([
             'statistics' => $statistics,
             'history' => $formattedHistory,
-        ];
-
-        return ApiResponse::data($data);
+        ]);
     }
 }

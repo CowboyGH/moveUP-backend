@@ -11,6 +11,7 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Payment\SavedCardController;
 use App\Http\Controllers\PhaseController;
+use App\Http\Controllers\TestAttemptController;
 use App\Http\Controllers\UserParameterController;
 use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\WorkoutGeneratorController;
@@ -59,6 +60,10 @@ Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
     Route::get('/my-subscriptions', [App\Http\Controllers\SubscriptionController::class, 'mySubscriptions']);
     Route::get('/my-test-history', [App\Http\Controllers\TestingController::class, 'myTestHistory']);
     Route::get('/my-workout-history', [App\Http\Controllers\WorkoutController::class, 'myWorkoutHistory']);
+
+    Route::post('/tests/{testing}/start', [TestAttemptController::class, 'start']);
+    Route::post('/test-attempts/{attempt}/result', [TestAttemptController::class, 'storeResult']);
+    Route::post('/test-attempts/{attempt}/complete', [TestAttemptController::class, 'complete']);
 
     Route::get('/user-parameters/me', [UserParameterController::class, 'getMyParameters']);
     Route::put('/user-parameters', [UserParameterController::class, 'update']);
