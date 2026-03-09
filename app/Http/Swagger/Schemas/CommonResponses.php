@@ -22,6 +22,7 @@ class CommonResponses {}
 /**
  * @OA\Schema(
  *     schema="ErrorResponse",
+ *     type="object",
  *     required={"code", "message"},
  *     @OA\Property(property="code", type="string", description="Код ошибки"),
  *     @OA\Property(property="message", type="string", description="Сообщение об ошибке")
@@ -32,6 +33,7 @@ class ErrorResponseSchema {}
 /**
  * @OA\Schema(
  *     schema="ValidationErrorResponse",
+ *     type="object",
  *     required={"code", "message", "errors"},
  *     @OA\Property(property="code", type="string", example="validation_failed"),
  *     @OA\Property(property="message", type="string", example="Ошибка валидации"),

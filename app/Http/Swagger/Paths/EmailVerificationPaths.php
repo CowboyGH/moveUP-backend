@@ -21,14 +21,8 @@ namespace App\Http\Swagger\Paths;
  *         description="Ошибка бизнес-логики",
  *         @OA\JsonContent(
  *             oneOf={
- *                 @OA\Schema(
- *                     @OA\Property(property="code", type="string", example="email_already_verified"),
- *                     @OA\Property(property="message", type="string", example="Email уже подтвержден.")
- *                 ),
- *                 @OA\Schema(
- *                     @OA\Property(property="code", type="string", example="validation_failed"),
- *                     @OA\Property(property="message", type="string", example="Неверный или истекший код подтверждения.")
- *                 )
+ *                 @OA\Schema(ref="#/components/schemas/EmailAlreadyVerifiedResponse"),
+ *                 @OA\Schema(ref="#/components/schemas/InvalidVerificationCodeResponse")
  *             }
  *         )
  *     ),
@@ -63,10 +57,7 @@ class EmailVerificationPaths {}
  *     @OA\Response(
  *         response=400,
  *         description="Email уже подтвержден",
- *         @OA\JsonContent(
- *             @OA\Property(property="code", type="string", example="email_already_verified"),
- *             @OA\Property(property="message", type="string", example="Email уже подтвержден.")
- *         )
+ *         @OA\JsonContent(ref="#/components/schemas/EmailAlreadyVerifiedResponse")
  *     ),
  *     @OA\Response(
  *         response=404,
