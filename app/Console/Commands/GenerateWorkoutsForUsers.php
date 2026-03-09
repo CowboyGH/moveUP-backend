@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use App\Services\PhaseService;
-use App\Services\WorkoutGeneratorService;
+use App\Services\WorkoutGeneration\WorkoutGeneratorService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 

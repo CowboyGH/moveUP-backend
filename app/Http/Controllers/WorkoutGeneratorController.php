@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Responses\ApiResponse;
-use App\Http\Responses\ErrorResponse;
 use App\Models\User;
-use App\Services\WorkoutGeneratorService;
 use App\Services\PhaseService;
+use App\Services\WorkoutGeneration\WorkoutGeneratorService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class WorkoutGeneratorController extends Controller
 {

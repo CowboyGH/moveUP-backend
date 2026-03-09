@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use App\Models\Phase;
-use App\Services\WorkoutGeneratorService;
+use App\Models\User;
+use App\Services\WorkoutGeneration\WorkoutGeneratorService;
 use Illuminate\Console\Command;
 
 class CheckAllPhases extends Command

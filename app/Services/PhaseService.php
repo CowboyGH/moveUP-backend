@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Services;
-use App\Services\WorkoutGeneratorService;
-use App\Models\User;
 use App\Models\Phase;
+use App\Models\User;
 use App\Models\UserProgress;
 use App\Models\UserWorkout;
+use App\Services\WorkoutGeneration\WorkoutGeneratorService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
