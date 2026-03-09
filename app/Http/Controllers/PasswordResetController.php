@@ -26,13 +26,13 @@ class PasswordResetController extends Controller
             );
         }
 
-        if (!$user->email_verified_at) {
-            return ApiResponse::error(
-                ErrorResponse::EMAIL_NOT_VERIFIED, // Изменено с CONFLICT на существующий код
-                'Email не подтвержден. Сначала подтвердите email.',
-                400
-            );
-        }
+//        if (!$user->email_verified_at) {
+//            return ApiResponse::error(
+//                ErrorResponse::EMAIL_NOT_VERIFIED, // Изменено с CONFLICT на существующий код
+//                'Email не подтвержден. Сначала подтвердите email.',
+//                400
+//            );
+//        }
 
         SendPasswordResetEmail::dispatch($user);
 
@@ -52,13 +52,13 @@ class PasswordResetController extends Controller
             );
         }
 
-        if (!$user->email_verified_at) {
-            return ApiResponse::error(
-                ErrorResponse::EMAIL_NOT_VERIFIED,
-                'Email не подтвержден. Сначала подтвердите email.',
-                400
-            );
-        }
+//        if (!$user->email_verified_at) {
+//            return ApiResponse::error(
+//                ErrorResponse::EMAIL_NOT_VERIFIED,
+//                'Email не подтвержден. Сначала подтвердите email.',
+//                400
+//            );
+//        }
 
         if (!$user->verifyPasswordResetCode($validated['code'])) {
             return ApiResponse::error(
@@ -84,13 +84,13 @@ class PasswordResetController extends Controller
             );
         }
 
-        if (!$user->email_verified_at) {
-            return ApiResponse::error(
-                ErrorResponse::EMAIL_NOT_VERIFIED,
-                'Email не подтвержден. Сначала подтвердите email.',
-                400
-            );
-        }
+//        if (!$user->email_verified_at) {
+//            return ApiResponse::error(
+//                ErrorResponse::EMAIL_NOT_VERIFIED,
+//                'Email не подтвержден. Сначала подтвердите email.',
+//                400
+//            );
+//        }
 
         if (!$user->verifyPasswordResetCode($validated['code'])) {
             return ApiResponse::error(
@@ -104,6 +104,11 @@ class PasswordResetController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
         $user->clearPasswordResetCode();
+
+        if(!$user->email_verified_at){
+            $user->email_verified_at = now();
+            $user->save();
+        }
 
         return ApiResponse::success('Пароль успешно сброшен.');
     }

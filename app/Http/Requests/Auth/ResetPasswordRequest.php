@@ -27,7 +27,7 @@ class ResetPasswordRequest extends ApiFormRequest
         return [
             'email' => 'required|email',
             'code' => 'required|string|size:6|regex:/^[0-9]+$/',
-            'password' => ['required', 'string', 'min:8', 'max:12', 'confirmed', 'regex:/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/'],
+            'password' => ['required', 'string', 'min:8', 'max:64', 'confirmed', 'regex:/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/'],
         ];
     }
     public function messages(): array
@@ -42,7 +42,7 @@ class ResetPasswordRequest extends ApiFormRequest
 
             'password.required' => 'Поле "Пароль" обязательно для заполнения.',
             'password.min' => 'Пароль должен содержать минимум 8 символов.',
-            'password.max' => 'Пароль должен содержать максимум 12 символов.',
+            'password.max' => 'Пароль должен содержать максимум 64 символа.',
             'password.confirmed' => 'Пароли не совпадают.',
             'password.regex' => 'Пароль должен содержать только латинские буквы и цифры.',
         ];
