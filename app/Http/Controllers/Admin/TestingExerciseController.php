@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\TestingExercise\FilterTestingExerciseRequest;
 use App\Http\Requests\Admin\TestingExercise\StoreTestingExerciseRequest;
 use App\Http\Requests\Admin\TestingExercise\UpdateTestingExerciseRequest;
 use App\Http\Responses\ApiResponse;
@@ -13,10 +14,67 @@ use Illuminate\Http\Request;
 
 class TestingExerciseController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(FilterTestingExerciseRequest $request): JsonResponse
     {
-        $exercises = TestingExercise::withCount('testings')->get();
-        return ApiResponse::data($exercises);
+        $query = TestingExercise::with('exercise')
+            ->withCount('testings');
+
+        // Поиск по описанию
+        if ($request->filled('search')) {
+            $query->search($request->search, ['description']);
+        }
+
+        // Фильтр по ID упражнения
+        if ($request->filled('exercise_id')) {
+            $query->where('exercise_id', $request->exercise_id);
+        }
+
+        // Фильтр по наличию в тестах
+        if ($request->filled('has_testings')) {
+            if ($request->has_testings) {
+                $query->has('testings');
+            } else {
+                $query->doesntHave('testings');
+            }
+        }
+
+        // Фильтр по датам
+        $query->dateFilter($request->date_from, $request->date_to);
+
+        // Сортировка
+        $query->orderBy($request->getSortBy(), $request->getSortDir());
+
+        // Пагинация
+        $exercises = $query->paginate($request->getPerPage());
+
+        $formattedExercises = collect($exercises->items())->map(function ($exercise) {
+            return [
+                'id' => $exercise->id,
+                'exercise_id' => $exercise->exercise_id,
+                'exercise' => $exercise->exercise ? [
+                    'id' => $exercise->exercise->id,
+                    'title' => $exercise->exercise->title,
+                ] : null,
+                'description' => $exercise->description,
+                'image' => $exercise->image,
+                'testings_count' => $exercise->testings_count,
+                'created_at' => $exercise->created_at?->toISOString(),
+                'updated_at' => $exercise->updated_at?->toISOString(),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $formattedExercises,
+            'meta' => [
+                'current_page' => $exercises->currentPage(),
+                'last_page' => $exercises->lastPage(),
+                'per_page' => $exercises->perPage(),
+                'total' => $exercises->total(),
+                'from' => $exercises->firstItem(),
+                'to' => $exercises->lastItem(),
+            ],
+        ]);
     }
     public function store(StoreTestingExerciseRequest $request): JsonResponse
     {

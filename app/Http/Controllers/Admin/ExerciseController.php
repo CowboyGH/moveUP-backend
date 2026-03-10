@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Exercise\FilterExerciseRequest;
 use App\Http\Requests\Admin\Exercise\StoreExerciseRequest;
 use App\Http\Requests\Admin\Exercise\UpdateExerciseRequest;
 use App\Http\Requests\Admin\Exercise\UploadExerciseImageRequest;
@@ -17,11 +18,44 @@ class ExerciseController extends Controller
     /**
      * Получить список всех упражнений
      */
-    public function index(): JsonResponse
+    public function index(FilterExerciseRequest $request): JsonResponse
     {
-        $exercises = Exercise::with(['equipment'])->withCount('workouts')->get();
+        $query = Exercise::with(['equipment'])->withCount('workouts');
 
-        $formattedExercises = $exercises->map(function ($exercise) {
+        // Поиск по текстовым полям
+        if ($request->filled('search')) {
+            $query->search($request->search, ['title', 'description', 'muscle_group']);
+        }
+
+        // Фильтр по группе мышц
+        if ($request->filled('muscle_group')) {
+            $query->where('muscle_group', 'LIKE', '%' . $request->muscle_group . '%');
+        }
+
+        // Фильтр по оборудованию
+        if ($request->filled('equipment_id')) {
+            $query->where('equipment_id', $request->equipment_id);
+        }
+
+        // Фильтр по датам
+        $query->dateFilter($request->date_from, $request->date_to);
+
+        // Фильтр по наличию в тренировках
+        if ($request->filled('has_workouts')) {
+            if ($request->has_workouts) {
+                $query->has('workouts');
+            } else {
+                $query->doesntHave('workouts');
+            }
+        }
+
+        // Сортировка
+        $query->orderBy($request->getSortBy(), $request->getSortDir());
+
+        // Пагинация
+        $exercises = $query->paginate($request->getPerPage());
+
+        $formattedExercises = collect($exercises->items())->map(function ($exercise) {
             return [
                 'id' => $exercise->id,
                 'title' => $exercise->title,
@@ -39,7 +73,18 @@ class ExerciseController extends Controller
             ];
         });
 
-        return ApiResponse::data($formattedExercises);
+        return response()->json([
+            'success' => true,
+            'data' => $formattedExercises,
+            'meta' => [
+                'current_page' => $exercises->currentPage(),
+                'last_page' => $exercises->lastPage(),
+                'per_page' => $exercises->perPage(),
+                'total' => $exercises->total(),
+                'from' => $exercises->firstItem(),
+                'to' => $exercises->lastItem(),
+            ],
+        ]);
     }
 
     /**

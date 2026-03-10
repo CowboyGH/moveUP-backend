@@ -5,17 +5,81 @@ namespace App\Http\Swagger\Paths\Admin;
 /**
  * @OA\Get(
  *     path="/api/admin/testing-exercises",
- *     summary="Получить список всех тестовых упражнений",
- *     description="Возвращает список всех тестовых упражнений с количеством тестов, в которых они используются",
+ *     summary="Получить список всех тестовых упражнений с фильтрацией",
+ *     description="Возвращает список всех тестовых упражнений с количеством тестов, в которых они используются. Поддерживает поиск, фильтрацию и пагинацию",
  *     operationId="getTestingExercisesList",
  *     tags={"Admin Testing Exercises"},
  *     security={{"bearerAuth":{}}},
+ *
+ *     @OA\Parameter(
+ *         name="search",
+ *         in="query",
+ *         description="Поиск по описанию упражнения",
+ *         required=false,
+ *         @OA\Schema(type="string", maxLength=100, example="отжимания")
+ *     ),
+ *     @OA\Parameter(
+ *         name="exercise_id",
+ *         in="query",
+ *         description="Фильтр по ID основного упражнения",
+ *         required=false,
+ *         @OA\Schema(type="integer", example=5)
+ *     ),
+ *     @OA\Parameter(
+ *         name="has_testings",
+ *         in="query",
+ *         description="Фильтр по наличию в тестах (true/false)",
+ *         required=false,
+ *         @OA\Schema(type="boolean", example=true)
+ *     ),
+ *     @OA\Parameter(
+ *         name="per_page",
+ *         in="query",
+ *         description="Количество элементов на странице (1-100)",
+ *         required=false,
+ *         @OA\Schema(type="integer", default=15, minimum=1, maximum=100)
+ *     ),
+ *     @OA\Parameter(
+ *         name="page",
+ *         in="query",
+ *         description="Номер страницы",
+ *         required=false,
+ *         @OA\Schema(type="integer", default=1, minimum=1)
+ *     ),
+ *     @OA\Parameter(
+ *         name="sort_by",
+ *         in="query",
+ *         description="Поле для сортировки",
+ *         required=false,
+ *         @OA\Schema(type="string", enum={"id", "exercise_id", "created_at", "updated_at"}, default="created_at")
+ *     ),
+ *     @OA\Parameter(
+ *         name="sort_dir",
+ *         in="query",
+ *         description="Направление сортировки",
+ *         required=false,
+ *         @OA\Schema(type="string", enum={"asc", "desc"}, default="desc")
+ *     ),
+ *     @OA\Parameter(
+ *         name="date_from",
+ *         in="query",
+ *         description="Начальная дата создания (Y-m-d)",
+ *         required=false,
+ *         @OA\Schema(type="string", format="date", example="2026-01-01")
+ *     ),
+ *     @OA\Parameter(
+ *         name="date_to",
+ *         in="query",
+ *         description="Конечная дата создания (Y-m-d)",
+ *         required=false,
+ *         @OA\Schema(type="string", format="date", example="2026-12-31")
+ *     ),
+ *
  *     @OA\Response(
  *         response=200,
  *         description="Успешный ответ",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="message", type="string", example="success"),
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
@@ -29,6 +93,16 @@ namespace App\Http\Swagger\Paths\Admin;
  *                     @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-20T08:20:35.000000Z"),
  *                     @OA\Property(property="testings_count", type="integer", example=2)
  *                 )
+ *             ),
+ *             @OA\Property(
+ *                 property="meta",
+ *                 type="object",
+ *                 @OA\Property(property="current_page", type="integer", example=1),
+ *                 @OA\Property(property="last_page", type="integer", example=5),
+ *                 @OA\Property(property="per_page", type="integer", example=15),
+ *                 @OA\Property(property="total", type="integer", example=75),
+ *                 @OA\Property(property="from", type="integer", example=1),
+ *                 @OA\Property(property="to", type="integer", example=15)
  *             )
  *         )
  *     ),
@@ -41,6 +115,11 @@ namespace App\Http\Swagger\Paths\Admin;
  *         response=403,
  *         description="Доступ запрещен (только для администраторов)",
  *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибка валидации параметров",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
  *     )
  * )
  */

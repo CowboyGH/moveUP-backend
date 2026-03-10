@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Workout\FilterWorkoutRequest;
 use App\Http\Requests\Admin\Workout\StoreWorkoutRequest;
 use App\Http\Requests\Admin\Workout\UpdateWorkoutRequest;
 use App\Http\Requests\Admin\Workout\UploadWorkoutImageRequest;
@@ -18,34 +19,87 @@ class WorkoutController extends Controller
     /**
      * Получить список всех тренировок
      */
-    public function index(): JsonResponse
+    public function index(FilterWorkoutRequest $request): JsonResponse
     {
-        $workouts = Workout::with(['phase', 'exercises', 'warmups'])
-            ->withCount(['userWorkouts'])
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($workout) {
-                return [
-                    'id' => $workout->id,
-                    'title' => $workout->title,
-                    'description' => $workout->description,
-                    'duration_minutes' => $workout->duration_minutes,
-                    'image' => $workout->image,
-                    'image_url' => $workout->image_url,
-                    'is_active' => $workout->is_active,
-                    'phase' => $workout->phase ? [
-                        'id' => $workout->phase->id,
-                        'name' => $workout->phase->name,
-                    ] : null,
-                    'exercises_count' => $workout->exercises->count(),
-                    'warmups_count' => $workout->warmups->count(),
-                    'user_workouts_count' => $workout->user_workouts_count,
-                    'created_at' => $workout->created_at?->toISOString(),
-                    'updated_at' => $workout->updated_at?->toISOString(),
-                ];
-            });
+        $query = Workout::with(['phase'])
+            ->withCount(['exercises', 'warmups', 'userWorkouts']);
 
-        return ApiResponse::data($workouts);
+        // Поиск по текстовым полям
+        if ($request->filled('search')) {
+            $query->search($request->search, ['title', 'description']);
+        }
+
+        // Фильтр по фазе
+        if ($request->filled('phase_id')) {
+            $query->where('phase_id', $request->phase_id);
+        }
+
+        // Фильтр по длительности
+        if ($request->filled('duration_min')) {
+            $query->where('duration_minutes', '>=', $request->duration_min);
+        }
+        if ($request->filled('duration_max')) {
+            $query->where('duration_minutes', '<=', $request->duration_max);
+        }
+
+        // Фильтр по количеству упражнений
+        if ($request->filled('exercises_count_min') || $request->filled('exercises_count_max')) {
+            // Уже есть withCount, используем having
+            if ($request->filled('exercises_count_min')) {
+                $query->having('exercises_count', '>=', $request->exercises_count_min);
+            }
+            if ($request->filled('exercises_count_max')) {
+                $query->having('exercises_count', '<=', $request->exercises_count_max);
+            }
+        }
+
+        // Фильтр по статусу активности
+        if ($request->filled('is_active')) {
+            $query->where('is_active', $request->is_active);
+        }
+
+        // Фильтр по датам
+        $query->dateFilter($request->date_from, $request->date_to);
+
+        // Сортировка
+        $query->orderBy($request->getSortBy(), $request->getSortDir());
+
+        // Пагинация
+        $workouts = $query->paginate($request->getPerPage());
+
+        $formattedWorkouts = collect($workouts->items())->map(function ($workout) {
+            return [
+                'id' => $workout->id,
+                'title' => $workout->title,
+                'description' => $workout->description,
+                'duration_minutes' => $workout->duration_minutes,
+                'image' => $workout->image,
+                'image_url' => $workout->image_url,
+                'is_active' => $workout->is_active,
+                'phase' => $workout->phase ? [
+                    'id' => $workout->phase->id,
+                    'name' => $workout->phase->name,
+                ] : null,
+                'exercises_count' => $workout->exercises_count,
+                'warmups_count' => $workout->warmups_count,
+                'user_workouts_count' => $workout->user_workouts_count,
+                'created_at' => $workout->created_at?->toISOString(),
+                'updated_at' => $workout->updated_at?->toISOString(),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $formattedWorkouts,
+            'meta' => [
+                'current_page' => $workouts->currentPage(),
+                'last_page' => $workouts->lastPage(),
+                'per_page' => $workouts->perPage(),
+                'total' => $workouts->total(),
+                'from' => $workouts->firstItem(),
+                'to' => $workouts->lastItem(),
+            ],
+        ]);
     }
 
     /**

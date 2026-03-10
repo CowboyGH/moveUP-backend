@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Category\FilterCategoryRequest;
 use App\Http\Requests\Admin\Category\StoreCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 use App\Http\Responses\ApiResponse;
@@ -13,10 +14,41 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(FilterCategoryRequest $request): JsonResponse // Добавить тип Request
     {
-        $categories = Category::withCount('testings')->get();
-        return ApiResponse::data($categories);
+        $query = Category::withCount('testings');
+
+        // Поиск по названию
+        if ($request->filled('search')) {
+            $query->search($request->search, ['name']);
+        }
+
+        // Фильтр по датам
+        $query->dateFilter($request->date_from, $request->date_to);
+
+        // Фильтр по статусу (если есть is_active)
+        if ($request->filled('is_active')) {
+            $query->status($request->is_active);
+        }
+
+        // Сортировка
+        $query->orderBy($request->getSortBy(), $request->getSortDir());
+
+        // Пагинация
+        $categories = $query->paginate($request->getPerPage());
+
+        return response()->json([
+            'success' => true,
+            'data' => $categories->items(),
+            'meta' => [
+                'current_page' => $categories->currentPage(),
+                'last_page' => $categories->lastPage(),
+                'per_page' => $categories->perPage(),
+                'total' => $categories->total(),
+                'from' => $categories->firstItem(),
+                'to' => $categories->lastItem(),
+            ],
+        ]);
     }
 
     public function store(StoreCategoryRequest $request): JsonResponse

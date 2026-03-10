@@ -17,9 +17,97 @@
                 "tags": [
                     "Admin Categories"
                 ],
-                "summary": "Получить список всех категорий тестов",
-                "description": "Возвращает список всех категорий с количеством привязанных тестов",
+                "summary": "Получить список всех категорий тестов с фильтрацией",
+                "description": "Возвращает список всех категорий с количеством привязанных тестов. Поддерживает поиск, фильтрацию и пагинацию",
                 "operationId": "getCategoriesList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Поиск по названию категории",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "maxLength": 100,
+                            "example": "Бокс"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Количество элементов на странице (1-100)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Поле для сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "created_at",
+                            "enum": [
+                                "id",
+                                "name",
+                                "created_at",
+                                "updated_at"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_dir",
+                        "in": "query",
+                        "description": "Направление сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "description": "Начальная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-01-01"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "description": "Конечная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-12-31"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Успешный ответ",
@@ -30,10 +118,6 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "success"
                                         },
                                         "data": {
                                             "type": "array",
@@ -64,6 +148,35 @@
                                                 },
                                                 "type": "object"
                                             }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -87,6 +200,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации параметров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }
@@ -601,9 +724,128 @@
                 "tags": [
                     "Admin Exercises"
                 ],
-                "summary": "Получить список всех упражнений",
-                "description": "Возвращает список всех упражнений с информацией об оборудовании и количеством тренировок",
+                "summary": "Получить список всех упражнений с фильтрацией",
+                "description": "Возвращает список всех упражнений с информацией об оборудовании и количеством тренировок. Поддерживает поиск, фильтрацию и пагинацию",
                 "operationId": "getExercisesList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Поиск по названию, описанию или группе мышц",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "maxLength": 100,
+                            "example": "жим"
+                        }
+                    },
+                    {
+                        "name": "muscle_group",
+                        "in": "query",
+                        "description": "Фильтр по группе мышц",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Грудные"
+                        }
+                    },
+                    {
+                        "name": "equipment_id",
+                        "in": "query",
+                        "description": "Фильтр по ID оборудования",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "has_workouts",
+                        "in": "query",
+                        "description": "Фильтр по наличию в тренировках (true/false)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Количество элементов на странице (1-100)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Поле для сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "created_at",
+                            "enum": [
+                                "id",
+                                "title",
+                                "muscle_group",
+                                "created_at",
+                                "updated_at"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_dir",
+                        "in": "query",
+                        "description": "Направление сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "description": "Начальная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-01-01"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "description": "Конечная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-12-31"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Успешный ответ",
@@ -615,15 +857,40 @@
                                             "type": "boolean",
                                             "example": true
                                         },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/components/schemas/Exercise"
                                             }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -647,6 +914,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации параметров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }
@@ -1262,8 +1539,147 @@
                 "tags": [
                     "Admin Subscriptions"
                 ],
-                "summary": "Получить список всех подписок",
+                "summary": "Получить список всех подписок с фильтрацией",
+                "description": "Возвращает список всех подписок. Поддерживает поиск, фильтрацию и пагинацию",
                 "operationId": "6d5828eaebedae03be7dfe2eb4f18bac",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Поиск по названию и описанию",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "maxLength": 100,
+                            "example": "premium"
+                        }
+                    },
+                    {
+                        "name": "price_min",
+                        "in": "query",
+                        "description": "Минимальная цена",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "minimum": 0,
+                            "example": 5.99
+                        }
+                    },
+                    {
+                        "name": "price_max",
+                        "in": "query",
+                        "description": "Максимальная цена",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "minimum": 0,
+                            "example": 29.99
+                        }
+                    },
+                    {
+                        "name": "duration_days",
+                        "in": "query",
+                        "description": "Длительность подписки в днях",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                30,
+                                90,
+                                180,
+                                365
+                            ],
+                            "example": 30
+                        }
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "description": "Фильтр по статусу активности",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Количество элементов на странице (1-100)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Поле для сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "created_at",
+                            "enum": [
+                                "id",
+                                "name",
+                                "price",
+                                "duration_days",
+                                "created_at",
+                                "updated_at"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_dir",
+                        "in": "query",
+                        "description": "Направление сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "description": "Начальная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-01-01"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "description": "Конечная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-12-31"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Успешный ответ",
@@ -1274,10 +1690,6 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "success"
                                         },
                                         "data": {
                                             "type": "array",
@@ -1324,6 +1736,35 @@
                                                 },
                                                 "type": "object"
                                             }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -1332,7 +1773,7 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован. Возможные причины: истекший токен, невалидный токен или сессия завершена из-за неактивности",
+                        "description": "Не авторизован",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1347,6 +1788,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации параметров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }
@@ -2038,9 +2489,151 @@
                 "tags": [
                     "Admin Testings"
                 ],
-                "summary": "Получить список всех тестов",
-                "description": "Возвращает список всех тестов с категориями, упражнениями и количеством результатов",
+                "summary": "Получить список всех тестов с фильтрацией",
+                "description": "Возвращает список всех тестов с категориями, упражнениями и количеством результатов. Поддерживает поиск, фильтрацию и пагинацию",
                 "operationId": "getTestingsList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Поиск по названию и описанию",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "maxLength": 100,
+                            "example": "диагностика"
+                        }
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "description": "Фильтр по ID категории",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "has_results",
+                        "in": "query",
+                        "description": "Фильтр по наличию результатов (true/false)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "duration_min",
+                        "in": "query",
+                        "description": "Минимальная длительность",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "duration_max",
+                        "in": "query",
+                        "description": "Максимальная длительность",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "example": 60
+                        }
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "description": "Фильтр по статусу активности",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Количество элементов на странице (1-100)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Поле для сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "created_at",
+                            "enum": [
+                                "id",
+                                "title",
+                                "duration_minutes",
+                                "is_active",
+                                "created_at",
+                                "updated_at"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_dir",
+                        "in": "query",
+                        "description": "Направление сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "description": "Начальная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-01-01"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "description": "Конечная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-12-31"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Успешный ответ",
@@ -2051,10 +2644,6 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "success"
                                         },
                                         "data": {
                                             "type": "array",
@@ -2101,112 +2690,45 @@
                                                     "categories": {
                                                         "type": "array",
                                                         "items": {
-                                                            "properties": {
-                                                                "id": {
-                                                                    "type": "integer",
-                                                                    "example": 1
-                                                                },
-                                                                "name": {
-                                                                    "type": "string",
-                                                                    "example": "Бокс и единоборства"
-                                                                },
-                                                                "created_at": {
-                                                                    "type": "string",
-                                                                    "format": "datetime",
-                                                                    "example": "2026-02-20T08:20:35.000000Z"
-                                                                },
-                                                                "updated_at": {
-                                                                    "type": "string",
-                                                                    "format": "datetime",
-                                                                    "example": "2026-02-20T08:20:35.000000Z"
-                                                                },
-                                                                "pivot": {
-                                                                    "properties": {
-                                                                        "testing_id": {
-                                                                            "type": "integer",
-                                                                            "example": 72
-                                                                        },
-                                                                        "category_id": {
-                                                                            "type": "integer",
-                                                                            "example": 1
-                                                                        },
-                                                                        "created_at": {
-                                                                            "type": "string",
-                                                                            "format": "datetime",
-                                                                            "example": "2026-02-20T08:37:48.000000Z"
-                                                                        },
-                                                                        "updated_at": {
-                                                                            "type": "string",
-                                                                            "format": "datetime",
-                                                                            "example": "2026-02-20T08:37:48.000000Z"
-                                                                        }
-                                                                    },
-                                                                    "type": "object"
-                                                                }
-                                                            },
-                                                            "type": "object"
+                                                            "$ref": "#/components/schemas/Category"
                                                         }
                                                     },
-                                                    "test_exercises": {
-                                                        "type": "array",
-                                                        "items": {
-                                                            "properties": {
-                                                                "id": {
-                                                                    "type": "integer",
-                                                                    "example": 1
-                                                                },
-                                                                "description": {
-                                                                    "type": "string",
-                                                                    "example": "Отжимания от пола - максимальное количество за 1 минуту"
-                                                                },
-                                                                "image": {
-                                                                    "type": "string",
-                                                                    "example": "/uploads/exercises/pushups.jpg"
-                                                                },
-                                                                "created_at": {
-                                                                    "type": "string",
-                                                                    "format": "datetime",
-                                                                    "example": "2026-02-20T08:20:35.000000Z"
-                                                                },
-                                                                "updated_at": {
-                                                                    "type": "string",
-                                                                    "format": "datetime",
-                                                                    "example": "2026-02-20T08:20:35.000000Z"
-                                                                },
-                                                                "pivot": {
-                                                                    "properties": {
-                                                                        "testing_id": {
-                                                                            "type": "integer",
-                                                                            "example": 72
-                                                                        },
-                                                                        "testing_exercise_id": {
-                                                                            "type": "integer",
-                                                                            "example": 1
-                                                                        },
-                                                                        "order_number": {
-                                                                            "type": "integer",
-                                                                            "example": 0
-                                                                        },
-                                                                        "created_at": {
-                                                                            "type": "string",
-                                                                            "format": "datetime",
-                                                                            "example": "2026-02-20T08:37:48.000000Z"
-                                                                        },
-                                                                        "updated_at": {
-                                                                            "type": "string",
-                                                                            "format": "datetime",
-                                                                            "example": "2026-02-20T08:37:48.000000Z"
-                                                                        }
-                                                                    },
-                                                                    "type": "object"
-                                                                }
-                                                            },
-                                                            "type": "object"
-                                                        }
+                                                    "exercises_count": {
+                                                        "type": "integer",
+                                                        "example": 5
                                                     }
                                                 },
                                                 "type": "object"
                                             }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -2230,6 +2752,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации параметров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }
@@ -3246,9 +3778,117 @@
                 "tags": [
                     "Admin Testing Exercises"
                 ],
-                "summary": "Получить список всех тестовых упражнений",
-                "description": "Возвращает список всех тестовых упражнений с количеством тестов, в которых они используются",
+                "summary": "Получить список всех тестовых упражнений с фильтрацией",
+                "description": "Возвращает список всех тестовых упражнений с количеством тестов, в которых они используются. Поддерживает поиск, фильтрацию и пагинацию",
                 "operationId": "getTestingExercisesList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Поиск по описанию упражнения",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "maxLength": 100,
+                            "example": "отжимания"
+                        }
+                    },
+                    {
+                        "name": "exercise_id",
+                        "in": "query",
+                        "description": "Фильтр по ID основного упражнения",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    },
+                    {
+                        "name": "has_testings",
+                        "in": "query",
+                        "description": "Фильтр по наличию в тестах (true/false)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Количество элементов на странице (1-100)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Поле для сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "created_at",
+                            "enum": [
+                                "id",
+                                "exercise_id",
+                                "created_at",
+                                "updated_at"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_dir",
+                        "in": "query",
+                        "description": "Направление сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "description": "Начальная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-01-01"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "description": "Конечная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-12-31"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Успешный ответ",
@@ -3259,10 +3899,6 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "success"
                                         },
                                         "data": {
                                             "type": "array",
@@ -3301,6 +3937,35 @@
                                                 },
                                                 "type": "object"
                                             }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -3324,6 +3989,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации параметров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }
@@ -3892,9 +4567,107 @@
                 "tags": [
                     "Admin Warmups"
                 ],
-                "summary": "Получить список всех разминок",
-                "description": "Возвращает список всех разминок с количеством тренировок",
+                "summary": "Получить список всех разминок с фильтрацией",
+                "description": "Возвращает список всех разминок с количеством тренировок. Поддерживает поиск, фильтрацию и пагинацию",
                 "operationId": "getWarmupsList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Поиск по названию и описанию разминки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "maxLength": 100,
+                            "example": "суставная"
+                        }
+                    },
+                    {
+                        "name": "has_workouts",
+                        "in": "query",
+                        "description": "Фильтр по наличию в тренировках (true/false)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Количество элементов на странице (1-100)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Поле для сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "created_at",
+                            "enum": [
+                                "id",
+                                "name",
+                                "created_at",
+                                "updated_at"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_dir",
+                        "in": "query",
+                        "description": "Направление сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "description": "Начальная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-01-01"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "description": "Конечная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-12-31"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Успешный ответ",
@@ -3906,15 +4679,40 @@
                                             "type": "boolean",
                                             "example": true
                                         },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/components/schemas/Warmup"
                                             }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -3938,6 +4736,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации параметров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }
@@ -4531,9 +5339,163 @@
                 "tags": [
                     "Admin Workouts"
                 ],
-                "summary": "Получить список всех тренировок",
-                "description": "Возвращает список всех тренировок с детальной информацией",
+                "summary": "Получить список всех тренировок с фильтрацией",
+                "description": "Возвращает список всех тренировок с детальной информацией. Поддерживает поиск, фильтрацию и пагинацию",
                 "operationId": "getWorkoutsList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Поиск по названию и описанию тренировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "maxLength": 100,
+                            "example": "утренняя"
+                        }
+                    },
+                    {
+                        "name": "phase_id",
+                        "in": "query",
+                        "description": "Фильтр по ID фазы",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "duration_min",
+                        "in": "query",
+                        "description": "Минимальная длительность в минутах",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "example": 20
+                        }
+                    },
+                    {
+                        "name": "duration_max",
+                        "in": "query",
+                        "description": "Максимальная длительность в минутах",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "example": 60
+                        }
+                    },
+                    {
+                        "name": "exercises_count_min",
+                        "in": "query",
+                        "description": "Минимальное количество упражнений",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "example": 3
+                        }
+                    },
+                    {
+                        "name": "exercises_count_max",
+                        "in": "query",
+                        "description": "Максимальное количество упражнений",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "description": "Фильтр по статусу активности",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Количество элементов на странице (1-100)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Поле для сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "created_at",
+                            "enum": [
+                                "id",
+                                "title",
+                                "duration_minutes",
+                                "is_active",
+                                "created_at",
+                                "updated_at"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_dir",
+                        "in": "query",
+                        "description": "Направление сортировки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "description": "Начальная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-01-01"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "description": "Конечная дата создания (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-12-31"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Успешный ответ",
@@ -4544,10 +5506,6 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "success"
                                         },
                                         "data": {
                                             "type": "array",
@@ -4622,6 +5580,35 @@
                                                 },
                                                 "type": "object"
                                             }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -4645,6 +5632,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации параметров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }
@@ -10131,6 +11128,66 @@
                 },
                 "type": "object"
             },
+            "Category": {
+                "title": "Категория теста",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Бокс и единоборства"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2026-02-20T08:20:35.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2026-02-20T08:20:35.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryWithPivot": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Category"
+                    },
+                    {
+                        "properties": {
+                            "pivot": {
+                                "properties": {
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "testing_id": {
+                                        "type": "integer",
+                                        "example": 72
+                                    },
+                                    "created_at": {
+                                        "type": "string",
+                                        "format": "datetime",
+                                        "example": "2026-02-20T08:37:48.000000Z"
+                                    },
+                                    "updated_at": {
+                                        "type": "string",
+                                        "format": "datetime",
+                                        "example": "2026-02-20T08:37:48.000000Z"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
             "SuccessResponse": {
                 "title": "Успешный ответ",
                 "properties": {
@@ -10486,6 +11543,25 @@
                         "type": "object"
                     }
                 ]
+            },
+            "PaginatedResponse": {
+                "title": "Ответ с пагинацией",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
             },
             "VerifyEmailRequest": {
                 "required": [
@@ -11371,6 +12447,36 @@
                         "type": "object"
                     }
                 ]
+            },
+            "PaginationMeta": {
+                "title": "Метаданные пагинации",
+                "properties": {
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "total": {
+                        "type": "integer",
+                        "example": 75
+                    },
+                    "from": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "to": {
+                        "type": "integer",
+                        "example": 15
+                    }
+                },
+                "type": "object"
             },
             "ForgotPasswordRequest": {
                 "required": [
@@ -12465,6 +13571,192 @@
                         "type": "object"
                     }
                 ]
+            },
+            "TestingExercise": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "/uploads/exercises/pushups.jpg"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2026-02-20T08:20:35.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2026-02-20T08:20:35.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "TestingExerciseWithPivot": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/TestingExercise"
+                    },
+                    {
+                        "properties": {
+                            "pivot": {
+                                "properties": {
+                                    "testing_id": {
+                                        "type": "integer",
+                                        "example": 72
+                                    },
+                                    "testing_exercise_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "order_number": {
+                                        "type": "integer",
+                                        "example": 0
+                                    },
+                                    "created_at": {
+                                        "type": "string",
+                                        "format": "datetime",
+                                        "example": "2026-02-20T08:37:48.000000Z"
+                                    },
+                                    "updated_at": {
+                                        "type": "string",
+                                        "format": "datetime",
+                                        "example": "2026-02-20T08:37:48.000000Z"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "Testing": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 72
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Базовая диагностика"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Тест для определения базового уровня физической подготовки"
+                    },
+                    "duration_minutes": {
+                        "type": "string",
+                        "example": "15-20 минут"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "/uploads/tests/basic-diagnostic.jpg"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2026-02-20T08:37:48.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2026-02-20T08:37:48.000000Z"
+                    },
+                    "test_results_count": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "categories": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Category"
+                        }
+                    },
+                    "exercises": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TestingExerciseWithPivot"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "TestingWithResults": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Testing"
+                    },
+                    {
+                        "properties": {
+                            "test_results": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/TestResult"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "TestResult": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "testing_id": {
+                        "type": "integer",
+                        "example": 72
+                    },
+                    "exercise_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "result_value": {
+                        "type": "integer",
+                        "example": 25
+                    },
+                    "pulse": {
+                        "type": "integer",
+                        "example": 120,
+                        "nullable": true
+                    },
+                    "test_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-02-20"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2026-02-20T08:37:48.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2026-02-20T08:37:48.000000Z"
+                    }
+                },
+                "type": "object"
             },
             "User": {
                 "title": "Пользователь",

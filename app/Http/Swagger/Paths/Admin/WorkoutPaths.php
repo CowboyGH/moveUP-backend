@@ -5,17 +5,109 @@ namespace App\Http\Swagger\Paths\Admin;
 /**
  * @OA\Get(
  *     path="/api/admin/workouts",
- *     summary="Получить список всех тренировок",
- *     description="Возвращает список всех тренировок с детальной информацией",
+ *     summary="Получить список всех тренировок с фильтрацией",
+ *     description="Возвращает список всех тренировок с детальной информацией. Поддерживает поиск, фильтрацию и пагинацию",
  *     operationId="getWorkoutsList",
  *     tags={"Admin Workouts"},
  *     security={{"bearerAuth":{}}},
+ *
+ *     @OA\Parameter(
+ *         name="search",
+ *         in="query",
+ *         description="Поиск по названию и описанию тренировки",
+ *         required=false,
+ *         @OA\Schema(type="string", maxLength=100, example="утренняя")
+ *     ),
+ *     @OA\Parameter(
+ *         name="phase_id",
+ *         in="query",
+ *         description="Фильтр по ID фазы",
+ *         required=false,
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\Parameter(
+ *         name="duration_min",
+ *         in="query",
+ *         description="Минимальная длительность в минутах",
+ *         required=false,
+ *         @OA\Schema(type="integer", minimum=1, example=20)
+ *     ),
+ *     @OA\Parameter(
+ *         name="duration_max",
+ *         in="query",
+ *         description="Максимальная длительность в минутах",
+ *         required=false,
+ *         @OA\Schema(type="integer", minimum=1, example=60)
+ *     ),
+ *     @OA\Parameter(
+ *         name="exercises_count_min",
+ *         in="query",
+ *         description="Минимальное количество упражнений",
+ *         required=false,
+ *         @OA\Schema(type="integer", minimum=0, example=3)
+ *     ),
+ *     @OA\Parameter(
+ *         name="exercises_count_max",
+ *         in="query",
+ *         description="Максимальное количество упражнений",
+ *         required=false,
+ *         @OA\Schema(type="integer", minimum=0, example=10)
+ *     ),
+ *     @OA\Parameter(
+ *         name="is_active",
+ *         in="query",
+ *         description="Фильтр по статусу активности",
+ *         required=false,
+ *         @OA\Schema(type="boolean", example=true)
+ *     ),
+ *     @OA\Parameter(
+ *         name="per_page",
+ *         in="query",
+ *         description="Количество элементов на странице (1-100)",
+ *         required=false,
+ *         @OA\Schema(type="integer", default=15, minimum=1, maximum=100)
+ *     ),
+ *     @OA\Parameter(
+ *         name="page",
+ *         in="query",
+ *         description="Номер страницы",
+ *         required=false,
+ *         @OA\Schema(type="integer", default=1, minimum=1)
+ *     ),
+ *     @OA\Parameter(
+ *         name="sort_by",
+ *         in="query",
+ *         description="Поле для сортировки",
+ *         required=false,
+ *         @OA\Schema(type="string", enum={"id", "title", "duration_minutes", "is_active", "created_at", "updated_at"}, default="created_at")
+ *     ),
+ *     @OA\Parameter(
+ *         name="sort_dir",
+ *         in="query",
+ *         description="Направление сортировки",
+ *         required=false,
+ *         @OA\Schema(type="string", enum={"asc", "desc"}, default="desc")
+ *     ),
+ *     @OA\Parameter(
+ *         name="date_from",
+ *         in="query",
+ *         description="Начальная дата создания (Y-m-d)",
+ *         required=false,
+ *         @OA\Schema(type="string", format="date", example="2026-01-01")
+ *     ),
+ *     @OA\Parameter(
+ *         name="date_to",
+ *         in="query",
+ *         description="Конечная дата создания (Y-m-d)",
+ *         required=false,
+ *         @OA\Schema(type="string", format="date", example="2026-12-31")
+ *     ),
+ *
  *     @OA\Response(
  *         response=200,
  *         description="Успешный ответ",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="message", type="string", example="success"),
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
@@ -40,6 +132,16 @@ namespace App\Http\Swagger\Paths\Admin;
  *                     @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
  *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-01-01T12:00:00Z")
  *                 )
+ *             ),
+ *             @OA\Property(
+ *                 property="meta",
+ *                 type="object",
+ *                 @OA\Property(property="current_page", type="integer", example=1),
+ *                 @OA\Property(property="last_page", type="integer", example=5),
+ *                 @OA\Property(property="per_page", type="integer", example=15),
+ *                 @OA\Property(property="total", type="integer", example=75),
+ *                 @OA\Property(property="from", type="integer", example=1),
+ *                 @OA\Property(property="to", type="integer", example=15)
  *             )
  *         )
  *     ),
@@ -52,6 +154,11 @@ namespace App\Http\Swagger\Paths\Admin;
  *         response=403,
  *         description="Доступ запрещен (только для администраторов)",
  *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибка валидации параметров",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
  *     )
  * )
  */

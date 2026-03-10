@@ -273,3 +273,18 @@ class InvalidResetCodeResponseSchema {}
  * )
  */
 class AvatarNotFoundResponseSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="PaginatedResponse",
+ *     type="object",
+ *     title="Ответ с пагинацией",
+ *     @OA\Property(property="success", type="boolean", example=true),
+ *     @OA\Property(property="data", type="array", @OA\Items(type="object")),
+ *     @OA\Property(
+ *         property="meta",
+ *         ref="#/components/schemas/PaginationMeta"
+ *     )
+ * )
+ */
+class PaginatedResponse {}

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Warmup\FilterWarmupRequest;
 use App\Http\Requests\Admin\Warmup\StoreWarmupRequest;
 use App\Http\Requests\Admin\Warmup\UpdateWarmupRequest;
 use App\Http\Requests\Admin\Warmup\UploadWarmupImageRequest;
@@ -17,11 +18,34 @@ class WarmupController extends Controller
     /**
      * Получить список всех разминок
      */
-    public function index(): JsonResponse
+    public function index(FilterWarmupRequest $request): JsonResponse
     {
-        $warmups = Warmup::withCount('workouts')->get();
+        $query = Warmup::withCount('workouts');
 
-        $formattedWarmups = $warmups->map(function ($warmup) {
+        // Поиск по названию и описанию
+        if ($request->filled('search')) {
+            $query->search($request->search, ['name', 'description']);
+        }
+
+        // Фильтр по наличию в тренировках
+        if ($request->filled('has_workouts')) {
+            if ($request->has_workouts) {
+                $query->has('workouts');
+            } else {
+                $query->doesntHave('workouts');
+            }
+        }
+
+        // Фильтр по датам
+        $query->dateFilter($request->date_from, $request->date_to);
+
+        // Сортировка
+        $query->orderBy($request->getSortBy(), $request->getSortDir());
+
+        // Пагинация
+        $warmups = $query->paginate($request->getPerPage());
+
+        $formattedWarmups = collect($warmups->items())->map(function ($warmup) {
             return [
                 'id' => $warmup->id,
                 'name' => $warmup->name,
@@ -34,7 +58,18 @@ class WarmupController extends Controller
             ];
         });
 
-        return ApiResponse::data($formattedWarmups);
+        return response()->json([
+            'success' => true,
+            'data' => $formattedWarmups,
+            'meta' => [
+                'current_page' => $warmups->currentPage(),
+                'last_page' => $warmups->lastPage(),
+                'per_page' => $warmups->perPage(),
+                'total' => $warmups->total(),
+                'from' => $warmups->firstItem(),
+                'to' => $warmups->lastItem(),
+            ],
+        ]);
     }
 
     /**

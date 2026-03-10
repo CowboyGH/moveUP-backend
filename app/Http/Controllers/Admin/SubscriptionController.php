@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Subscription\FilterSubscriptionRequest;
 use App\Http\Requests\Admin\Subscription\StoreSubscriptionRequest;
 use App\Http\Requests\Admin\Subscription\UpdateSubscriptionImageRequest;
 use App\Http\Requests\Admin\Subscription\UpdateSubscriptionRequest;
@@ -14,11 +15,68 @@ use Illuminate\Support\Facades\Storage;
 
 class SubscriptionController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(FilterSubscriptionRequest $request): JsonResponse
     {
-        $subscriptions = Subscription::all();
+        $query = Subscription::query();
 
-        return ApiResponse::data($subscriptions);
+        // Поиск по названию и описанию
+        if ($request->filled('search')) {
+            $query->search($request->search, ['name', 'description']);
+        }
+
+        // Фильтр по цене
+        if ($request->filled('price_min')) {
+            $query->where('price', '>=', $request->price_min);
+        }
+        if ($request->filled('price_max')) {
+            $query->where('price', '<=', $request->price_max);
+        }
+
+        // Фильтр по длительности
+        if ($request->filled('duration_days')) {
+            $query->where('duration_days', $request->duration_days);
+        }
+
+        // Фильтр по статусу
+        if ($request->filled('is_active')) {
+            $query->where('is_active', $request->is_active);
+        }
+
+        // Фильтр по датам
+        $query->dateFilter($request->date_from, $request->date_to);
+
+        // Сортировка
+        $query->orderBy($request->getSortBy(), $request->getSortDir());
+
+        // Пагинация
+        $subscriptions = $query->paginate($request->getPerPage());
+
+        $formattedSubscriptions = collect($subscriptions->items())->map(function ($subscription) {
+            return [
+                'id' => $subscription->id,
+                'name' => $subscription->name,
+                'description' => $subscription->description,
+                'image' => $subscription->image,
+                'price' => number_format($subscription->price, 2, '.', ''),
+                'duration_days' => $subscription->duration_days,
+                'is_active' => $subscription->is_active,
+                'created_at' => $subscription->created_at?->toISOString(),
+                'updated_at' => $subscription->updated_at?->toISOString(),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $formattedSubscriptions,
+            'meta' => [
+                'current_page' => $subscriptions->currentPage(),
+                'last_page' => $subscriptions->lastPage(),
+                'per_page' => $subscriptions->perPage(),
+                'total' => $subscriptions->total(),
+                'from' => $subscriptions->firstItem(),
+                'to' => $subscriptions->lastItem(),
+            ],
+        ]);
     }
 
     public function store(StoreSubscriptionRequest $request): JsonResponse
