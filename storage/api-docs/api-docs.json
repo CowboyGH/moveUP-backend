@@ -119,6 +119,10 @@
                                             "type": "boolean",
                                             "example": true
                                         },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
@@ -857,6 +861,10 @@
                                             "type": "boolean",
                                             "example": true
                                         },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
@@ -1401,7 +1409,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ImageNotFoundResponse"
+                                    "$ref": "#/components/schemas/NotFoundResponse"
                                 }
                             }
                         }
@@ -1690,6 +1698,10 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
                                         },
                                         "data": {
                                             "type": "array",
@@ -2322,7 +2334,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                    "$ref": "#/components/schemas/ConflictResponse"
                                 }
                             }
                         }
@@ -2644,6 +2656,10 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
                                         },
                                         "data": {
                                             "type": "array",
@@ -3900,6 +3916,10 @@
                                             "type": "boolean",
                                             "example": true
                                         },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
@@ -4679,6 +4699,10 @@
                                             "type": "boolean",
                                             "example": true
                                         },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
@@ -5201,7 +5225,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ImageNotFoundResponse"
+                                    "$ref": "#/components/schemas/NotFoundResponse"
                                 }
                             }
                         }
@@ -5506,6 +5530,10 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
                                         },
                                         "data": {
                                             "type": "array",
@@ -6091,7 +6119,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ImageNotFoundResponse"
+                                    "$ref": "#/components/schemas/NotFoundResponse"
                                 }
                             }
                         }
@@ -8657,23 +8685,37 @@
                                                     },
                                                     "name": {
                                                         "type": "string",
-                                                        "example": "1 month"
+                                                        "example": "Premium Subscription"
                                                     },
                                                     "description": {
                                                         "type": "string",
-                                                        "example": "Full access for 1 month"
+                                                        "example": "Full access to all premium features"
                                                     },
                                                     "image": {
                                                         "type": "string",
-                                                        "example": "http://localhost/storage/subscriptions/abc.jpg"
+                                                        "example": "http://localhost:8000/images/default-subscription.jpg"
                                                     },
                                                     "price": {
                                                         "type": "string",
-                                                        "example": "9.99"
+                                                        "example": "99.99"
                                                     },
                                                     "duration_days": {
-                                                        "type": "integer",
+                                                        "type": "string",
                                                         "example": 30
+                                                    },
+                                                    "is_active": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-03-11T10:19:22.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-03-11T10:19:22.000000Z"
                                                     }
                                                 },
                                                 "type": "object"
@@ -8713,7 +8755,7 @@
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "example": 1
+                            "example": 5
                         }
                     }
                 ],
@@ -8736,23 +8778,23 @@
                                             "properties": {
                                                 "id": {
                                                     "type": "integer",
-                                                    "example": 1
+                                                    "example": 5
                                                 },
                                                 "name": {
                                                     "type": "string",
-                                                    "example": "1 month"
+                                                    "example": "Premium Subscription"
                                                 },
                                                 "description": {
                                                     "type": "string",
-                                                    "example": "Full access for 1 month"
+                                                    "example": "Full access to all premium features"
                                                 },
                                                 "image": {
                                                     "type": "string",
-                                                    "example": "http://localhost/storage/subscriptions/abc.jpg"
+                                                    "example": "http://localhost:8000/images/default-subscription.jpg"
                                                 },
                                                 "price": {
                                                     "type": "string",
-                                                    "example": "9.99"
+                                                    "example": "99.99"
                                                 },
                                                 "duration_days": {
                                                     "type": "integer",
@@ -8765,12 +8807,12 @@
                                                 "created_at": {
                                                     "type": "string",
                                                     "format": "date-time",
-                                                    "example": "2024-01-01T12:00:00Z"
+                                                    "example": "2026-03-11T10:19:22.000000Z"
                                                 },
                                                 "updated_at": {
                                                     "type": "string",
                                                     "format": "date-time",
-                                                    "example": "2024-01-01T12:00:00Z"
+                                                    "example": "2026-03-11T10:19:22.000000Z"
                                                 }
                                             },
                                             "type": "object"

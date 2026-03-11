@@ -93,6 +93,7 @@ namespace App\Http\Swagger\Paths\Admin;
  *         description="Успешный ответ",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="success"),
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
@@ -419,7 +420,7 @@ class SubscriptionUpdateImage {}
  *     @OA\Response(
  *         response=422,
  *         description="Нельзя удалить используемую подписку",
- *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/ConflictResponse")
  *     )
  * )
  */

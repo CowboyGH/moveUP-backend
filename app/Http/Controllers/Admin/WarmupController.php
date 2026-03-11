@@ -60,6 +60,7 @@ class WarmupController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'success',
             'data' => $formattedWarmups,
             'meta' => [
                 'current_page' => $warmups->currentPage(),
@@ -151,7 +152,7 @@ class WarmupController extends Controller
             'updated_at' => $warmup->updated_at?->toISOString(),
         ];
 
-        return ApiResponse::data($data);
+        return ApiResponse::success('success', $data);
     }
 
     /**
@@ -323,6 +324,7 @@ class WarmupController extends Controller
             ]);
         }
 
+        // Убран 'success' => false
         return response()->json([
             'code' => ErrorResponse::NOT_FOUND,
             'message' => 'Изображение не найдено'

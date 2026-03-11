@@ -9,9 +9,7 @@ use App\Http\Requests\Admin\Testing\UpdateTestingRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\Testing;
-use App\Models\TestingExercise;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TestingController extends Controller
@@ -82,6 +80,7 @@ class TestingController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'success', // Добавлено поле message
             'data' => $formattedTestings,
             'meta' => [
                 'current_page' => $testings->currentPage(),
@@ -139,7 +138,8 @@ class TestingController extends Controller
                 404
             );
         }
-        return ApiResponse::data($testing);
+        // Используем success с сообщением вместо data
+        return ApiResponse::success('success', $testing);
     }
 
     public function update(UpdateTestingRequest $request, int $id): JsonResponse

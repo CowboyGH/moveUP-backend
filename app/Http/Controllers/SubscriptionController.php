@@ -24,7 +24,7 @@ class SubscriptionController extends Controller
                 ];
             });
 
-        return ApiResponse::data($subscriptions);
+        return ApiResponse::success('success', $subscriptions);
     }
 
     public function show(int $id): JsonResponse
@@ -41,7 +41,7 @@ class SubscriptionController extends Controller
             );
         }
 
-        return ApiResponse::data($subscription);
+        return ApiResponse::success('success', $subscription);
     }
 
     public function mySubscriptions(): JsonResponse
@@ -80,7 +80,7 @@ class SubscriptionController extends Controller
             'history' => $formattedHistory,
         ];
 
-        return ApiResponse::data($data);
+        return ApiResponse::success('success', $data);
     }
 
     private function getSubscriptionStatus(UserSubscription $subscription): string

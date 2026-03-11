@@ -10,11 +10,10 @@ use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index(FilterCategoryRequest $request): JsonResponse // Добавить тип Request
+    public function index(FilterCategoryRequest $request): JsonResponse
     {
         $query = Category::withCount('testings');
 
@@ -39,6 +38,7 @@ class CategoryController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'success',
             'data' => $categories->items(),
             'meta' => [
                 'current_page' => $categories->currentPage(),
@@ -61,7 +61,7 @@ class CategoryController extends Controller
             'updated_at' => $category->updated_at,
             'testings_count' => 0,
         ];
-        return ApiResponse::success('Категория успешно создана',$data, 201);
+        return ApiResponse::success('Категория успешно создана', $data, 201);
     }
 
     public function show(int $id): JsonResponse
@@ -75,8 +75,10 @@ class CategoryController extends Controller
             );
         }
         $category->loadCount('testings');
-        return ApiResponse::data($category);
+
+        return ApiResponse::success('success', $category);
     }
+
     public function update(UpdateCategoryRequest $request, int $id): JsonResponse
     {
         $category = Category::find($id);
@@ -88,8 +90,9 @@ class CategoryController extends Controller
             );
         }
         $category->update($request->validated());
-        return ApiResponse::success('Категория успешно обновлена',$category);
+        return ApiResponse::success('Категория успешно обновлена', $category);
     }
+
     public function destroy(int $id): JsonResponse
     {
         $category = Category::find($id);

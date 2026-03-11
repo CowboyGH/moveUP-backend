@@ -18,11 +18,14 @@ namespace App\Http\Swagger\Paths;
  *                 type="array",
  *                 @OA\Items(
  *                     @OA\Property(property="id", type="integer", example=1),
- *                     @OA\Property(property="name", type="string", example="1 month"),
- *                     @OA\Property(property="description", type="string", example="Full access for 1 month"),
- *                     @OA\Property(property="image", type="string", example="http://localhost/storage/subscriptions/abc.jpg"),
- *                     @OA\Property(property="price", type="string", example="9.99"),
- *                     @OA\Property(property="duration_days", type="integer", example=30)
+ *                     @OA\Property(property="name", type="string", example="Premium Subscription"),
+ *                     @OA\Property(property="description", type="string", example="Full access to all premium features"),
+ *                     @OA\Property(property="image", type="string", example="http://localhost:8000/images/default-subscription.jpg"),
+ *                     @OA\Property(property="price", type="string", example="99.99"),
+ *                     @OA\Property(property="duration_days", type="string", example=30),
+ *                     @OA\Property(property="is_active", type="boolean", example=true),
+ *                     @OA\Property(property="created_at", type="string", format="date-time", example="2026-03-11T10:19:22.000000Z"),
+ *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2026-03-11T10:19:22.000000Z")
  *                 )
  *             )
  *         )
@@ -46,7 +49,7 @@ class SubscriptionPaths {}
  *         in="path",
  *         required=true,
  *         description="ID подписки",
- *         @OA\Schema(type="integer", example=1)
+ *         @OA\Schema(type="integer", example=5)
  *     ),
  *     @OA\Response(
  *         response=200,
@@ -56,15 +59,15 @@ class SubscriptionPaths {}
  *             @OA\Property(property="message", type="string", example="success"),
  *             @OA\Property(
  *                 property="data",
- *                 @OA\Property(property="id", type="integer", example=1),
- *                 @OA\Property(property="name", type="string", example="1 month"),
- *                 @OA\Property(property="description", type="string", example="Full access for 1 month"),
- *                 @OA\Property(property="image", type="string", example="http://localhost/storage/subscriptions/abc.jpg"),
- *                 @OA\Property(property="price", type="string", example="9.99"),
+ *                 @OA\Property(property="id", type="integer", example=5),
+ *                 @OA\Property(property="name", type="string", example="Premium Subscription"),
+ *                 @OA\Property(property="description", type="string", example="Full access to all premium features"),
+ *                 @OA\Property(property="image", type="string", example="http://localhost:8000/images/default-subscription.jpg"),
+ *                 @OA\Property(property="price", type="string", example="99.99"),
  *                 @OA\Property(property="duration_days", type="integer", example=30),
  *                 @OA\Property(property="is_active", type="boolean", example=true),
- *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
- *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-01-01T12:00:00Z")
+ *                 @OA\Property(property="created_at", type="string", format="date-time", example="2026-03-11T10:19:22.000000Z"),
+ *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2026-03-11T10:19:22.000000Z")
  *             )
  *         )
  *     ),

@@ -87,6 +87,7 @@ namespace App\Http\Swagger\Paths\Admin;
  *         description="Успешный ответ",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="success"),
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
@@ -447,7 +448,7 @@ class ExerciseUploadImagePaths {}
  *     @OA\Response(
  *         response=404,
  *         description="Изображение не найдено",
- *         @OA\JsonContent(ref="#/components/schemas/ImageNotFoundResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
  *     )
  * )
  */

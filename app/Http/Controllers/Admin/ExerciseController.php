@@ -75,6 +75,7 @@ class ExerciseController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'success',
             'data' => $formattedExercises,
             'meta' => [
                 'current_page' => $exercises->currentPage(),
@@ -179,7 +180,7 @@ class ExerciseController extends Controller
             'updated_at' => $exercise->updated_at?->toISOString(),
         ];
 
-        return ApiResponse::data($data);
+        return ApiResponse::success('success', $data);
     }
 
     /**
@@ -365,6 +366,7 @@ class ExerciseController extends Controller
             ]);
         }
 
+        // Убран 'success' => false
         return response()->json([
             'code' => ErrorResponse::NOT_FOUND,
             'message' => 'Изображение не найдено'

@@ -67,6 +67,7 @@ class SubscriptionController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'success', // Добавлено поле message
             'data' => $formattedSubscriptions,
             'meta' => [
                 'current_page' => $subscriptions->currentPage(),
@@ -115,7 +116,8 @@ class SubscriptionController extends Controller
             );
         }
 
-        return ApiResponse::data($subscription);
+        // Используем success с сообщением вместо data
+        return ApiResponse::success('success', $subscription);
     }
 
     public function update(UpdateSubscriptionRequest $request, int $id): JsonResponse
@@ -133,6 +135,7 @@ class SubscriptionController extends Controller
 
         return ApiResponse::success('Подписка успешно обновлена', $subscription);
     }
+
     public function updateImage(UpdateSubscriptionImageRequest $request, int $id): JsonResponse
     {
         $subscription = Subscription::find($id);

@@ -10,7 +10,6 @@ use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\TestingExercise;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class TestingExerciseController extends Controller
 {
@@ -65,6 +64,7 @@ class TestingExerciseController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'success', // Добавлено поле message
             'data' => $formattedExercises,
             'meta' => [
                 'current_page' => $exercises->currentPage(),
@@ -76,6 +76,7 @@ class TestingExerciseController extends Controller
             ],
         ]);
     }
+
     public function store(StoreTestingExerciseRequest $request): JsonResponse
     {
         $exercise = TestingExercise::create([
@@ -106,8 +107,10 @@ class TestingExerciseController extends Controller
                 404
             );
         }
-        return ApiResponse::data($exercise);
+        // Используем success с сообщением вместо data
+        return ApiResponse::success('success', $exercise);
     }
+
     public function update(UpdateTestingExerciseRequest $request, int $id): JsonResponse
     {
         $exercise = TestingExercise::find($id);

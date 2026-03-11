@@ -90,6 +90,7 @@ class WorkoutController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'success',
             'data' => $formattedWorkouts,
             'meta' => [
                 'current_page' => $workouts->currentPage(),
@@ -164,7 +165,7 @@ class WorkoutController extends Controller
             );
         }
 
-        return ApiResponse::data($this->formatWorkout($workout));
+        return ApiResponse::success('success', $this->formatWorkout($workout));
     }
 
     /**
@@ -428,6 +429,7 @@ class WorkoutController extends Controller
             ]);
         }
 
+        // Убран 'success' => false
         return response()->json([
             'code' => ErrorResponse::NOT_FOUND,
             'message' => 'Изображение не найдено'
