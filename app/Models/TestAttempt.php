@@ -12,6 +12,8 @@ class TestAttempt extends Model
 {
     use HasFactory;
 
+    protected $table = 'test_attempts';
+
     protected $fillable = [
         'testing_id',
         'started_at',
