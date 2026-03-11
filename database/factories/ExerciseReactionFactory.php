@@ -5,18 +5,11 @@ namespace Database\Factories;
 use App\Models\User;
 use App\Models\Exercise;
 use App\Models\UserWorkout;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ExerciseReaction>
- */
 class ExerciseReactionFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
@@ -28,9 +21,6 @@ class ExerciseReactionFactory extends Factory
         ];
     }
 
-    /**
-     * Состояние для реакции good
-     */
     public function good(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -38,9 +28,6 @@ class ExerciseReactionFactory extends Factory
         ]);
     }
 
-    /**
-     * Состояние для реакции normal
-     */
     public function normal(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -48,9 +35,6 @@ class ExerciseReactionFactory extends Factory
         ]);
     }
 
-    /**
-     * Состояние для реакции bad
-     */
     public function bad(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -58,9 +42,6 @@ class ExerciseReactionFactory extends Factory
         ]);
     }
 
-    /**
-     * Указать конкретную дату реакции
-     */
     public function onDate($date): static
     {
         return $this->state(fn (array $attributes) => [

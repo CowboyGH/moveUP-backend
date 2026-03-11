@@ -66,9 +66,6 @@ class PhaseFactory extends Factory
         ]);
     }
 
-    /**
-     * Создать фазу с определенным порядковым номером
-     */
     public function withOrder(int $order): static
     {
         return $this->state([

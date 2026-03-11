@@ -5,17 +5,16 @@ namespace Database\Factories;
 use App\Models\User;
 use App\Models\TestAttempt;
 use App\Models\TestingTestExercise;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TestResultFactory extends Factory
 {
     public function definition(): array
     {
-        // Логика выбора пользователя (можно упростить, если будем передавать user_id извне)
         $user = User::whereHas('role', fn($q) => $q->where('name', 'user'))->inRandomOrder()->first()
             ?? User::factory()->user()->create();
 
-        // Берём случайную связку тест-упражнение
         $testingTestExercise = TestingTestExercise::inRandomOrder()->first()
             ?? TestingTestExercise::factory()->create();
 
@@ -23,7 +22,7 @@ class TestResultFactory extends Factory
             'user_id' => $user->id,
             'testing_id' => $testingTestExercise->testing_id,
             'testing_exercise_id' => $testingTestExercise->testing_exercise_id,
-            'test_attempt_id' => TestAttempt::factory(), // будет переопределён в сидере
+            'test_attempt_id' => TestAttempt::factory(),
             'result_value' => fake()->numberBetween(1, 4),
             'test_date' => fake()->dateTimeBetween('-30 days', 'now'),
         ];

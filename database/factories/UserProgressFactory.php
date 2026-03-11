@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Phase;
 use App\Models\User;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserProgressFactory extends Factory

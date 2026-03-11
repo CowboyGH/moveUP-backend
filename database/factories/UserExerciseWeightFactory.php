@@ -4,21 +4,14 @@ namespace Database\Factories;
 
 use App\Models\User;
 use App\Models\Exercise;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserExerciseWeight>
- */
 class UserExerciseWeightFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
-        $weight = $this->faker->randomFloat(1, 5, 200); // вес от 5 до 200 кг с одним знаком
+        $weight = $this->faker->randomFloat(1, 5, 200);
 
         return [
             'user_id'           => User::factory(),
@@ -28,9 +21,6 @@ class UserExerciseWeightFactory extends Factory
         ];
     }
 
-    /**
-     * Указать конкретный вес
-     */
     public function withWeight(float $weight): static
     {
         return $this->state(fn (array $attributes) => [
@@ -38,9 +28,6 @@ class UserExerciseWeightFactory extends Factory
         ]);
     }
 
-    /**
-     * Указать коэффициент корректировки
-     */
     public function withAdjustmentFactor(float $factor): static
     {
         return $this->state(fn (array $attributes) => [

@@ -4,11 +4,9 @@ namespace Database\Factories;
 
 use App\Models\UserWorkout;
 use App\Models\Exercise;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ExercisePerformance>
- */
 class ExercisePerformanceFactory extends Factory
 {
     /**
@@ -18,12 +16,10 @@ class ExercisePerformanceFactory extends Factory
      */
     public function definition(): array
     {
-        // Генерируем плановые показатели
         $setsPlanned = $this->faker->numberBetween(3, 5);
         $repsPlanned = $this->faker->numberBetween(8, 15);
-        $weightPlanned = $this->faker->randomFloat(1, 20, 150); // вес с одним знаком после запятой
+        $weightPlanned = $this->faker->randomFloat(1, 20, 150);
 
-        // Фактическое выполнение может немного отличаться
         $setsCompleted = $this->faker->optional(0.9, $setsPlanned)->numberBetween($setsPlanned - 1, $setsPlanned);
         $repsCompleted = $this->faker->optional(0.9, $repsPlanned)->numberBetween($repsPlanned - 3, $repsPlanned + 2);
         $weightUsed = $this->faker->optional(0.8, $weightPlanned)->randomFloat(1, $weightPlanned * 0.9, $weightPlanned * 1.1);
@@ -42,9 +38,6 @@ class ExercisePerformanceFactory extends Factory
         ];
     }
 
-    /**
-     * Состояние для отрицательной реакции
-     */
     public function badReaction(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -52,9 +45,6 @@ class ExercisePerformanceFactory extends Factory
         ]);
     }
 
-    /**
-     * Состояние для нормальной реакции
-     */
     public function normalReaction(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -62,9 +52,6 @@ class ExercisePerformanceFactory extends Factory
         ]);
     }
 
-    /**
-     * Состояние для хорошей реакции
-     */
     public function goodReaction(): static
     {
         return $this->state(fn (array $attributes) => [

@@ -6,6 +6,7 @@ use App\Models\Equipment;
 use App\Models\Goal;
 use App\Models\Level;
 use App\Models\User;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserParameterFactory extends Factory
@@ -24,9 +25,14 @@ class UserParameterFactory extends Factory
 
         $age = fake()->numberBetween(18, 60);
 
-        $levels = ['Начинающий', 'Средний', 'Продвинутый'];
-        $goals = ['Рост силовых показателей', 'Рост мышечной массы', 'Жиросжигание', 'Общее укрепление организма',];
-        $equipmentTypes = ['Гантели', 'Штанга', 'Тренажеры', 'Собственный вес', 'Смешанное'];
+        $levels = ['Начинающий', 'Опытный', 'Продвинутый'];
+        $goals = [
+            'Рост силовых показателей',
+            'Рост мышечной массы',
+            'Жиросжигание',
+            'Общее укрепление организма'
+        ];
+        $equipmentTypes = ['Зал', 'Смешанное'];
 
         return [
             'user_id' => User::factory(),
@@ -72,8 +78,8 @@ class UserParameterFactory extends Factory
     public function intermediate(): static
     {
         return $this->state(fn (array $attributes) => [
-            'level_id' => Level::where('name', 'Средний')->first()->id
-                ?? Level::factory()->create(['name' => 'Средний'])->id,
+            'level_id' => Level::where('name', 'Опытный')->first()->id
+                ?? Level::factory()->create(['name' => 'Опытный'])->id,
         ]);
     }
 
@@ -88,24 +94,24 @@ class UserParameterFactory extends Factory
     public function weightLoss(): static
     {
         return $this->state(fn (array $attributes) => [
-            'goal_id' => Goal::where('name', 'Похудение')->first()->id
-                ?? Goal::factory()->create(['name' => 'Похудение'])->id,
+            'goal_id' => Goal::where('name', 'Жиросжигание')->first()->id
+                ?? Goal::factory()->create(['name' => 'Жиросжигание'])->id,
         ]);
     }
 
     public function strength(): static
     {
         return $this->state(fn (array $attributes) => [
-            'goal_id' => Goal::where('name', 'Сила')->first()->id
-                ?? Goal::factory()->create(['name' => 'Сила'])->id,
+            'goal_id' => Goal::where('name', 'Рост силовых показателей')->first()->id
+                ?? Goal::factory()->create(['name' => 'Рост силовых показателей'])->id,
         ]);
     }
 
     public function massGain(): static
     {
         return $this->state(fn (array $attributes) => [
-            'goal_id' => Goal::where('name', 'Масса')->first()->id
-                ?? Goal::factory()->create(['name' => 'Масса'])->id,
+            'goal_id' => Goal::where('name', 'Рост мышечной массы')->first()->id
+                ?? Goal::factory()->create(['name' => 'Рост мышечной массы'])->id,
         ]);
     }
 }

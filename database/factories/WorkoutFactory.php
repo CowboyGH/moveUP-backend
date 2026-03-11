@@ -3,18 +3,11 @@
 namespace Database\Factories;
 
 use App\Models\Phase;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Workout>
- */
 class WorkoutFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $phase = Phase::inRandomOrder()->first() ?? Phase::factory()->create();

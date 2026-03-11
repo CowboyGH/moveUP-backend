@@ -7,16 +7,8 @@ use App\Models\Workout;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserWorkout>
- */
 class UserWorkoutFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $startedAt = fake()->dateTimeBetween('-30 days', 'now');

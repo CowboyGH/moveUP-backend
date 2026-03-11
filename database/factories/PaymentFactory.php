@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\User;
 use App\Models\Subscription;
 use App\Models\SavedCard;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PaymentFactory extends Factory

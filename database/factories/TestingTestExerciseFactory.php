@@ -5,21 +5,15 @@ namespace Database\Factories;
 use App\Models\Testing;
 use App\Models\TestingExercise;
 use App\Models\TestingTestExercise;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TestingTestExerciseFactory extends Factory
 {
-    /**
-     * Хранит все использованные комбинации (testing_id => [exercise_id => true]).
-     * Инициализируется существующими записями из БД и пополняется новыми.
-     */
     protected static array $usedCombinations = [];
 
     protected static bool $initialized = false;
 
-    /**
-     * Загружает существующие связи из таблицы в статическое свойство.
-     */
     protected static function initializeUsedCombinations(): void
     {
         if (self::$initialized) {
@@ -34,9 +28,6 @@ class TestingTestExerciseFactory extends Factory
         self::$initialized = true;
     }
 
-    /**
-     * Определение данных по умолчанию для фабрики.
-     */
     public function definition(): array
     {
         self::initializeUsedCombinations();

@@ -4,18 +4,11 @@ namespace Database\Factories;
 
 use App\Models\Subscription;
 use App\Models\User;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserSubscription>
- */
 class UserSubscriptionFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $subscription = Subscription::inRandomOrder()->first();
@@ -69,7 +62,7 @@ class UserSubscriptionFactory extends Factory
     public function withOneMonth(): static
     {
         return $this->state(function (array $attributes) {
-            $subscription = Subscription::where('name', '1 month')->first()
+            $subscription = Subscription::where('name', '1 месяц')->first()
                 ?? Subscription::factory()->basicOneMonth()->create();
 
             return [
@@ -81,7 +74,7 @@ class UserSubscriptionFactory extends Factory
     public function withThreeMonths(): static
     {
         return $this->state(function (array $attributes) {
-            $subscription = Subscription::where('name', '3 month')->first()
+            $subscription = Subscription::where('name', '3 месяца')->first()
                 ?? Subscription::factory()->proThreeMonths()->create();
 
             return [
@@ -93,7 +86,7 @@ class UserSubscriptionFactory extends Factory
     public function withSixMonths(): static
     {
         return $this->state(function (array $attributes) {
-            $subscription = Subscription::where('name', '6 month')->first()
+            $subscription = Subscription::where('name', '6 месяцев')->first()
                 ?? Subscription::factory()->premiumSixMonths()->create();
 
             return [
@@ -105,7 +98,7 @@ class UserSubscriptionFactory extends Factory
     public function withYearly(): static
     {
         return $this->state(function (array $attributes) {
-            $subscription = Subscription::where('name', '12 month')->first()
+            $subscription = Subscription::where('name', '12 месяцев')->first()
                 ?? Subscription::factory()->ultimateYearly()->create();
 
             return [
@@ -151,7 +144,7 @@ class UserSubscriptionFactory extends Factory
     public function longTerm(): static
     {
         return $this->state(function (array $attributes) {
-            $subscription = Subscription::where('name', '12 month')->first()
+            $subscription = Subscription::where('name', '12 месяцев')->first()
                 ?? Subscription::factory()->ultimateYearly()->create();
 
             $startDate = fake()->dateTimeBetween('-6 months', 'now');

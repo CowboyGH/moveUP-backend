@@ -3,18 +3,11 @@
 namespace Database\Factories;
 
 use App\Models\Equipment;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Exercise>
- */
 class ExerciseFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $muscleGroups = [
@@ -25,7 +18,7 @@ class ExerciseFactory extends Factory
         return [
             'equipment_id' => Equipment::inRandomOrder()->first()->id
                 ?? Equipment::factory()->create()->id,
-            'title' => fake()->unique()->words(3, true), // Вернул unique(), но добавил обработку
+            'title' => fake()->unique()->words(3, true),
             'description' => fake()->paragraph(3),
             'image' => 'exercises/exercise-' . fake()->numberBetween(1, 20) . '.jpg',
             'muscle_group' => fake()->randomElement($muscleGroups),
