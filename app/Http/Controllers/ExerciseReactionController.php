@@ -6,17 +6,28 @@ use App\Http\Requests\Exercise\ReactToExerciseRequest;
 use App\Http\Requests\Exercise\GetLoadRecommendationRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
+use App\Models\User;
 use App\Models\UserWorkout;
 use App\Services\ExerciseLoadService;
+use App\Services\PhaseService;
+use App\Services\WorkoutGeneration\WorkoutGeneratorService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class ExerciseReactionController extends Controller
 {
     protected ExerciseLoadService $exerciseLoadService;
+    protected WorkoutGeneratorService $workoutGenerator;
+    protected PhaseService $phaseService;
 
-    public function __construct(ExerciseLoadService $exerciseLoadService)
-    {
+    public function __construct(
+        ExerciseLoadService $exerciseLoadService,
+        WorkoutGeneratorService $workoutGenerator,
+        PhaseService $phaseService
+    ) {
         $this->exerciseLoadService = $exerciseLoadService;
+        $this->workoutGenerator = $workoutGenerator;
+        $this->phaseService = $phaseService;
     }
 
     /**
@@ -57,7 +68,55 @@ class ExerciseReactionController extends Controller
             $performanceData
         );
 
+        // Проверяем, не наступила ли фаза отдыха для упражнения
+        if ($result['rest_phase'] && $result['rest_phase']['required']) {
+            $this->checkAndRegenerateWorkouts($user, $validated['exercise_id'], $result['rest_phase']['duration_days']);
+        }
         return ApiResponse::success('Оценка упражнения сохранена', $result);
+    }
+    private function checkAndRegenerateWorkouts(User $user, int $exerciseId, int $restDays): void
+    {
+        $currentProgress = $user->currentProgress();
+        if (!$currentProgress) {
+            return;
+        }
+
+        // Получаем все активные тренировки пользователя
+        $activeWorkouts = $user->userWorkouts()
+            ->with('workout.exercises')
+            ->where('status', 'started')
+            ->get();
+
+        // Проверяем, есть ли среди будущих тренировок (не начатых) это упражнение
+        $hasFutureExercises = false;
+        foreach ($activeWorkouts as $userWorkout) {
+            if ($userWorkout->started_at !== null) {
+                continue;
+            }
+
+            // Проверяем, есть ли проблемное упражнение в тренировке
+            foreach ($userWorkout->workout->exercises as $exercise) {
+                if ($exercise->id == $exerciseId) {
+                    $hasFutureExercises = true;
+                    break 2;
+                }
+            }
+        }
+
+        if ($hasFutureExercises) {
+            Log::info("Фаза отдыха для упражнения {$exerciseId} на {$restDays} дней. Перегенерация тренировок для пользователя {$user->id}");
+
+            $user->userWorkouts()
+                ->where('status', 'started')
+                ->whereNull('started_at')
+                ->delete();
+
+            $workouts = $this->workoutGenerator->generateForPhase($user, $currentProgress->phase);
+            if ($workouts->isNotEmpty()) {
+                $this->workoutGenerator->assignWorkoutsToUser($user, $workouts);
+                Log::info("Сгенерировано {$workouts->count()} тренировок для пользователя {$user->id} после фазы отдыха");
+            }
+        }
     }
 
     /**

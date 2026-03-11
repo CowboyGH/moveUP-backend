@@ -7,9 +7,11 @@ use App\Http\Responses\ErrorResponse;
 use App\Models\TestAttempt;
 use App\Models\Testing;
 use App\Models\TestResult;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class TestAttemptController extends Controller
@@ -201,10 +203,37 @@ class TestAttemptController extends Controller
         TestResult::where('test_attempt_id', $attempt->id)
             ->update(['test_date' => now()->toDateString()]);
 
+        $user = auth()->user();
+        $this->regenerateWorkoutsAfterTest($user);
+
         return ApiResponse::success('Тест успешно завершён', [
             'attempt_id' => $attempt->id,
             'completed_at' => $attempt->completed_at,
             'pulse' => $attempt->pulse,
         ]);
+    }
+    private function regenerateWorkoutsAfterTest(User $user): void
+    {
+        $currentProgress = $user->currentProgress();
+
+        if (!$currentProgress) {
+            Log::info("Пользователь {$user->id} завершил тест, но у него нет активной фазы");
+            return;
+        }
+
+        // Удаляем старые незавершенные тренировки
+        $deleted = $user->userWorkouts()
+            ->where('status', 'started')
+            ->delete();
+
+        Log::info("Удалено {$deleted} старых тренировок пользователя {$user->id} после завершения теста");
+
+        // Генерируем новые тренировки с учетом результатов теста
+        $workouts = $this->workoutGenerator->generateForPhase($user, $currentProgress->phase);
+
+        if ($workouts->isNotEmpty()) {
+            $this->workoutGenerator->assignWorkoutsToUser($user, $workouts);
+            Log::info("Сгенерировано {$workouts->count()} тренировок для пользователя {$user->id} после завершения теста");
+        }
     }
 }
