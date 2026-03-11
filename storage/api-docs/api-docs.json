@@ -2530,7 +2530,7 @@
                         "description": "Минимальная длительность",
                         "required": false,
                         "schema": {
-                            "type": "integer",
+                            "type": "string",
                             "minimum": 1,
                             "example": 10
                         }
@@ -2541,7 +2541,7 @@
                         "description": "Максимальная длительность",
                         "required": false,
                         "schema": {
-                            "type": "integer",
+                            "type": "string",
                             "minimum": 1,
                             "example": 60
                         }
@@ -5370,7 +5370,7 @@
                         "description": "Минимальная длительность в минутах",
                         "required": false,
                         "schema": {
-                            "type": "integer",
+                            "type": "string",
                             "minimum": 1,
                             "example": 20
                         }
@@ -5381,7 +5381,7 @@
                         "description": "Максимальная длительность в минутах",
                         "required": false,
                         "schema": {
-                            "type": "integer",
+                            "type": "string",
                             "minimum": 1,
                             "example": 60
                         }
@@ -5524,7 +5524,7 @@
                                                         "example": "Комплекс упражнений для пробуждения"
                                                     },
                                                     "duration_minutes": {
-                                                        "type": "integer",
+                                                        "type": "string",
                                                         "example": 30
                                                     },
                                                     "image": {
@@ -5638,6 +5638,84 @@
                     },
                     "422": {
                         "description": "Ошибка валидации параметров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin Workouts"
+                ],
+                "summary": "Создать новую тренировку",
+                "description": "Создает новую тренировку с упражнениями и разминками",
+                "operationId": "createWorkout",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreWorkoutRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Тренировка успешно создана",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тренировка успешно создана"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Workout"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5778,7 +5856,7 @@
                                     },
                                     "duration_minutes": {
                                         "description": "Длительность в минутах",
-                                        "type": "integer",
+                                        "type": "string",
                                         "example": 30
                                     },
                                     "is_active": {
@@ -10552,7 +10630,7 @@
                                                     "example": "Accusamus enim placeat nihil ad ex ipsum iste animi. Facilis ut laudantium fuga ex fugiat. Occaecati non laboriosam facere."
                                                 },
                                                 "duration_minutes": {
-                                                    "type": "integer",
+                                                    "type": "string",
                                                     "example": 59
                                                 },
                                                 "phase": {
@@ -10760,7 +10838,7 @@
                                                                 "example": "completed"
                                                             },
                                                             "duration": {
-                                                                "type": "integer",
+                                                                "type": "string",
                                                                 "example": 14835
                                                             },
                                                             "progress": {
@@ -14083,7 +14161,7 @@
                         "example": "Комплекс упражнений для пробуждения"
                     },
                     "duration_minutes": {
-                        "type": "integer",
+                        "type": "string",
                         "example": 30
                     },
                     "image": {
@@ -14162,7 +14240,7 @@
                     },
                     "duration_minutes": {
                         "description": "Длительность в минутах",
-                        "type": "integer",
+                        "type": "string",
                         "example": 30
                     },
                     "is_active": {

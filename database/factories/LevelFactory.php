@@ -11,7 +11,7 @@ class LevelFactory extends Factory
         return [
             'name' => fake()->unique()->randomElement([
                 'Начинающий',
-                'Средний',
+                'Опытный',
                 'Продвинутый'
             ]),
         ];
@@ -27,7 +27,7 @@ class LevelFactory extends Factory
     public function intermediate(): static
     {
         return $this->state(fn (array $attributes) => [
-            'name' => 'Средний',
+            'name' => 'Опытный',
         ]);
     }
 

@@ -20,8 +20,8 @@ class StoreWorkoutRequest extends ApiFormRequest
             'duration_minutes' => 'required|integer|min:1|max:300',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'is_active' => 'boolean',
-            'exercises' => 'nullable|json', // Изменено с array на json
-            'warmups' => 'nullable|json',    // Изменено с array на json
+            'exercises' => 'nullable|array',
+            'warmups' => 'nullable|array',
         ];
     }
 

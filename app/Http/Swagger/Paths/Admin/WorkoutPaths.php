@@ -30,14 +30,14 @@ namespace App\Http\Swagger\Paths\Admin;
  *         in="query",
  *         description="Минимальная длительность в минутах",
  *         required=false,
- *         @OA\Schema(type="integer", minimum=1, example=20)
+ *         @OA\Schema(type="string", minimum=1, example=20)
  *     ),
  *     @OA\Parameter(
  *         name="duration_max",
  *         in="query",
  *         description="Максимальная длительность в минутах",
  *         required=false,
- *         @OA\Schema(type="integer", minimum=1, example=60)
+ *         @OA\Schema(type="string", minimum=1, example=60)
  *     ),
  *     @OA\Parameter(
  *         name="exercises_count_min",
@@ -115,7 +115,7 @@ namespace App\Http\Swagger\Paths\Admin;
  *                     @OA\Property(property="id", type="integer", example=1),
  *                     @OA\Property(property="title", type="string", example="Утренняя зарядка"),
  *                     @OA\Property(property="description", type="string", example="Комплекс упражнений для пробуждения"),
- *                     @OA\Property(property="duration_minutes", type="integer", example=30),
+ *                     @OA\Property(property="duration_minutes", type="string", example=30),
  *                     @OA\Property(property="image", type="string", nullable=true, example="workouts/morning-workout.jpg"),
  *                     @OA\Property(property="image_url", type="string", nullable=true, example="http://localhost/storage/workouts/morning-workout.jpg"),
  *                     @OA\Property(property="is_active", type="boolean", example=true),
@@ -163,6 +163,49 @@ namespace App\Http\Swagger\Paths\Admin;
  * )
  */
 class WorkoutPaths {}
+
+/**
+ * @OA\Post(
+ *     path="/api/admin/workouts",
+ *     summary="Создать новую тренировку",
+ *     description="Создает новую тренировку с упражнениями и разминками",
+ *     operationId="createWorkout",
+ *     tags={"Admin Workouts"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(ref="#/components/schemas/StoreWorkoutRequest")
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Тренировка успешно создана",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Тренировка успешно создана"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 ref="#/components/schemas/Workout"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Неавторизован",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Доступ запрещен (только для администраторов)",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибка валидации",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+ *     )
+ * )
+ */
+class WorkoutStorePaths {}
 
 /**
  * @OA\Get(
@@ -233,7 +276,7 @@ class WorkoutShowPaths {}
  *                 @OA\Property(property="phase_id", type="integer", nullable=true, example=1, description="ID фазы"),
  *                 @OA\Property(property="title", type="string", example="Утренняя зарядка", description="Название тренировки"),
  *                 @OA\Property(property="description", type="string", example="Комплекс упражнений для пробуждения", description="Описание тренировки"),
- *                 @OA\Property(property="duration_minutes", type="integer", example=30, description="Длительность в минутах"),
+ *                 @OA\Property(property="duration_minutes", type="string", example=30, description="Длительность в минутах"),
  *                 @OA\Property(property="is_active", type="boolean", example=true, description="Активность тренировки"),
  *                 @OA\Property(
  *                     property="image",

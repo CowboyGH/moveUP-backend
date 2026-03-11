@@ -23,7 +23,7 @@ class RegisterRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:20', 'regex:/^[a-zA-Zа-яА-ЯёЁ\s]+$/u'],
+            'name' => ['required', 'string', 'min:2', 'max:20', 'regex:/^[a-zA-Zа-яА-ЯёЁ\s]+$/u'],
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'string', 'min:8', 'max:64', 'regex:/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/'],
         ];
@@ -34,6 +34,7 @@ class RegisterRequest extends ApiFormRequest
         return [
             'name.required' => 'Поле "Имя" обязательно для заполнения.',
             'name.max' => 'Имя не должно превышать 20 символов.',
+            'name.min' => 'Имя не должно быть короче 2 символов.',
             'name.regex' => 'Имя может содержать только буквы и пробелы.',
 
             'email.required' => 'Поле "Email" обязательно для заполнения.',

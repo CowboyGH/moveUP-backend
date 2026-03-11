@@ -37,14 +37,14 @@ namespace App\Http\Swagger\Paths\Admin;
  *         in="query",
  *         description="Минимальная длительность",
  *         required=false,
- *         @OA\Schema(type="integer", minimum=1, example=10)
+ *         @OA\Schema(type="string", minimum=1, example=10)
  *     ),
  *     @OA\Parameter(
  *         name="duration_max",
  *         in="query",
  *         description="Максимальная длительность",
  *         required=false,
- *         @OA\Schema(type="integer", minimum=1, example=60)
+ *         @OA\Schema(type="string", minimum=1, example=60)
  *     ),
  *     @OA\Parameter(
  *         name="is_active",

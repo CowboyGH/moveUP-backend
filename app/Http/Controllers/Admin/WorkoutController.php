@@ -110,13 +110,7 @@ class WorkoutController extends Controller
         DB::beginTransaction();
 
         try {
-            $data = $request->except(['image', 'exercises', 'warmups']);
-
-            // Сохраняем изображение, если есть
-            if ($request->hasFile('image')) {
-                $path = $request->file('image')->store('workouts', 'public');
-                $data['image'] = $path;
-            }
+            $data = $request->except(['exercises', 'warmups']);
 
             $workout = Workout::create($data);
 
@@ -146,11 +140,6 @@ class WorkoutController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-
-            // Удаляем загруженное изображение, если что-то пошло не так
-            if (isset($path) && Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
-            }
 
             return ApiResponse::error(
                 ErrorResponse::SERVER_ERROR,

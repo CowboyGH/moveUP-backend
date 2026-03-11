@@ -67,7 +67,7 @@ class WorkoutPaths {}
  *                 @OA\Property(property="id", type="integer", example=1),
  *                 @OA\Property(property="title", type="string", example="Функциональный тренинг"),
  *                 @OA\Property(property="description", type="string", example="Accusamus enim placeat nihil ad ex ipsum iste animi. Facilis ut laudantium fuga ex fugiat. Occaecati non laboriosam facere."),
- *                 @OA\Property(property="duration_minutes", type="integer", example=59),
+ *                 @OA\Property(property="duration_minutes", type="string", example=59),
  *                 @OA\Property(
  *                     property="phase",
  *                     type="object",
@@ -160,7 +160,7 @@ class WorkoutShow {}
  *                         @OA\Property(property="started_at", type="string", format="date-time", example="2026-02-08 01:31:49"),
  *                         @OA\Property(property="completed_at", type="string", format="date-time", example="2026-02-18 08:46:59"),
  *                         @OA\Property(property="status", type="string", enum={"in_progress", "completed", "cancelled"}, example="completed"),
- *                         @OA\Property(property="duration", type="integer", example=14835),
+ *                         @OA\Property(property="duration", type="string", example=14835),
  *                         @OA\Property(
  *                             property="progress",
  *                             type="object",

@@ -65,7 +65,7 @@ class WorkoutWarmupSchema {}
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="title", type="string", example="Утренняя зарядка"),
  *     @OA\Property(property="description", type="string", example="Комплекс упражнений для пробуждения"),
- *     @OA\Property(property="duration_minutes", type="integer", example=30),
+ *     @OA\Property(property="duration_minutes", type="string", example=30),
  *     @OA\Property(property="image", type="string", nullable=true, example="workouts/morning-workout.jpg"),
  *     @OA\Property(property="image_url", type="string", nullable=true, example="http://localhost/storage/workouts/morning-workout.jpg"),
  *     @OA\Property(property="is_active", type="boolean", example=true),
@@ -99,7 +99,7 @@ class WorkoutSchema {}
  *     @OA\Property(property="phase_id", type="integer", nullable=true, example=1, description="ID фазы"),
  *     @OA\Property(property="title", type="string", example="Утренняя зарядка", description="Название тренировки"),
  *     @OA\Property(property="description", type="string", example="Комплекс упражнений для пробуждения", description="Описание тренировки"),
- *     @OA\Property(property="duration_minutes", type="integer", example=30, description="Длительность в минутах"),
+ *     @OA\Property(property="duration_minutes", type="string", example=30, description="Длительность в минутах"),
  *     @OA\Property(property="is_active", type="boolean", example=true, description="Активность тренировки"),
  *     @OA\Property(
  *         property="exercises",

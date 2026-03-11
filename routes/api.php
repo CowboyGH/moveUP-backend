@@ -136,7 +136,7 @@ Route::middleware(['jwt.custom', 'admin', 'track.activity'])->prefix('admin')->g
     Route::get('/warmups/{id}/image', [App\Http\Controllers\Admin\WarmupController::class, 'getImage']);
 
     Route::get('/workouts', [WorkoutController::class, 'index']);
-    #Route::post('/workouts', [WorkoutController::class, 'store']);
+    Route::post('/workouts', [WorkoutController::class, 'store']);
     Route::get('/workouts/{id}', [WorkoutController::class, 'show']);
     Route::put('/workouts/{id}', [WorkoutController::class, 'update']);
     Route::delete('/workouts/{id}', [WorkoutController::class, 'destroy']);
