@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Log;
 
 class PhaseService
 {
+    protected WorkoutGeneratorService $workoutGenerator;
+
+    public function __construct(WorkoutGeneratorService $workoutGenerator)
+    {
+        $this->workoutGenerator = $workoutGenerator;
+    }
 
     public function assignPhaseToUser(User $user, Phase $phase): UserProgress
     {
@@ -28,17 +34,18 @@ class PhaseService
     public function assignInitialPhase(User $user): UserProgress
     {
         $firstPhase = Phase::getFirstPhase();
-
         if (!$firstPhase) {
             throw new \Exception('В системе не обнаружено фаз');
         }
-        return UserProgress::create([
+        $progress = UserProgress::create([
             'user_id' => $user->id,
             'phase_id' => $firstPhase->id,
             'streak_days' => 0,
             'completed_workouts' => 0,
             'weekly_workout_goal' => 4,
         ]);
+        $this->assignWorkoutsForNewPhase($user, $firstPhase);
+        return $progress;
     }
 
     /**
@@ -80,6 +87,7 @@ class PhaseService
 
         Log::info("Пользователь {$user->id} перешел с фазы {$currentPhase->id} на фазу {$nextPhase->id}");
 
+        $this->assignWorkoutsForNewPhase($user, $nextPhase);
         return $nextPhase;
     }
 
@@ -176,11 +184,12 @@ class PhaseService
 
     public function assignWorkoutsForNewPhase(User $user, Phase $phase): void
     {
-        $generator = app(WorkoutGeneratorService::class);
-        $workouts = $generator->generateForPhase($user, $phase);
+        $workouts = $this->workoutGenerator->generateForPhase($user, $phase);
         if ($workouts->isNotEmpty()) {
-            $generator->assignWorkoutsToUser($user, $workouts);
+            $this->workoutGenerator->assignWorkoutsToUser($user, $workouts);
             Log::info("Назначено {$workouts->count()} тренировок пользователю {$user->id} для фазы {$phase->id}");
+        } else {
+            Log::warning("Не удалось сгенерировать тренировки для пользователя {$user->id} для фазы {$phase->id}");
         }
     }
 }

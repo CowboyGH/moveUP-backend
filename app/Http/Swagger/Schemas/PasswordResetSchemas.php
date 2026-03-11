@@ -65,3 +65,37 @@ class ResetPasswordRequestSchema {}
  * )
  */
 class ResetPasswordResponseSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="ResendResetCodeRequest",
+ *     type="object",
+ *     required={"email"},
+ *     @OA\Property(
+ *         property="email",
+ *         type="string",
+ *         format="email",
+ *         example="user@example.com",
+ *         description="Email пользователя (не обязательно подтвержденный)"
+ *     )
+ * )
+ */
+class ResendResetCodeRequestSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="ResendResetCodeResponse",
+ *     type="object",
+ *     @OA\Property(
+ *         property="success",
+ *         type="boolean",
+ *         example=true
+ *     ),
+ *     @OA\Property(
+ *         property="message",
+ *         type="string",
+ *         example="Новый код для сброса пароля отправлен на вашу почту."
+ *     )
+ * )
+ */
+class ResendResetCodeResponseSchema {}

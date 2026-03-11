@@ -27,6 +27,7 @@ Route::post('/resend-verification-code', [EmailVerificationController::class, 'r
 Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
 Route::post('/verify-reset-code', [PasswordResetController::class, 'verifyResetCode']);
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+Route::post('/resend-reset-code', [PasswordResetController::class, 'resendResetCode']);
 
 Route::get('/subscriptions', [SubscriptionController::class, 'index']);
 Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);

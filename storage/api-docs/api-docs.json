@@ -7722,6 +7722,58 @@
                 }
             }
         },
+        "/api/resend-reset-code": {
+            "post": {
+                "tags": [
+                    "Password Reset"
+                ],
+                "summary": "Повторная отправка кода сброса пароля",
+                "description": "Отправляет новый код для сброса пароля на email. Используется, если пользователь не получил код или код истек.",
+                "operationId": "b0d63e0478d14bd72e8cae5ee87f3e6f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ResendResetCodeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Новый код сброса отправлен на email",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResendResetCodeResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Пользователь с таким email не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибки валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/payment/subscription": {
             "post": {
                 "tags": [
@@ -12703,6 +12755,33 @@
                     "message": {
                         "type": "string",
                         "example": "Пароль успешно сброшен."
+                    }
+                },
+                "type": "object"
+            },
+            "ResendResetCodeRequest": {
+                "required": [
+                    "email"
+                ],
+                "properties": {
+                    "email": {
+                        "description": "Email пользователя (не обязательно подтвержденный)",
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    }
+                },
+                "type": "object"
+            },
+            "ResendResetCodeResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Новый код для сброса пароля отправлен на вашу почту."
                     }
                 },
                 "type": "object"

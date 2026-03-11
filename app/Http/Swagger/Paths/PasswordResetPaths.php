@@ -128,3 +128,32 @@ class VerifyResetCodePath {}
  * )
  */
 class ResetPasswordPath {}
+
+/**
+ * @OA\Post(
+ *     path="/api/resend-reset-code",
+ *     summary="Повторная отправка кода сброса пароля",
+ *     description="Отправляет новый код для сброса пароля на email. Используется, если пользователь не получил код или код истек.",
+ *     tags={"Password Reset"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(ref="#/components/schemas/ResendResetCodeRequest")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Новый код сброса отправлен на email",
+ *         @OA\JsonContent(ref="#/components/schemas/ResendResetCodeResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Пользователь с таким email не найден",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибки валидации",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+ *     )
+ * )
+ */
+class ResendResetCodePath {}
