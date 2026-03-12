@@ -39,7 +39,11 @@ class SubscriptionPaymentRequest extends FormRequest
         // Если используем новую карту
         else {
             $rules['card_number'] = 'required|string|size:16';
-            $rules['card_holder'] = 'required|string';
+            $rules['card_holder'] = [
+                'required',
+                'string',
+                'regex:/^[A-Z\s]+$/',
+            ];
             $rules['expiry_month'] = [
                 'required',
                 'string',
@@ -71,6 +75,7 @@ class SubscriptionPaymentRequest extends FormRequest
             'card_number.size' => 'Номер карты должен быть 16 цифр',
 
             'card_holder.required' => 'Имя держателя карты обязательно',
+            'card_holder.regex' => 'Имя держателя карты должно содержать только заглавные латинские буквы и пробелы',
 
             'expiry_month.required' => 'Месяц обязателен',
             'expiry_month.size' => 'Месяц должен быть 2 цифры',

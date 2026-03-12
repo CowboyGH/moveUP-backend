@@ -15,7 +15,12 @@ class SaveCardRequest extends FormRequest
     {
         return [
             'card_number' => 'required|string|size:16',
-            'card_holder' => 'required|string|max:50',
+            'card_holder' => [
+                'required',
+                'string',
+                'max:50',
+                'regex:/^[A-Z\s]+$/',
+            ],
             'expiry_month' => [
                 'required',
                 'string',
@@ -33,6 +38,7 @@ class SaveCardRequest extends FormRequest
             'card_number.size' => 'Номер карты должен быть 16 цифр',
 
             'card_holder.required' => 'Имя держателя карты обязательно',
+            'card_holder.regex' => 'Имя держателя карты должно содержать только заглавные латинские буквы и пробелы',
 
             'expiry_month.required' => 'Месяц обязателен',
             'expiry_month.size' => 'Месяц должен быть 2 цифры',
