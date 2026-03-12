@@ -7807,7 +7807,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "$ref": "#/components/schemas/PaymentFailedResponse"
                                 }
                             }
                         }
@@ -11734,6 +11734,24 @@
                     }
                 },
                 "type": "object"
+            },
+            "PaymentFailedResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "example": "payment_failed"
+                            },
+                            "message": {
+                                "example": "Не удалось получить данные карты"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
             },
             "VerifyEmailRequest": {
                 "required": [

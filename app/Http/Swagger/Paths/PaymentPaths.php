@@ -20,7 +20,7 @@ namespace App\Http\Swagger\Paths;
  *     @OA\Response(
  *         response=400,
  *         description="Ошибка в данных карты",
- *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+ *         @OA\JsonContent(ref="#/components/schemas/PaymentFailedResponse")
  *     ),
  *     @OA\Response(
  *         response=401,

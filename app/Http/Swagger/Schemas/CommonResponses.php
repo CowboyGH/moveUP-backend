@@ -288,3 +288,17 @@ class AvatarNotFoundResponseSchema {}
  * )
  */
 class PaginatedResponse {}
+
+/**
+ * @OA\Schema(
+ *     schema="PaymentFailedResponse",
+ *     allOf={
+ *         @OA\Schema(ref="#/components/schemas/ErrorResponse"),
+ *         @OA\Schema(
+ *             @OA\Property(property="code", example="payment_failed"),
+ *             @OA\Property(property="message", example="Не удалось получить данные карты")
+ *         )
+ *     }
+ * )
+ */
+class PaymentFailedResponseSchema {}

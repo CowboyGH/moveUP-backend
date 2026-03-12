@@ -12,6 +12,7 @@ use App\Services\Payment\PaymentService;
 use App\Services\Payment\SubscriptionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PaymentController extends Controller
 {
@@ -46,7 +47,19 @@ class PaymentController extends Controller
         DB::beginTransaction();
 
         try {
-            $subscription = Subscription::findOrFail($validated['subscription_id']);
+            $subscription = Subscription::where('id', $validated['subscription_id'])
+                ->where('is_active', true)
+                ->first();
+
+            if (!$subscription) {
+                DB::rollBack();
+                return ApiResponse::error(
+                    ErrorResponse::NOT_FOUND,
+                    'Подписка не найдена',
+                    404
+                );
+            }
+
             $savedCard = null;
             $cardData = $this->paymentService->getCardData($user, $validated, $this->cardService);
 

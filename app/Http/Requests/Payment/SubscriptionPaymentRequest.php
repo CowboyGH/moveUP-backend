@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Payment;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SubscriptionPaymentRequest extends FormRequest
 {
@@ -14,7 +15,7 @@ class SubscriptionPaymentRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'subscription_id' => 'required|integer|exists:subscriptions,id,is_active,1',
+            'subscription_id' => 'required|integer',
             'save_card' => 'required|boolean',
             'use_saved_card' => 'required|boolean',
         ];
@@ -39,10 +40,13 @@ class SubscriptionPaymentRequest extends FormRequest
         else {
             $rules['card_number'] = 'required|string|size:16';
             $rules['card_holder'] = 'required|string';
-            $rules['expiry_month'] = 'required|string|size:2';
+            $rules['expiry_month'] = [
+                'required',
+                'string',
+                'size:2',
+                Rule::in(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']),
+            ];
             $rules['expiry_year'] = 'required|string|size:4';
-
-            // CVV не сохраняем, но для оплаты нужен
             $rules['cvv'] = 'required|string|between:3,4';
         }
 
@@ -53,7 +57,7 @@ class SubscriptionPaymentRequest extends FormRequest
     {
         return [
             'subscription_id.required' => 'Выберите подписку',
-            'subscription_id.exists' => 'Подписка не найдена',
+            'subscription_id.integer' => 'ID подписки должен быть числом',
 
             'save_card.required' => 'Поле save_card обязательно',
             'save_card.boolean' => 'Поле save_card должно быть true или false',
@@ -70,6 +74,7 @@ class SubscriptionPaymentRequest extends FormRequest
 
             'expiry_month.required' => 'Месяц обязателен',
             'expiry_month.size' => 'Месяц должен быть 2 цифры',
+            'expiry_month.in' => 'Месяц должен быть от 01 до 12',
 
             'expiry_year.required' => 'Год обязателен',
             'expiry_year.size' => 'Год должен быть 4 цифры',
