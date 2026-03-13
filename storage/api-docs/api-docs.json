@@ -7472,6 +7472,404 @@
                 ]
             }
         },
+        "/api/guest/tests/{testing}/start": {
+            "post": {
+                "tags": [
+                    "Guest Tests"
+                ],
+                "summary": "Начать прохождение теста для гостя",
+                "description": "Создаёт новую попытку прохождения теста в Redis и возвращает первое упражнение. Guest ID сохраняется в cookie.",
+                "operationId": "fc797a8510b050627798144e3a9adab8",
+                "parameters": [
+                    {
+                        "name": "testing",
+                        "in": "path",
+                        "description": "ID теста",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 8
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Тест успешно начат для гостя",
+                        "headers": {
+                            "Set-Cookie": {
+                                "description": "guest_id сохраняется в cookie",
+                                "schema": {
+                                    "type": "string",
+                                    "example": "guest_id=550e8400-e29b-41d4-a716-446655440000; expires=Thu, 12-Apr-2026 14:30:00 GMT; path=/; httponly"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GuestTestStartResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Тест недоступен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "forbidden"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Этот тест недоступен"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "В тесте нет упражнений",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "not_found"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "В этом тесте нет упражнений"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/guest/test-attempts/{attempt}/result": {
+            "post": {
+                "tags": [
+                    "Guest Tests"
+                ],
+                "summary": "Сохранить результат упражнения для гостя",
+                "description": "Сохраняет результат текущего упражнения в Redis. Если это последнее упражнение, возвращает флаг all_exercises_completed.",
+                "operationId": "2f566f2065be23065e8f5e9ac5cdd8bc",
+                "parameters": [
+                    {
+                        "name": "attempt",
+                        "in": "path",
+                        "description": "ID попытки (с префиксом guest_)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "guest_816a590b-e438-49d8-962e-678e80849e58"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "testing_exercise_id",
+                                    "result_value"
+                                ],
+                                "properties": {
+                                    "testing_exercise_id": {
+                                        "description": "ID тестового упражнения",
+                                        "type": "integer",
+                                        "example": 16
+                                    },
+                                    "result_value": {
+                                        "description": "Оценка от 1 до 4",
+                                        "type": "integer",
+                                        "maximum": 4,
+                                        "minimum": 1,
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Результат сохранён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GuestTestStoreResultResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Попытка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "not_found"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Активная попытка теста не найдена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "conflict"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Упражнение не принадлежит этому тесту"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "code": {
+                                                    "type": "string",
+                                                    "example": "conflict"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Результат для этого упражнения уже сохранён"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "validation_failed"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ошибка валидации"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "result_value": [
+                                                    "Значение должно быть от 1 до 4"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/guest/test-attempts/{attempt}/complete": {
+            "post": {
+                "tags": [
+                    "Guest Tests"
+                ],
+                "summary": "Завершить тест для гостя",
+                "description": "Завершает попытку, сохраняет пульс и помечает тест как завершённый в Redis",
+                "operationId": "eef4c6995797d249d0a7bc572843b7b7",
+                "parameters": [
+                    {
+                        "name": "attempt",
+                        "in": "path",
+                        "description": "ID попытки (с префиксом guest_)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "guest_816a590b-e438-49d8-962e-678e80849e58"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "pulse"
+                                ],
+                                "properties": {
+                                    "pulse": {
+                                        "description": "Пульс после выполнения теста",
+                                        "type": "integer",
+                                        "maximum": 220,
+                                        "minimum": 30,
+                                        "example": 151
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Тест успешно завершён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GuestTestCompleteResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Попытка не найдена или тест не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "not_found"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Активная попытка теста не найдена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Не все упражнения выполнены",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "conflict"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Не все упражнения выполнены. Осталось: 2"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "validation_failed"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ошибка валидации"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "pulse": [
+                                                    "Пульс должен быть от 30 до 220"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/guest/tests/history": {
+            "get": {
+                "tags": [
+                    "Guest Tests"
+                ],
+                "summary": "Получить историю тестов гостя",
+                "description": "Возвращает статистику и список всех завершённых попыток гостя из Redis",
+                "operationId": "3416d4afd6f4e2b92094c0798492263b",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ. История тестов гостя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GuestTestHistoryResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/guest/tests/reset": {
+            "delete": {
+                "tags": [
+                    "Guest Tests"
+                ],
+                "summary": "Сбросить результаты тестов гостя",
+                "description": "Удаляет все результаты тестов гостя из Redis",
+                "operationId": "5eb639dde996972dac691db104dac215",
+                "responses": {
+                    "200": {
+                        "description": "Результаты успешно сброшены",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GuestTestResetResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/forgot-password": {
             "post": {
                 "tags": [
@@ -12618,6 +13016,268 @@
                 },
                 "type": "object"
             },
+            "GuestTestStartResponse": {
+                "title": "Ответ на начало теста для гостя",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Тест начат для гостя"
+                    },
+                    "data": {
+                        "properties": {
+                            "attempt_id": {
+                                "type": "string",
+                                "example": "guest_816a590b-e438-49d8-962e-678e80849e58"
+                            },
+                            "testing": {
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "example": 8
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "example": "id consectetur aperiam autem"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Ut laboriosam ipsa aut voluptatum. Quisquam repellat voluptates exercitationem quia."
+                                    },
+                                    "duration_minutes": {
+                                        "type": "string",
+                                        "example": "31"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": "tests/"
+                                    },
+                                    "total_exercises": {
+                                        "type": "integer",
+                                        "example": 4
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "current_exercise": {
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Velit reiciendis dolores magni mollitia molestias libero."
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": "testing_exercises/"
+                                    },
+                                    "order_number": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "GuestTestStoreResultResponse": {
+                "title": "Ответ на сохранение результата упражнения",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Результат сохранён для гостя"
+                    },
+                    "data": {
+                        "properties": {
+                            "saved": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "result": {
+                                "properties": {
+                                    "testing_exercise_id": {
+                                        "type": "integer",
+                                        "example": 16
+                                    },
+                                    "result_value": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "next_exercise": {
+                                "description": "Следующее упражнение (если есть)",
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "example": 4
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Приседания за 1 минуту"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": "testing_exercises/"
+                                    },
+                                    "order_number": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object",
+                                "nullable": true
+                            },
+                            "all_exercises_completed": {
+                                "type": "boolean",
+                                "example": true,
+                                "nullable": true
+                            },
+                            "message": {
+                                "type": "string",
+                                "example": "Все упражнения выполнены. Введите пульс для завершения теста.",
+                                "nullable": true
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "GuestTestCompleteResponse": {
+                "title": "Ответ на завершение теста",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Тест успешно завершён для гостя"
+                    },
+                    "data": {
+                        "properties": {
+                            "attempt_id": {
+                                "type": "string",
+                                "example": "guest_816a590b-e438-49d8-962e-678e80849e58"
+                            },
+                            "completed_at": {
+                                "type": "string",
+                                "format": "datetime",
+                                "example": "2026-03-13 14:30:11"
+                            },
+                            "pulse": {
+                                "type": "integer",
+                                "example": 151
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "GuestTestHistoryResponse": {
+                "title": "Ответ с историей тестов гостя",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "История тестов гостя"
+                    },
+                    "data": {
+                        "properties": {
+                            "statistics": {
+                                "properties": {
+                                    "total_attempts": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "completed_attempts": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "last_test_date": {
+                                        "type": "string",
+                                        "format": "datetime",
+                                        "example": "2026-03-13 14:17:50"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "history": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "attempt_id": {
+                                            "type": "string",
+                                            "example": "guest_7dc2bd47-8f9d-4da9-b67d-a1c02127cb75"
+                                        },
+                                        "testing_id": {
+                                            "type": "integer",
+                                            "example": 8
+                                        },
+                                        "testing_title": {
+                                            "type": "string",
+                                            "example": "id consectetur aperiam autem"
+                                        },
+                                        "completed_at": {
+                                            "type": "string",
+                                            "format": "datetime",
+                                            "example": "2026-03-13 14:17:50"
+                                        },
+                                        "pulse": {
+                                            "type": "integer",
+                                            "example": 150
+                                        },
+                                        "exercises_count": {
+                                            "type": "integer",
+                                            "example": 4
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "GuestTestResetResponse": {
+                "title": "Ответ на сброс тестов",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Результаты тестов гостя сброшены"
+                    },
+                    "data": {
+                        "type": "null",
+                        "example": null
+                    }
+                },
+                "type": "object"
+            },
             "ImageNotFoundResponse": {
                 "allOf": [
                     {
@@ -14589,6 +15249,10 @@
         {
             "name": "FCM",
             "description": "FCM"
+        },
+        {
+            "name": "Guest Tests",
+            "description": "Guest Tests"
         },
         {
             "name": "Password Reset",

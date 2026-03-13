@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\TestingExerciseController;
 use App\Http\Controllers\FcmTokenController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\GuestTestController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Payment\SavedCardController;
@@ -43,6 +44,15 @@ Route::post('/user-parameters/level', [UserParameterController::class, 'saveLeve
 Route::delete('/user-parameters/guest', [UserParameterController::class, 'clearGuestData']);
 
 Route::get('/avatars/{userId}', [App\Http\Controllers\ProfileController::class, 'getAvatar']);
+
+Route::prefix('guest')->group(function () {
+    Route::post('/tests/{testing}/start', [GuestTestController::class, 'start']);
+    Route::post('/test-attempts/{attempt}/result', [GuestTestController::class, 'storeResult']);
+    Route::post('/test-attempts/{attempt}/complete', [GuestTestController::class, 'complete']);
+    Route::get('/tests/history', [GuestTestController::class, 'history']);
+    Route::delete('/tests/reset', [GuestTestController::class, 'reset']);
+});
+
 Route::middleware(['jwt.custom', 'track.activity'])->prefix('profile')->group(function () {
     Route::get('/', [App\Http\Controllers\ProfileController::class, 'show']);
     Route::put('/', [App\Http\Controllers\ProfileController::class, 'update']);
