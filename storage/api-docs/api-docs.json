@@ -10246,13 +10246,306 @@
                 ]
             }
         },
+        "/api/goals": {
+            "get": {
+                "tags": [
+                    "User Parameters"
+                ],
+                "summary": "Получить список всех целей тренировок",
+                "operationId": "9c14f486a2985a2b9fa6f3eec1ca29ee",
+                "responses": {
+                    "200": {
+                        "description": "Список целей получен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Список целей получен"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Рост силовых показателей"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-02-20T08:20:33.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-02-20T08:20:33.000000Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/levels": {
+            "get": {
+                "tags": [
+                    "User Parameters"
+                ],
+                "summary": "Получить список всех уровней подготовки",
+                "operationId": "47efd12eda8f2eff08791beb52e37741",
+                "responses": {
+                    "200": {
+                        "description": "Список уровней получен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Список уровней получен"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Начинающий"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-02-20T08:20:33.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-02-20T08:20:33.000000Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/equipment": {
+            "get": {
+                "tags": [
+                    "User Parameters"
+                ],
+                "summary": "Получить список всего доступного оборудования",
+                "operationId": "1764ea5a98d0ae13de3b319c804cb17e",
+                "responses": {
+                    "200": {
+                        "description": "Список оборудования получен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Список оборудования получен"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-02-20T08:20:33.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-02-20T08:20:33.000000Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user-parameters/references": {
+            "get": {
+                "tags": [
+                    "User Parameters"
+                ],
+                "summary": "Получить все справочные данные сразу (цели, уровни, оборудование)",
+                "description": "Полезно для первоначальной загрузки приложения, чтобы сократить количество запросов",
+                "operationId": "233c4a7cff5323e83a8584d8bf96cf31",
+                "responses": {
+                    "200": {
+                        "description": "Справочные данные получены",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Справочные данные получены"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "goals": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Рост силовых показателей"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "levels": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Начинающий"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "equipment": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Тренажерный зал"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/user-parameters/goal": {
             "post": {
                 "tags": [
                     "User Parameters"
                 ],
                 "summary": "Сохранить цель тренировок (шаг 1)",
-                "operationId": "2973bb3be8f4b9966d200fd3299fcefa",
+                "description": "Сохраняет цель тренировок для авторизованного пользователя или гостя",
+                "operationId": "2ce546d47c58cdfce6d097beef23ca53",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -10274,30 +10567,73 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Цель сохранена для гостя",
+                        "description": "Цель сохранена",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Цель сохранена для гостя"
-                                        },
-                                        "data": {
+                                    "oneOf": [
+                                        {
                                             "properties": {
-                                                "guest_id": {
-                                                    "type": "string",
-                                                    "example": "2daabfb2-cd72-440c-aacd-00f08d5e92e3"
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": true
                                                 },
-                                                "guest_data": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Цель сохранена"
+                                                },
+                                                "data": {
                                                     "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 54
+                                                        },
+                                                        "user_id": {
+                                                            "type": "integer",
+                                                            "example": 336
+                                                        },
                                                         "goal_id": {
                                                             "type": "integer",
                                                             "example": 1
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Цель сохранена для гостя"
+                                                },
+                                                "data": {
+                                                    "properties": {
+                                                        "guest_id": {
+                                                            "type": "string",
+                                                            "example": "2daabfb2-cd72-440c-aacd-00f08d5e92e3"
+                                                        },
+                                                        "guest_data": {
+                                                            "properties": {
+                                                                "goal_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                }
+                                                            },
+                                                            "type": "object"
                                                         }
                                                     },
                                                     "type": "object"
@@ -10305,8 +10641,7 @@
                                             },
                                             "type": "object"
                                         }
-                                    },
-                                    "type": "object"
+                                    ]
                                 }
                             }
                         }
@@ -10340,6 +10675,7 @@
                     "User Parameters"
                 ],
                 "summary": "Сохранить антропометрические данные (шаг 2)",
+                "description": "Сохраняет антропометрические данные для авторизованного пользователя или гостя",
                 "operationId": "5f06333ae034245948d070e7f53d8a88",
                 "requestBody": {
                     "required": true,
@@ -10387,40 +10723,30 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Антропометрия сохранена для гостя",
+                        "description": "Антропометрия сохранена",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Антропометрия сохранена для гостя"
-                                        },
-                                        "data": {
+                                    "oneOf": [
+                                        {
                                             "properties": {
-                                                "guest_id": {
-                                                    "type": "string",
-                                                    "example": "2daabfb2-cd72-440c-aacd-00f08d5e92e3"
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": true
                                                 },
-                                                "guest_data": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Антропометрия сохранена"
+                                                },
+                                                "data": {
                                                     "properties": {
-                                                        "goal_id": {
+                                                        "id": {
                                                             "type": "integer",
-                                                            "example": 1
+                                                            "example": 54
                                                         },
-                                                        "created_at": {
-                                                            "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2026-02-24 12:10:56"
-                                                        },
-                                                        "updated_at": {
-                                                            "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2026-02-24 12:10:56"
+                                                        "user_id": {
+                                                            "type": "integer",
+                                                            "example": 336
                                                         },
                                                         "gender": {
                                                             "type": "string",
@@ -10432,7 +10758,6 @@
                                                         },
                                                         "weight": {
                                                             "type": "number",
-                                                            "format": "float",
                                                             "example": 50
                                                         },
                                                         "height": {
@@ -10448,9 +10773,59 @@
                                                 }
                                             },
                                             "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Антропометрия сохранена для гостя"
+                                                },
+                                                "data": {
+                                                    "properties": {
+                                                        "guest_id": {
+                                                            "type": "string",
+                                                            "example": "2daabfb2-cd72-440c-aacd-00f08d5e92e3"
+                                                        },
+                                                        "guest_data": {
+                                                            "properties": {
+                                                                "goal_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "gender": {
+                                                                    "type": "string",
+                                                                    "example": "female"
+                                                                },
+                                                                "age": {
+                                                                    "type": "integer",
+                                                                    "example": 32
+                                                                },
+                                                                "weight": {
+                                                                    "type": "number",
+                                                                    "example": 50
+                                                                },
+                                                                "height": {
+                                                                    "type": "integer",
+                                                                    "example": 172
+                                                                },
+                                                                "equipment_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
-                                    },
-                                    "type": "object"
+                                    ]
                                 }
                             }
                         }
@@ -10484,6 +10859,7 @@
                     "User Parameters"
                 ],
                 "summary": "Сохранить уровень подготовки (шаг 3)",
+                "description": "Сохраняет уровень подготовки для авторизованного пользователя или гостя",
                 "operationId": "10a80227c0d08738755621941a6a91bb",
                 "requestBody": {
                     "required": true,
@@ -10506,61 +10882,30 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Уровень сохранен для гостя",
+                        "description": "Уровень сохранен",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Уровень сохранен для гостя"
-                                        },
-                                        "data": {
+                                    "oneOf": [
+                                        {
                                             "properties": {
-                                                "guest_id": {
-                                                    "type": "string",
-                                                    "example": "2daabfb2-cd72-440c-aacd-00f08d5e92e3"
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": true
                                                 },
-                                                "guest_data": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Уровень сохранен"
+                                                },
+                                                "data": {
                                                     "properties": {
-                                                        "goal_id": {
+                                                        "id": {
                                                             "type": "integer",
-                                                            "example": 1
+                                                            "example": 54
                                                         },
-                                                        "created_at": {
-                                                            "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2026-02-24 12:10:56"
-                                                        },
-                                                        "updated_at": {
-                                                            "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2026-02-24 12:11:10"
-                                                        },
-                                                        "gender": {
-                                                            "type": "string",
-                                                            "example": "female"
-                                                        },
-                                                        "age": {
+                                                        "user_id": {
                                                             "type": "integer",
-                                                            "example": 32
-                                                        },
-                                                        "weight": {
-                                                            "type": "number",
-                                                            "format": "float",
-                                                            "example": 50
-                                                        },
-                                                        "height": {
-                                                            "type": "integer",
-                                                            "example": 172
-                                                        },
-                                                        "equipment_id": {
-                                                            "type": "integer",
-                                                            "example": 1
+                                                            "example": 336
                                                         },
                                                         "level_id": {
                                                             "type": "integer",
@@ -10571,9 +10916,63 @@
                                                 }
                                             },
                                             "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Уровень сохранен для гостя"
+                                                },
+                                                "data": {
+                                                    "properties": {
+                                                        "guest_id": {
+                                                            "type": "string",
+                                                            "example": "2daabfb2-cd72-440c-aacd-00f08d5e92e3"
+                                                        },
+                                                        "guest_data": {
+                                                            "properties": {
+                                                                "goal_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "gender": {
+                                                                    "type": "string",
+                                                                    "example": "female"
+                                                                },
+                                                                "age": {
+                                                                    "type": "integer",
+                                                                    "example": 32
+                                                                },
+                                                                "weight": {
+                                                                    "type": "number",
+                                                                    "example": 50
+                                                                },
+                                                                "height": {
+                                                                    "type": "integer",
+                                                                    "example": 172
+                                                                },
+                                                                "equipment_id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "level_id": {
+                                                                    "type": "integer",
+                                                                    "example": 3
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
-                                    },
-                                    "type": "object"
+                                    ]
                                 }
                             }
                         }
@@ -10607,6 +11006,7 @@
                     "User Parameters"
                 ],
                 "summary": "Получить параметры авторизованного пользователя",
+                "description": "Возвращает параметры текущего авторизованного пользователя с связанными моделями цели, уровня и оборудования",
                 "operationId": "d39cfbe801b98434cfd646e6cbb8bb3c",
                 "responses": {
                     "200": {
@@ -10686,6 +11086,15 @@
                                                             "type": "string",
                                                             "example": "Рост силовых показателей"
                                                         },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Тренировки направлены на увеличение силы"
+                                                        },
+                                                        "icon": {
+                                                            "type": "string",
+                                                            "example": "goals/strength.png",
+                                                            "nullable": true
+                                                        },
                                                         "created_at": {
                                                             "type": "string",
                                                             "format": "date-time",
@@ -10709,6 +11118,23 @@
                                                             "type": "string",
                                                             "example": "Начинающий"
                                                         },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Для тех, кто только начинает"
+                                                        },
+                                                        "icon": {
+                                                            "type": "string",
+                                                            "example": "levels/beginner.png",
+                                                            "nullable": true
+                                                        },
+                                                        "min_experience_months": {
+                                                            "type": "integer",
+                                                            "example": 0
+                                                        },
+                                                        "max_experience_months": {
+                                                            "type": "integer",
+                                                            "example": 6
+                                                        },
                                                         "created_at": {
                                                             "type": "string",
                                                             "format": "date-time",
@@ -10730,7 +11156,16 @@
                                                         },
                                                         "name": {
                                                             "type": "string",
-                                                            "example": "Зал"
+                                                            "example": "Тренажерный зал"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Полный набор тренажеров"
+                                                        },
+                                                        "icon": {
+                                                            "type": "string",
+                                                            "example": "equipment/gym.png",
+                                                            "nullable": true
                                                         },
                                                         "created_at": {
                                                             "type": "string",
@@ -10788,6 +11223,7 @@
                     "User Parameters"
                 ],
                 "summary": "Обновить параметры пользователя",
+                "description": "Обновляет один или несколько параметров авторизованного пользователя. При изменении ключевых параметров (goal_id, level_id, equipment_id) автоматически перегенерируются тренировки",
                 "operationId": "f0dc21eab9b071f8acddc62e09933992",
                 "requestBody": {
                     "required": true,
@@ -10951,6 +11387,7 @@
                     "User Parameters"
                 ],
                 "summary": "Очистить данные гостя",
+                "description": "Удаляет все данные гостя из Redis и очищает cookie guest_id",
                 "operationId": "6d712f8cb053777717ed58d8e82d8326",
                 "responses": {
                     "200": {
@@ -10966,6 +11403,10 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Данные гостя очищены"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
                                         }
                                     },
                                     "type": "object"

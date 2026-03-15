@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Responses\ApiResponse;
+use App\Models\Equipment;
+use App\Models\Goal;
+use App\Models\Level;
 use App\Models\User;
 use App\Models\UserParameter;
 use App\Services\GuestDataService;
@@ -12,6 +15,7 @@ use App\Http\Requests\UserParameter\SaveGoalRequest;
 use App\Http\Requests\UserParameter\SaveAnthropometryRequest;
 use App\Http\Requests\UserParameter\SaveLevelRequest;
 use App\Http\Requests\UserParameter\UpdateUserParameterRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -29,6 +33,34 @@ class UserParameterController extends Controller
         $this->guestService = $guestService;
         $this->phaseService = $phaseService;
         $this->workoutGenerator = $workoutGenerator;
+    }
+    public function getGoals(): JsonResponse
+    {
+        $goals = Goal::all();
+
+        return ApiResponse::success('Список целей получен', $goals);
+    }
+    public function getLevels(): JsonResponse
+    {
+        $levels = Level::all();
+
+        return ApiResponse::success('Список уровней получен', $levels);
+    }
+    public function getEquipment(): JsonResponse
+    {
+        $equipment = Equipment::all();
+
+        return ApiResponse::success('Список оборудования получен', $equipment);
+    }
+    public function getAllReferences(): JsonResponse
+    {
+        $data = [
+            'goals' => Goal::select('id', 'name')->get(),
+            'levels' => Level::select('id', 'name',)->get(),
+            'equipment' => Equipment::select('id', 'name')->get(),
+        ];
+
+        return ApiResponse::success('Справочные данные получены', $data);
     }
 
     public function saveGoal(SaveGoalRequest $request)

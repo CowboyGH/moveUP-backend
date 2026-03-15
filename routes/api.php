@@ -38,6 +38,11 @@ Route::get('/testings/{id}', [App\Http\Controllers\TestingController::class, 'sh
 Route::get('/workouts', [App\Http\Controllers\WorkoutController::class, 'index']);
 Route::get('/workouts/{id}', [App\Http\Controllers\WorkoutController::class, 'show']);
 
+Route::get('/goals', [UserParameterController::class, 'getGoals']);
+Route::get('/levels', [UserParameterController::class, 'getLevels']);
+Route::get('/equipment', [UserParameterController::class, 'getEquipment']);
+Route::get('/user-parameters/references', [UserParameterController::class, 'getAllReferences']);
+
 Route::post('/user-parameters/goal', [UserParameterController::class, 'saveGoal']);
 Route::post('/user-parameters/anthropometry', [UserParameterController::class, 'saveAnthropometry']);
 Route::post('/user-parameters/level', [UserParameterController::class, 'saveLevel']);
