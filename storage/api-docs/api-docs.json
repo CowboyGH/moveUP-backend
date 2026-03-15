@@ -14521,13 +14521,13 @@
                     },
                     "avatar_url": {
                         "type": "string",
-                        "example": "http://localhost/storage/avatars/avatar_1_1234567890.jpg",
+                        "example": "http://localhost:8000/storage/avatars/EEWWelWPSfLlZE54ZROgfa6Qwryb4HQSenpNJjKd.jpg",
                         "nullable": true
                     },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
-                        "example": "2024-01-01 12:00:00"
+                        "example": "2026-03-12 16:15:47"
                     },
                     "email_verified": {
                         "type": "boolean",
@@ -14540,28 +14540,27 @@
                 "properties": {
                     "goal": {
                         "type": "string",
-                        "example": "Рост силовых показателей"
+                        "example": "Общее укрепление организма"
                     },
                     "level": {
                         "type": "string",
-                        "example": "Средний"
+                        "example": "Начинающий"
                     },
                     "equipment": {
                         "type": "string",
-                        "example": "Зал"
+                        "example": "Смешанное"
                     },
                     "height": {
                         "type": "integer",
-                        "example": 175
+                        "example": 199
                     },
                     "weight": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 70.5
+                        "type": "integer",
+                        "example": 78
                     },
                     "age": {
                         "type": "integer",
-                        "example": 25
+                        "example": 20
                     },
                     "gender": {
                         "type": "string",
@@ -14575,52 +14574,116 @@
                 "type": "object",
                 "nullable": true
             },
-            "ActiveSubscriptionInProfile": {
+            "SubscriptionHistoryItem": {
                 "properties": {
                     "id": {
                         "type": "integer",
-                        "example": 5
+                        "example": 21
                     },
-                    "name": {
-                        "type": "string",
-                        "example": "Премиум"
-                    },
-                    "price": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 29.99
+                    "subscription": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "3 месяца"
+                            },
+                            "price": {
+                                "type": "string",
+                                "example": "1400.00"
+                            }
+                        },
+                        "type": "object"
                     },
                     "start_date": {
                         "type": "string",
                         "format": "date",
-                        "example": "2024-01-01"
+                        "example": "2026-03-15"
                     },
                     "end_date": {
                         "type": "string",
                         "format": "date",
-                        "example": "2024-02-01"
+                        "example": "2026-06-13"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "expired",
+                            "cancelled",
+                            "inactive"
+                        ],
+                        "example": "active"
+                    }
+                },
+                "type": "object"
+            },
+            "ActiveSubscriptionInProfile": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 21
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "3 месяца"
+                    },
+                    "price": {
+                        "type": "string",
+                        "example": "1400.00"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-15"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-06-13"
                     },
                     "days_left": {
-                        "type": "integer",
-                        "example": 15
+                        "type": "number",
+                        "format": "float",
+                        "example": 89.38
                     }
                 },
                 "type": "object",
                 "nullable": true
             },
+            "ProfileSubscriptions": {
+                "properties": {
+                    "active": {
+                        "$ref": "#/components/schemas/ActiveSubscriptionInProfile"
+                    },
+                    "history": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SubscriptionHistoryItem"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "CardInProfile": {
                 "properties": {
                     "id": {
                         "type": "integer",
-                        "example": 3
+                        "example": 1
                     },
                     "card_holder": {
                         "type": "string",
-                        "example": "IVAN IVANOV"
+                        "example": "Connie Hammes"
                     },
                     "card_last_four": {
                         "type": "string",
-                        "example": "4242"
+                        "example": "7065"
                     },
                     "expiry_month": {
                         "type": "string",
@@ -14628,11 +14691,11 @@
                     },
                     "expiry_year": {
                         "type": "string",
-                        "example": "2025"
+                        "example": "2027"
                     },
                     "expiry_formatted": {
                         "type": "string",
-                        "example": "12/2025"
+                        "example": "12/2027"
                     },
                     "is_default": {
                         "type": "boolean",
@@ -14641,112 +14704,143 @@
                 },
                 "type": "object"
             },
-            "StatisticsVolumeMonth": {
+            "ProfileCurrentPhase": {
                 "properties": {
-                    "month": {
-                        "type": "string",
-                        "example": "2024-01"
-                    },
-                    "value": {
+                    "id": {
                         "type": "integer",
-                        "example": 320
-                    }
-                },
-                "type": "object"
-            },
-            "StatisticsVolume": {
-                "properties": {
-                    "total": {
-                        "type": "integer",
-                        "example": 1250
+                        "example": 2
                     },
-                    "by_month": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/StatisticsVolumeMonth"
-                        }
-                    }
-                },
-                "type": "object"
-            },
-            "StatisticsFrequency": {
-                "properties": {
-                    "total_workouts": {
-                        "type": "integer",
-                        "example": 24
-                    },
-                    "average_per_week": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 3.2
-                    },
-                    "current_streak": {
-                        "type": "integer",
-                        "example": 5
-                    },
-                    "max_streak": {
-                        "type": "integer",
-                        "example": 12
-                    }
-                },
-                "type": "object"
-            },
-            "StatisticsTrend": {
-                "properties": {
-                    "direction": {
-                        "type": "string",
-                        "enum": [
-                            "up",
-                            "down",
-                            "stable"
-                        ],
-                        "example": "up"
-                    },
-                    "percentage": {
-                        "type": "integer",
-                        "example": 15
-                    },
-                    "compared_to": {
-                        "type": "string",
-                        "example": "last_month"
-                    }
-                },
-                "type": "object"
-            },
-            "StatisticsCategory": {
-                "properties": {
                     "name": {
                         "type": "string",
-                        "example": "Силовые"
+                        "example": "Базовая фаза"
                     },
-                    "count": {
+                    "description": {
+                        "type": "string",
+                        "example": "Формирование базовых навыков и силы. Увеличение рабочих весов и освоение правильной техники выполнения упражнений."
+                    },
+                    "duration_days": {
                         "type": "integer",
-                        "example": 15
+                        "example": 14
                     },
-                    "percentage": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 62.5
+                    "order_number": {
+                        "type": "integer",
+                        "example": 2
                     }
                 },
                 "type": "object"
             },
-            "StatisticsData": {
+            "ProfileProgress": {
                 "properties": {
-                    "volume": {
-                        "$ref": "#/components/schemas/StatisticsVolume"
+                    "streak_days": {
+                        "type": "integer",
+                        "example": 19
                     },
-                    "frequency": {
-                        "$ref": "#/components/schemas/StatisticsFrequency"
+                    "completed_workouts": {
+                        "type": "integer",
+                        "example": 8
                     },
-                    "trend": {
-                        "$ref": "#/components/schemas/StatisticsTrend"
+                    "days_passed": {
+                        "type": "integer",
+                        "example": 26
                     },
-                    "categories": {
+                    "days_left": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "expected_workouts": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "total_expected_workouts": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "weekly_goal": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "phase_started_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-02-17T16:10:12.000000Z"
+                    },
+                    "last_workout_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-10T16:52:31.000000Z"
+                    },
+                    "has_workout_today": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileNextPhase": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Интенсивная фаза"
+                    },
+                    "order_number": {
+                        "type": "integer",
+                        "example": 3
+                    }
+                },
+                "type": "object",
+                "nullable": true
+            },
+            "ProfileRecentWorkout": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "workout_name": {
+                        "type": "string",
+                        "example": "Функциональный тренинг"
+                    },
+                    "completed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-10T16:52:31.000000Z"
+                    },
+                    "duration": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1610.87
+                    }
+                },
+                "type": "object"
+            },
+            "ProfilePhase": {
+                "properties": {
+                    "has_progress": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "current_phase": {
+                        "$ref": "#/components/schemas/ProfileCurrentPhase"
+                    },
+                    "progress": {
+                        "$ref": "#/components/schemas/ProfileProgress"
+                    },
+                    "next_phase": {
+                        "$ref": "#/components/schemas/ProfileNextPhase"
+                    },
+                    "recent_workouts": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/StatisticsCategory"
+                            "$ref": "#/components/schemas/ProfileRecentWorkout"
                         }
+                    },
+                    "can_advance": {
+                        "type": "boolean",
+                        "example": true
                     }
                 },
                 "type": "object"
@@ -14759,7 +14853,7 @@
                     },
                     "message": {
                         "type": "string",
-                        "example": "Профиль получен"
+                        "example": "success"
                     },
                     "data": {
                         "properties": {
@@ -14770,22 +14864,10 @@
                                 "$ref": "#/components/schemas/UserParametersInProfile"
                             },
                             "subscriptions": {
-                                "properties": {
-                                    "active": {
-                                        "$ref": "#/components/schemas/ActiveSubscriptionInProfile"
-                                    },
-                                    "history": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object"
-                                        }
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/ProfileSubscriptions"
                             },
                             "phase": {
-                                "description": "Данные о текущей фазе",
-                                "type": "object"
+                                "$ref": "#/components/schemas/ProfilePhase"
                             },
                             "cards": {
                                 "type": "array",
@@ -14794,7 +14876,12 @@
                                 }
                             },
                             "statistics": {
-                                "$ref": "#/components/schemas/StatisticsData"
+                                "description": "Пустой массив, статистика еще не реализована",
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                },
+                                "example": []
                             }
                         },
                         "type": "object"
@@ -14867,7 +14954,9 @@
                         "example": true
                     },
                     "data": {
-                        "$ref": "#/components/schemas/StatisticsData"
+                        "description": "Данные статистики (заглушка)",
+                        "type": "object",
+                        "example": []
                     }
                 },
                 "type": "object"

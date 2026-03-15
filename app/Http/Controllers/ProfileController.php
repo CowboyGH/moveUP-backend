@@ -44,39 +44,34 @@ class ProfileController extends Controller
             ->where('end_date', '>', now())
             ->first();
 
+        // Получаем ВСЮ историю подписок (не только активные)
+        $subscriptionsHistory = $user->userSubscriptions()
+            ->with('subscription')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($userSubscription) {
+                return [
+                    'id' => $userSubscription->id,
+                    'subscription' => [
+                        'id' => $userSubscription->subscription->id,
+                        'name' => $userSubscription->subscription->name,
+                        'price' => $userSubscription->subscription->price,
+                    ],
+                    'start_date' => $userSubscription->start_date->format('Y-m-d'),
+                    'end_date' => $userSubscription->end_date->format('Y-m-d'),
+                    'is_active' => $userSubscription->is_active,
+                    'status' => $this->getSubscriptionStatus($userSubscription),
+                ];
+            });
+
         // Получаем текущую фазу
         $phaseProgress = $this->phaseService->getUserPhaseProgress($user);
 
         // Получаем сохраненные карты
         $cards = $this->cardService->getUserCards($user);
 
-        // Статистика (заглушка)
-        $statistics = [
-            'volume' => [
-                'total' => 1250,
-                'by_month' => [
-                    ['month' => '2024-01', 'value' => 320],
-                    ['month' => '2024-02', 'value' => 450],
-                    ['month' => '2024-03', 'value' => 480],
-                ]
-            ],
-            'frequency' => [
-                'total_workouts' => 24,
-                'average_per_week' => 3.2,
-                'current_streak' => 5,
-                'max_streak' => 12,
-            ],
-            'trend' => [
-                'direction' => 'up',
-                'percentage' => 15,
-                'compared_to' => 'last_month',
-            ],
-            'categories' => [
-                ['name' => 'Силовые', 'count' => 15, 'percentage' => 62.5],
-                ['name' => 'Кардио', 'count' => 6, 'percentage' => 25],
-                ['name' => 'Растяжка', 'count' => 3, 'percentage' => 12.5],
-            ],
-        ];
+        // Статистика (пустой массив, так как еще не реализовано)
+        $statistics = [];
 
         $data = [
             'user' => [
@@ -105,14 +100,29 @@ class ProfileController extends Controller
                     'end_date' => $activeSubscription->end_date->format('Y-m-d'),
                     'days_left' => max(0, now()->diffInDays($activeSubscription->end_date, false)),
                 ] : null,
-                'history' => [],
+                'history' => $subscriptionsHistory,
             ],
             'phase' => $phaseProgress,
             'cards' => $cards,
             'statistics' => $statistics,
         ];
 
-        return ApiResponse::data($data);
+        return ApiResponse::success('success', $data);
+    }
+
+    /**
+     * Получить статус подписки
+     */
+    private function getSubscriptionStatus($subscription): string
+    {
+        if ($subscription->is_active && $subscription->end_date->isFuture()) {
+            return 'active';
+        } elseif ($subscription->end_date->isPast()) {
+            return 'expired';
+        } elseif (!$subscription->is_active && $subscription->end_date->isFuture()) {
+            return 'cancelled';
+        }
+        return 'inactive';
     }
 
     /**
