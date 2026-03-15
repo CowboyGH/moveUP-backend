@@ -75,13 +75,17 @@ class UserProgress extends Model
         $daysPassed = now()->diffInDays($this->created_at);
         $phaseDuration = $this->phase->duration_days;
 
-        if ($daysPassed >= $phaseDuration) {
-            return true;
-        }
         $weeksPassed = $daysPassed / 7;
         $expectedWorkouts = ceil($weeksPassed * $this->weekly_workout_goal);
 
-        return $this->completed_workouts >= $expectedWorkouts;
+        $minRequiredWorkouts = ceil($expectedWorkouts * 0.5);
+
+
+        $enoughTimePassed = $daysPassed >= $phaseDuration;
+        $enoughWorkoutsDone = $this->completed_workouts >= $expectedWorkouts;
+        $minWorkoutsDone = $this->completed_workouts >= $minRequiredWorkouts;
+
+        return $enoughWorkoutsDone || ($enoughTimePassed && $minWorkoutsDone);
     }
 
     /**

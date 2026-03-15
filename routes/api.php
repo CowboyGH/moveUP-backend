@@ -98,6 +98,14 @@ Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
     Route::post('/exercise/load-recommendation', [App\Http\Controllers\ExerciseReactionController::class, 'recommendation']);
     Route::post('/workouts/complete-with-adjustments', [App\Http\Controllers\WorkoutCompletionController::class, 'completeWithAdjustments']);
     Route::post('/workouts/start', [App\Http\Controllers\WorkoutStartController::class, 'start']);
+
+    Route::prefix('workout-execution')->group(function () {
+        Route::get('/{userWorkout}', [App\Http\Controllers\WorkoutExecutionController::class, 'show'])->name('workout-execution.show');
+        Route::post('/{userWorkout}/next-warmup', [App\Http\Controllers\WorkoutExecutionController::class, 'nextWarmup'])->name('workout-execution.next-warmup');
+        Route::post('/{userWorkout}/next-exercise', [App\Http\Controllers\WorkoutExecutionController::class, 'nextExercise'])->name('workout-execution.next-exercise');
+        Route::post('/{userWorkout}/save-exercise-result', [App\Http\Controllers\WorkoutExecutionController::class, 'saveExerciseResult'])->name('workout-execution.save-exercise-result');
+        Route::post('/{userWorkout}/complete', [App\Http\Controllers\WorkoutExecutionController::class, 'complete'])->name('workout-execution.complete');
+    });
 });
 
 Route::middleware(['jwt.custom', 'track.activity'])->prefix('payment')->group(function () {

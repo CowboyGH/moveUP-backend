@@ -1,5 +1,4 @@
 <?php
-// app/Services/ExerciseLoadService.php
 
 namespace App\Services;
 
@@ -65,7 +64,7 @@ class ExerciseLoadService
     /**
      * Сохранение веса пользователя
      */
-    private function saveExerciseWeight(int $userId, int $exerciseId, float $weight): void
+    public function saveExerciseWeight(int $userId, int $exerciseId, float $weight): void
     {
         $roundedWeight = $this->roundToHalf($weight);
 
