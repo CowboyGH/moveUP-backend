@@ -17,7 +17,7 @@ class UpdateProfileRequest extends ApiFormRequest
         $user = $this->user();
 
         return [
-            'name' => ['sometimes', 'string', 'max:20', 'regex:/^[a-zA-Zа-яА-ЯёЁ\s]+$/u'],
+            'name' => ['sometimes', 'string', 'max:20', 'min:2', 'regex:/^[a-zA-Zа-яА-ЯёЁ\s]+$/u'],
             'email' => [
                 'sometimes',
                 'string',
@@ -32,6 +32,7 @@ class UpdateProfileRequest extends ApiFormRequest
     {
         return [
             'name.max' => 'Имя не должно превышать 20 символов.',
+            'name.min' => 'Имя не должно быть короче 2-х символов',
             'name.regex' => 'Имя может содержать только буквы и пробелы.',
             'email.email' => 'Введите корректный адрес электронной почты.',
             'email.unique' => 'Этот email уже зарегистрирован.',
