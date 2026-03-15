@@ -9571,8 +9571,8 @@
                                                     "example": "Оценка функциональной подготовки"
                                                 },
                                                 "duration_minutes": {
-                                                    "type": "integer",
-                                                    "example": 30
+                                                    "type": "string",
+                                                    "example": "30 минут"
                                                 },
                                                 "image": {
                                                     "type": "string",

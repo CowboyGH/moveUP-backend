@@ -68,7 +68,7 @@ class TestingPaths {}
  *                 @OA\Property(property="id", type="integer", example=1),
  *                 @OA\Property(property="title", type="string", example="Функциональный тест"),
  *                 @OA\Property(property="description", type="string", example="Оценка функциональной подготовки"),
- *                 @OA\Property(property="duration_minutes", type="integer", example=30),
+ *                 @OA\Property(property="duration_minutes", type="string", example="30 минут"),
  *                 @OA\Property(property="image", type="string", example="test.jpg"),
  *                 @OA\Property(
  *                     property="categories",
