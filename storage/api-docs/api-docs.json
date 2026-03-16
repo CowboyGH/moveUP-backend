@@ -11434,10 +11434,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Данные гостя очищены"
-                                        },
-                                        "data": {
-                                            "type": "null",
-                                            "example": null
                                         }
                                     },
                                     "type": "object"
@@ -11458,115 +11454,29 @@
                 }
             }
         },
-        "/api/workouts": {
+        "/api/workout-execution/{userWorkout}": {
             "get": {
                 "tags": [
-                    "Workouts"
+                    "Workout Execution"
                 ],
-                "summary": "Получить список всех активных тренировок",
-                "operationId": "5774be4d4b0098a157a33d4c33753e72",
-                "responses": {
-                    "200": {
-                        "description": "Успешный ответ. Список доступных тренировок",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "title": {
-                                                        "type": "string",
-                                                        "example": "Функциональный тренинг"
-                                                    },
-                                                    "description": {
-                                                        "type": "string",
-                                                        "example": "Accusamus enim placeat nihil ad ex ipsum iste animi. Facilis ut laudantium fuga ex fugiat. Occaecati non laboriosam facere."
-                                                    },
-                                                    "duration_minutes": {
-                                                        "type": "string",
-                                                        "example": "59"
-                                                    },
-                                                    "phase": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 2
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Базовая фаза"
-                                                            }
-                                                        },
-                                                        "type": "object",
-                                                        "nullable": true
-                                                    },
-                                                    "exercises_count": {
-                                                        "type": "integer",
-                                                        "example": 0
-                                                    },
-                                                    "warmups_count": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ServerErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/workouts/{id}": {
-            "get": {
-                "tags": [
-                    "Workouts"
-                ],
-                "summary": "Получить информацию о конкретной тренировке",
-                "operationId": "7314a47a79649074c8fa86587e7dceb7",
+                "summary": "Получить детали тренировки для выполнения",
+                "description": "Возвращает детальную информацию о тренировке, включая разминки и упражнения с весами пользователя",
+                "operationId": "bd88b9fbc028452e730814ecb514ea5e",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "userWorkout",
                         "in": "path",
-                        "description": "ID тренировки",
+                        "description": "ID записи тренировки пользователя",
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "example": 1
+                            "example": 926
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Успешный ответ. Информация о тренировке",
+                        "description": "Детали тренировки",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -11577,111 +11487,473 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "success"
+                                            "example": "Детали тренировки"
                                         },
                                         "data": {
+                                            "$ref": "#/components/schemas/WorkoutDetailsResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Тренировка не принадлежит пользователю",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тренировка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/workout-execution/{userWorkout}/next-warmup": {
+            "post": {
+                "tags": [
+                    "Workout Execution"
+                ],
+                "summary": "Получить следующее упражнение разминки",
+                "description": "Возвращает следующее упражнение разминки или переходит к первому упражнению тренировки, если разминка закончена",
+                "operationId": "7a1dcf66be27a524d35e224e920f92c5",
+                "parameters": [
+                    {
+                        "name": "userWorkout",
+                        "in": "path",
+                        "description": "ID записи тренировки пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 926
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "current_warmup_id": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
                                             "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": true
                                                 },
-                                                "title": {
+                                                "message": {
                                                     "type": "string",
-                                                    "example": "Функциональный тренинг"
+                                                    "example": "success"
                                                 },
-                                                "description": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/NextWarmupResponse"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "message": {
                                                     "type": "string",
-                                                    "example": "Accusamus enim placeat nihil ad ex ipsum iste animi. Facilis ut laudantium fuga ex fugiat. Occaecati non laboriosam facere."
+                                                    "example": "success"
                                                 },
-                                                "duration_minutes": {
-                                                    "type": "string",
-                                                    "example": 59
-                                                },
-                                                "phase": {
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "integer",
-                                                            "example": 2
-                                                        },
-                                                        "name": {
-                                                            "type": "string",
-                                                            "example": "Базовая фаза"
-                                                        }
-                                                    },
-                                                    "type": "object",
-                                                    "nullable": true
-                                                },
-                                                "exercises": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Приседания"
-                                                            },
-                                                            "description": {
-                                                                "type": "string",
-                                                                "example": "Техника приседаний"
-                                                            },
-                                                            "image": {
-                                                                "type": "string",
-                                                                "example": "exercise.jpg",
-                                                                "nullable": true
-                                                            },
-                                                            "sets": {
-                                                                "type": "integer",
-                                                                "example": 3
-                                                            },
-                                                            "reps": {
-                                                                "type": "integer",
-                                                                "example": 12
-                                                            },
-                                                            "order_number": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "warmups": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Разминка"
-                                                            },
-                                                            "description": {
-                                                                "type": "string",
-                                                                "example": "Общая разминка"
-                                                            },
-                                                            "image": {
-                                                                "type": "string",
-                                                                "example": "warmup.jpg",
-                                                                "nullable": true
-                                                            },
-                                                            "order_number": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ExerciseResponse"
                                                 }
                                             },
                                             "type": "object"
                                         }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Тренировка не принадлежит пользователю",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/workout-execution/{userWorkout}/next-exercise": {
+            "post": {
+                "tags": [
+                    "Workout Execution"
+                ],
+                "summary": "Получить следующее упражнение",
+                "description": "Возвращает следующее упражнение или сигнал о завершении тренировки",
+                "operationId": "3738fd18b59b6d91747256f782d3e76a",
+                "parameters": [
+                    {
+                        "name": "userWorkout",
+                        "in": "path",
+                        "description": "ID записи тренировки пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 926
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "current_exercise_id"
+                                ],
+                                "properties": {
+                                    "current_exercise_id": {
+                                        "type": "integer",
+                                        "example": 21
+                                    },
+                                    "weight_used": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 40,
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "success"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ExerciseResponse"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "success"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/CompletedResponse"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Тренировка не принадлежит пользователю",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Упражнение не найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/workout-execution/{userWorkout}/save-exercise-result": {
+            "post": {
+                "tags": [
+                    "Workout Execution"
+                ],
+                "summary": "Сохранить результат выполнения упражнения",
+                "description": "Сохраняет результат выполнения упражнения, включая реакцию пользователя и использованный вес",
+                "operationId": "9deff930fb2d89ea3cce6f42b126c72d",
+                "parameters": [
+                    {
+                        "name": "userWorkout",
+                        "in": "path",
+                        "description": "ID записи тренировки пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 926
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SaveExerciseResultRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Результат успешно сохранен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Результат упражнения сохранен"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/SaveExerciseResultResponse"
+                                        }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Тренировка не принадлежит пользователю",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Упражнение не найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/workout-execution/{userWorkout}/complete": {
+            "post": {
+                "tags": [
+                    "Workout Execution"
+                ],
+                "summary": "Завершить тренировку",
+                "description": "Завершает тренировку, обновляет статус и прогресс пользователя",
+                "operationId": "394bea02944bb856ad66dbd51539d65f",
+                "parameters": [
+                    {
+                        "name": "userWorkout",
+                        "in": "path",
+                        "description": "ID записи тренировки пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 926
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Тренировка успешно завершена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тренировка успешно завершена!"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CompleteWorkoutResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Тренировка не принадлежит пользователю",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
                                 }
                             }
                         }
@@ -11696,155 +11968,26 @@
                             }
                         }
                     },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ServerErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/my-workout-history": {
-            "get": {
-                "tags": [
-                    "Workouts"
-                ],
-                "summary": "Получить историю пройденных тренировок текущего пользователя",
-                "operationId": "0e1af1ff4b76f358f31dd81a760e8cc1",
-                "responses": {
-                    "200": {
-                        "description": "Успешный ответ. История тренировок пользователя",
+                    "409": {
+                        "description": "Тренировка уже завершена",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "success": {
                                             "type": "boolean",
-                                            "example": true
+                                            "example": false
+                                        },
+                                        "code": {
+                                            "type": "string",
+                                            "example": "conflict"
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "success"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "active": {
-                                                    "description": "Текущая активная тренировка (если есть)",
-                                                    "type": "object",
-                                                    "example": null,
-                                                    "nullable": true
-                                                },
-                                                "statistics": {
-                                                    "properties": {
-                                                        "total_workouts_started": {
-                                                            "type": "integer",
-                                                            "example": 1
-                                                        },
-                                                        "total_workouts_completed": {
-                                                            "type": "integer",
-                                                            "example": 1
-                                                        },
-                                                        "total_workouts_in_progress": {
-                                                            "type": "integer",
-                                                            "example": 0
-                                                        },
-                                                        "last_workout_date": {
-                                                            "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2026-02-18 08:46:59"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "history": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "workout": {
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "integer",
-                                                                        "example": 41
-                                                                    },
-                                                                    "title": {
-                                                                        "type": "string",
-                                                                        "example": "Йога для гибкости и релаксации"
-                                                                    }
-                                                                },
-                                                                "type": "object"
-                                                            },
-                                                            "started_at": {
-                                                                "type": "string",
-                                                                "format": "date-time",
-                                                                "example": "2026-02-08 01:31:49"
-                                                            },
-                                                            "completed_at": {
-                                                                "type": "string",
-                                                                "format": "date-time",
-                                                                "example": "2026-02-18 08:46:59"
-                                                            },
-                                                            "status": {
-                                                                "type": "string",
-                                                                "enum": [
-                                                                    "in_progress",
-                                                                    "completed",
-                                                                    "cancelled"
-                                                                ],
-                                                                "example": "completed"
-                                                            },
-                                                            "duration": {
-                                                                "type": "string",
-                                                                "example": 14835
-                                                            },
-                                                            "progress": {
-                                                                "properties": {
-                                                                    "exercises_completed": {
-                                                                        "type": "integer",
-                                                                        "example": 0
-                                                                    },
-                                                                    "exercises_total": {
-                                                                        "type": "integer",
-                                                                        "example": 0
-                                                                    },
-                                                                    "warmups_completed": {
-                                                                        "type": "integer",
-                                                                        "example": 0
-                                                                    },
-                                                                    "warmups_total": {
-                                                                        "type": "integer",
-                                                                        "example": 0
-                                                                    }
-                                                                },
-                                                                "type": "object"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
+                                            "example": "Тренировка уже завершена"
                                         }
                                     },
                                     "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Не авторизован",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
@@ -13742,10 +13885,6 @@
                     "message": {
                         "type": "string",
                         "example": "Результаты тестов гостя сброшены"
-                    },
-                    "data": {
-                        "type": "null",
-                        "example": null
                     }
                 },
                 "type": "object"
@@ -15409,6 +15548,683 @@
                 },
                 "type": "object"
             },
+            "UserWorkoutSimple": {
+                "title": "Тренировка пользователя (кратко)",
+                "properties": {
+                    "user_workout_id": {
+                        "type": "integer",
+                        "example": 926
+                    },
+                    "workout": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 76
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Базовая силовая тренировка"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "Фундаментальные упражнения для развития силы"
+                            },
+                            "duration_minutes": {
+                                "type": "string",
+                                "example": "20"
+                            },
+                            "type": {
+                                "type": "string",
+                                "example": "strength"
+                            },
+                            "image": {
+                                "type": "string",
+                                "example": null,
+                                "nullable": true
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "phase": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Подготовительная фаза"
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "exercises_count": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "warmups_count": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "assigned",
+                            "started",
+                            "completed"
+                        ],
+                        "example": "assigned"
+                    },
+                    "can_be_started": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "is_started": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "started_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutsListResponse": {
+                "title": "Список тренировок пользователя",
+                "properties": {
+                    "assigned": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserWorkoutSimple"
+                        }
+                    },
+                    "started": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserWorkoutSimple"
+                        }
+                    },
+                    "has_active": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutStartRequest": {
+                "required": [
+                    "workout_id"
+                ],
+                "properties": {
+                    "workout_id": {
+                        "type": "integer",
+                        "example": 76
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutStartResponse": {
+                "properties": {
+                    "user_workout_id": {
+                        "type": "integer",
+                        "example": 926
+                    },
+                    "started_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-16T05:13:25.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "WarmupItem": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Мобилизация бедра"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Выполняйте указанное упражнение 60 сек."
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "http://localhost:8000/storage/warmups/warmup1.jpg"
+                    },
+                    "duration_seconds": {
+                        "type": "integer",
+                        "example": 60
+                    },
+                    "order_number": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "ExerciseItem": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 21
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "eos quos error"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Autem sunt dicta omnis sed vel voluptate et."
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "http://localhost:8000/storage/exercises/exercise-2.jpg"
+                    },
+                    "sets": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "reps": {
+                        "type": "integer",
+                        "example": 11
+                    },
+                    "order_number": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "current_weight": {
+                        "type": "number",
+                        "format": "float",
+                        "example": null,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutDetailsResponse": {
+                "properties": {
+                    "user_workout_id": {
+                        "type": "integer",
+                        "example": 926
+                    },
+                    "workout": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 76
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Базовая силовая тренировка"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "Фундаментальные упражнения для развития силы"
+                            },
+                            "duration_minutes": {
+                                "type": "string",
+                                "example": "20"
+                            },
+                            "type": {
+                                "type": "string",
+                                "example": "strength"
+                            },
+                            "image": {
+                                "type": "string",
+                                "example": null,
+                                "nullable": true
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "warmups": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WarmupItem"
+                        }
+                    },
+                    "exercises": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExerciseItem"
+                        }
+                    },
+                    "started_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-16T05:13:25.000000Z",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "assigned",
+                            "started",
+                            "completed"
+                        ],
+                        "example": "started"
+                    }
+                },
+                "type": "object"
+            },
+            "NextWarmupResponse": {
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "warmup",
+                            "exercise",
+                            "completed"
+                        ],
+                        "example": "warmup"
+                    },
+                    "warmup": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Мобилизация бедра"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "Выполняйте указанное упражнение 60 сек."
+                            },
+                            "image": {
+                                "type": "string",
+                                "example": "http://localhost:8000/storage/warmups/warmup1.jpg"
+                            },
+                            "duration_seconds": {
+                                "type": "integer",
+                                "example": 60
+                            },
+                            "order_number": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "is_last": {
+                                "type": "boolean",
+                                "example": true
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ExerciseResponse": {
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "exercise",
+                            "completed"
+                        ],
+                        "example": "exercise"
+                    },
+                    "needs_weight_input": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "exercise": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 21
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "eos quos error"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "Autem sunt dicta omnis sed vel voluptate et."
+                            },
+                            "image": {
+                                "type": "string",
+                                "example": "http://localhost:8000/storage/exercises/exercise-2.jpg"
+                            },
+                            "sets": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "reps": {
+                                "type": "integer",
+                                "example": 11
+                            },
+                            "order_number": {
+                                "type": "integer",
+                                "example": 5
+                            },
+                            "current_weight": {
+                                "type": "number",
+                                "format": "float",
+                                "example": null,
+                                "nullable": true
+                            },
+                            "is_last": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "exercise_number": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "total_exercises": {
+                                "type": "integer",
+                                "example": 1
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "CompletedResponse": {
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "example": "completed"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Все упражнения выполнены. Завершите тренировку."
+                    }
+                },
+                "type": "object"
+            },
+            "SaveExerciseResultRequest": {
+                "required": [
+                    "exercise_id",
+                    "reaction"
+                ],
+                "properties": {
+                    "exercise_id": {
+                        "type": "integer",
+                        "example": 21
+                    },
+                    "reaction": {
+                        "type": "string",
+                        "enum": [
+                            "good",
+                            "normal",
+                            "bad"
+                        ],
+                        "example": "good"
+                    },
+                    "weight_used": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 40,
+                        "nullable": true
+                    },
+                    "sets_completed": {
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": true
+                    },
+                    "reps_completed": {
+                        "type": "integer",
+                        "example": 11,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutReactionAnalysis": {
+                "properties": {
+                    "pattern": {
+                        "type": "string",
+                        "enum": [
+                            "no_data",
+                            "consistently_good",
+                            "consistently_bad",
+                            "mostly_good",
+                            "mostly_bad",
+                            "mixed"
+                        ],
+                        "example": "consistently_good"
+                    },
+                    "consecutive_good": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "consecutive_bad": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "last_reaction": {
+                        "type": "string",
+                        "enum": [
+                            "good",
+                            "normal",
+                            "bad"
+                        ],
+                        "example": "good"
+                    },
+                    "trend": {
+                        "type": "string",
+                        "enum": [
+                            "neutral",
+                            "positive_streak",
+                            "negative",
+                            "negative_critical"
+                        ],
+                        "example": "neutral"
+                    },
+                    "stats": {
+                        "properties": {
+                            "good": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "normal": {
+                                "type": "integer",
+                                "example": 0
+                            },
+                            "bad": {
+                                "type": "integer",
+                                "example": 0
+                            },
+                            "total": {
+                                "type": "integer",
+                                "example": 1
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutLoadAdjustment": {
+                "properties": {
+                    "applied": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "percent": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "old_weight": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 40
+                    },
+                    "new_weight": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 40
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": null,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ExerciseResult": {
+                "properties": {
+                    "reaction": {
+                        "properties": {
+                            "user_id": {
+                                "type": "integer",
+                                "example": 322
+                            },
+                            "exercise_id": {
+                                "type": "integer",
+                                "example": 21
+                            },
+                            "reaction_date": {
+                                "type": "string",
+                                "format": "date",
+                                "example": "2026-03-15T17:00:00.000000Z"
+                            },
+                            "user_workout_id": {
+                                "type": "integer",
+                                "example": 926
+                            },
+                            "reaction": {
+                                "type": "string",
+                                "enum": [
+                                    "good",
+                                    "normal",
+                                    "bad"
+                                ],
+                                "example": "good"
+                            },
+                            "updated_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2026-03-16T05:15:39.000000Z"
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2026-03-16T05:15:39.000000Z"
+                            },
+                            "id": {
+                                "type": "integer",
+                                "example": 31
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "analysis": {
+                        "$ref": "#/components/schemas/WorkoutReactionAnalysis"
+                    },
+                    "adjustments": {
+                        "$ref": "#/components/schemas/WorkoutLoadAdjustment"
+                    },
+                    "rest_phase": {
+                        "type": "object",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "current_weight": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 40
+                    },
+                    "recommendations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": []
+                    }
+                },
+                "type": "object"
+            },
+            "SaveExerciseResultResponse": {
+                "properties": {
+                    "exercise_result": {
+                        "$ref": "#/components/schemas/ExerciseResult"
+                    },
+                    "next_url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/workout-execution/926/next-exercise"
+                    }
+                },
+                "type": "object"
+            },
+            "PhaseProgress": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 73
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 322
+                    },
+                    "phase_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "streak_days": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "completed_workouts": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "weekly_workout_goal": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-16T05:16:28.000000Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-16T05:16:28.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "CompleteWorkoutResponse": {
+                "properties": {
+                    "user_workout": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 926
+                            },
+                            "completed_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2026-03-16T05:16:28.000000Z"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "phase_progress": {
+                        "$ref": "#/components/schemas/PhaseProgress"
+                    }
+                },
+                "type": "object"
+            },
             "Phase": {
                 "properties": {
                     "id": {
@@ -15856,6 +16672,10 @@
         {
             "name": "User Parameters",
             "description": "User Parameters"
+        },
+        {
+            "name": "Workout Execution",
+            "description": "Workout Execution"
         }
     ]
 }

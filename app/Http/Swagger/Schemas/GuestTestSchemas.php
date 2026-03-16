@@ -128,8 +128,7 @@ class GuestTestHistoryResponse {}
  *     type="object",
  *     title="Ответ на сброс тестов",
  *     @OA\Property(property="success", type="boolean", example=true),
- *     @OA\Property(property="message", type="string", example="Результаты тестов гостя сброшены"),
- *     @OA\Property(property="data", type="null", example=null)
+ *     @OA\Property(property="message", type="string", example="Результаты тестов гостя сброшены")
  * )
  */
 class GuestTestResetResponse {}

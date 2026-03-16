@@ -503,8 +503,7 @@ class UpdateUserParameters {}
  *         description="Данные гостя очищены",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="message", type="string", example="Данные гостя очищены"),
- *             @OA\Property(property="data", type="null", example=null)
+ *             @OA\Property(property="message", type="string", example="Данные гостя очищены")
  *         )
  *     ),
  *     @OA\Response(

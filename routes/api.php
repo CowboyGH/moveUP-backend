@@ -37,7 +37,6 @@ Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
 Route::get('/testings', [App\Http\Controllers\TestingController::class, 'index']);
 Route::get('/testings/{id}', [App\Http\Controllers\TestingController::class, 'show']);
 Route::get('/workouts', [App\Http\Controllers\WorkoutController::class, 'index']);
-Route::get('/workouts/{id}', [App\Http\Controllers\WorkoutController::class, 'show']);
 
 Route::get('/goals', [UserParameterController::class, 'getGoals']);
 Route::get('/levels', [UserParameterController::class, 'getLevels']);
