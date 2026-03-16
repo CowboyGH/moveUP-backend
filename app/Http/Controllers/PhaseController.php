@@ -24,6 +24,7 @@ class PhaseController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Текущая фаза пользователя',
             'data' => $progress
         ]);
     }
@@ -34,17 +35,48 @@ class PhaseController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Список всех фаз',
             'data' => $phases
         ]);
     }
 
     public function getPhaseDetails(Phase $phase): JsonResponse
     {
-        $phase->load('workouts');
+        $phase->load(['workouts' => function ($query) {
+            $query->where('is_active', 1);
+        }]);
+
+        $formattedWorkouts = $phase->workouts->map(function ($workout) {
+            return [
+                'id' => $workout->id,
+                'phase_id' => $workout->phase_id,
+                'title' => $workout->title,
+                'description' => $workout->description,
+                'duration_minutes' => $workout->duration_minutes,
+                'type' => $workout->type,
+                'is_active' => $workout->is_active,
+                'image' => $workout->image,
+                'image_url' => $workout->image_url,
+                'created_at' => $workout->created_at,
+                'updated_at' => $workout->updated_at,
+            ];
+        });
+
+        $data = [
+            'id' => $phase->id,
+            'name' => $phase->name,
+            'description' => $phase->description,
+            'duration_days' => $phase->duration_days,
+            'order_number' => $phase->order_number,
+            'created_at' => $phase->created_at,
+            'updated_at' => $phase->updated_at,
+            'workouts' => $formattedWorkouts,
+        ];
 
         return response()->json([
             'success' => true,
-            'data' => $phase
+            'message' => 'Детальная информация о фазе',
+            'data' => $data
         ]);
     }
 }

@@ -17,48 +17,75 @@ class WorkoutController extends Controller
 {
     public function index(): JsonResponse
     {
-        $workouts = Workout::where('is_active', 1)
-            ->with(['phase', 'exercises', 'warmups'])
-            ->get()
-            ->map(function ($workout) {
-                return [
+        $user = auth()->user();
+
+        $userWorkouts = UserWorkout::with(['workout.phase', 'workout.exercises', 'workout.warmups'])
+            ->where('user_id', $user->id)
+            ->whereIn('status', [UserWorkout::STATUS_ASSIGNED, UserWorkout::STATUS_STARTED])
+            ->get();
+
+        $formattedWorkouts = $userWorkouts->map(function ($userWorkout) {
+            $workout = $userWorkout->workout;
+
+            return [
+                'user_workout_id' => $userWorkout->id,
+                'workout' => [
                     'id' => $workout->id,
                     'title' => $workout->title,
                     'description' => $workout->description,
                     'duration_minutes' => $workout->duration_minutes,
-                    'phase' => $workout->phase ? [
-                        'id' => $workout->phase->id,
-                        'name' => $workout->phase->name,
-                    ] : null,
-                    'exercises_count' => $workout->exercises->count(),
-                    'warmups_count' => $workout->warmups->count(),
-                ];
-            });
+                    'type' => $workout->type,
+                    'image' => $workout->image_url,
+                ],
+                'phase' => $workout->phase ? [
+                    'id' => $workout->phase->id,
+                    'name' => $workout->phase->name,
+                ] : null,
+                'exercises_count' => $workout->exercises->count(),
+                'warmups_count' => $workout->warmups->count(),
+                'status' => $userWorkout->status,
+                'can_be_started' => $userWorkout->canBeStarted(),
+                'is_started' => $userWorkout->isStarted(),
+                'started_at' => $userWorkout->started_at,
+            ];
+        });
+        $assigned = $formattedWorkouts->where('status', UserWorkout::STATUS_ASSIGNED)->values();
+        $started = $formattedWorkouts->where('status', UserWorkout::STATUS_STARTED)->values();
 
-        return ApiResponse::data($workouts);
+        return ApiResponse::data([
+            'assigned' => $assigned,
+            'started' => $started,
+            'has_active' => $started->isNotEmpty(),
+        ]);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(UserWorkout $userWorkout)
     {
-        $workout = Workout::where('id', $id)
-            ->where('is_active', 1)
-            ->with(['phase', 'exercises', 'warmups'])
-            ->first();
+        $user = auth()->user();
 
-        if (!$workout) {
+        if ($userWorkout->user_id !== $user->id) {
             return ApiResponse::error(
-                ErrorResponse::NOT_FOUND,
-                'Тренировка не найдена',
-                404
+                ErrorResponse::FORBIDDEN,
+                'Тренировка не принадлежит текущему пользователю',
+                403
             );
         }
+
+        $userWorkout->load([
+            'workout.warmups',
+            'workout.exercises' => function ($query) {
+                $query->orderBy('pivot_order_number');
+            }
+        ]);
+
+        $workout = $userWorkout->workout;
 
         $formattedExercises = $workout->exercises->map(function ($exercise) {
             return [
                 'id' => $exercise->id,
-                'name' => $exercise->name,
+                'title' => $exercise->title,
                 'description' => $exercise->description,
-                'image' => $exercise->image,
+                'image' => $exercise->image_url,
                 'sets' => $exercise->pivot->sets,
                 'reps' => $exercise->pivot->reps,
                 'order_number' => $exercise->pivot->order_number,
@@ -70,22 +97,25 @@ class WorkoutController extends Controller
                 'id' => $warmup->id,
                 'name' => $warmup->name,
                 'description' => $warmup->description,
-                'image' => $warmup->image,
+                'image' => $warmup->image_url,
                 'order_number' => $warmup->pivot->order_number,
             ];
         })->sortBy('order_number')->values();
 
         $data = [
-            'id' => $workout->id,
-            'title' => $workout->title,
-            'description' => $workout->description,
-            'duration_minutes' => $workout->duration_minutes,
-            'phase' => $workout->phase ? [
-                'id' => $workout->phase->id,
-                'name' => $workout->phase->name,
-            ] : null,
-            'exercises' => $formattedExercises,
+            'user_workout_id' => $userWorkout->id,
+            'workout' => [
+                'id' => $workout->id,
+                'title' => $workout->title,
+                'description' => $workout->description,
+                'duration_minutes' => $workout->duration_minutes,
+                'type' => $workout->type,
+                'image' => $workout->image_url,
+            ],
             'warmups' => $formattedWarmups,
+            'exercises' => $formattedExercises,
+            'status' => $userWorkout->status,
+            'started_at' => $userWorkout->started_at,
         ];
 
         return ApiResponse::data($data);
@@ -94,19 +124,19 @@ class WorkoutController extends Controller
     public function myWorkoutHistory(): JsonResponse
     {
         $user = auth()->user();
-
         $userWorkouts = UserWorkout::with(['workout', 'exercisePerformances', 'userWarmupPerformances.warmup'])
             ->where('user_id', $user->id)
-            ->orderBy('started_at', 'desc')->get();
+            ->orderBy('started_at', 'desc')
+            ->get();
 
-        $activeWorkout = $userWorkouts->where('status', 'started')->first();
+        $activeWorkout = $userWorkouts->where('status', UserWorkout::STATUS_STARTED)->first();
+        $completedWorkouts = $userWorkouts->where('status', UserWorkout::STATUS_COMPLETED);
 
         $formattedHistory = $userWorkouts->map(function ($userWorkout) {
             $workout = $userWorkout->workout;
 
             $totalExercises = $userWorkout->exercisePerformances->count();
             $completedExercises = $userWorkout->exercisePerformances->where('completed', true)->count();
-
             $totalWarmups = $userWorkout->userWarmupPerformances->count();
             $completedWarmups = $userWorkout->userWarmupPerformances->where('completed', true)->count();
 
@@ -116,8 +146,8 @@ class WorkoutController extends Controller
                     'id' => $workout ? $workout->id : null,
                     'title' => $workout ? $workout->title : 'Тренировка удалена',
                 ],
-                'started_at' => $userWorkout->started_at ? $userWorkout->started_at->format('Y-m-d H:i:s') : null,
-                'completed_at' => $userWorkout->completed_at ? $userWorkout->completed_at->format('Y-m-d H:i:s') : null,
+                'started_at' => $userWorkout->started_at?->format('Y-m-d H:i:s'),
+                'completed_at' => $userWorkout->completed_at?->format('Y-m-d H:i:s'),
                 'status' => $userWorkout->status,
                 'duration' => $userWorkout->completed_at && $userWorkout->started_at
                     ? (int) $userWorkout->started_at->diffInMinutes($userWorkout->completed_at)
@@ -130,28 +160,26 @@ class WorkoutController extends Controller
                 ],
             ];
         });
-
         $statistics = [
-            'total_workouts_started' => $userWorkouts->count(),
-            'total_workouts_completed' => $userWorkouts->where('status', 'completed')->count(),
-            'total_workouts_in_progress' => $userWorkouts->where('status', 'in_progress')->count(),
+            'total_workouts_assigned' => $userWorkouts->count(),
+            'total_workouts_completed' => $completedWorkouts->count(),
+            'total_workouts_in_progress' => $userWorkouts->where('status', UserWorkout::STATUS_STARTED)->count(),
+            'total_workouts_pending' => $userWorkouts->where('status', UserWorkout::STATUS_ASSIGNED)->count(),
             'last_workout_date' => $userWorkouts->isNotEmpty() && $userWorkouts->first()->completed_at
                 ? $userWorkouts->first()->completed_at->format('Y-m-d H:i:s')
                 : null,
         ];
-
         $data = [
             'active' => $activeWorkout ? [
                 'id' => $activeWorkout->id,
                 'workout_id' => $activeWorkout->workout_id,
-                'title' => $activeWorkout->workout ? $activeWorkout->workout->title : 'Тренировка удалена',
+                'title' => $activeWorkout->workout?->title ?? 'Тренировка удалена',
                 'started_at' => $activeWorkout->started_at->format('Y-m-d H:i:s'),
                 'duration_minutes' => (int) $activeWorkout->started_at->diffInMinutes(now()),
             ] : null,
             'statistics' => $statistics,
             'history' => $formattedHistory,
         ];
-
         return ApiResponse::data($data);
     }
 

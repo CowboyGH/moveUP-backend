@@ -15,6 +15,7 @@ use App\Http\Controllers\PhaseController;
 use App\Http\Controllers\TestAttemptController;
 use App\Http\Controllers\UserParameterController;
 use App\Http\Controllers\UserProgressController;
+use App\Http\Controllers\WorkoutExecution\WorkoutExecutionController;
 use App\Http\Controllers\WorkoutGeneratorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ExerciseController;
@@ -100,11 +101,11 @@ Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
     Route::post('/workouts/start', [App\Http\Controllers\WorkoutStartController::class, 'start']);
 
     Route::prefix('workout-execution')->group(function () {
-        Route::get('/{userWorkout}', [App\Http\Controllers\WorkoutExecutionController::class, 'show'])->name('workout-execution.show');
-        Route::post('/{userWorkout}/next-warmup', [App\Http\Controllers\WorkoutExecutionController::class, 'nextWarmup'])->name('workout-execution.next-warmup');
-        Route::post('/{userWorkout}/next-exercise', [App\Http\Controllers\WorkoutExecutionController::class, 'nextExercise'])->name('workout-execution.next-exercise');
-        Route::post('/{userWorkout}/save-exercise-result', [App\Http\Controllers\WorkoutExecutionController::class, 'saveExerciseResult'])->name('workout-execution.save-exercise-result');
-        Route::post('/{userWorkout}/complete', [App\Http\Controllers\WorkoutExecutionController::class, 'complete'])->name('workout-execution.complete');
+        Route::get('/{userWorkout}', [WorkoutExecutionController::class, 'show'])->name('workout-execution.show');
+        Route::post('/{userWorkout}/next-warmup', [WorkoutExecutionController::class, 'nextWarmup'])->name('workout-execution.next-warmup');
+        Route::post('/{userWorkout}/next-exercise', [WorkoutExecutionController::class, 'nextExercise'])->name('workout-execution.next-exercise');
+        Route::post('/{userWorkout}/save-exercise-result', [WorkoutExecutionController::class, 'saveExerciseResult'])->name('workout-execution.save-exercise-result');
+        Route::post('/{userWorkout}/complete', [WorkoutExecutionController::class, 'complete'])->name('workout-execution.complete');
     });
 });
 

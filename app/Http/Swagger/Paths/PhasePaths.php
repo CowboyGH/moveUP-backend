@@ -13,6 +13,7 @@ namespace App\Http\Swagger\Paths;
  *         description="Успешный ответ. Данные о текущей фазе и прогрессе",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Текущая фаза пользователя"),
  *             @OA\Property(
  *                 property="data",
  *                 ref="#/components/schemas/UserPhaseProgress"
@@ -44,6 +45,7 @@ class PhasePaths {}
  *         description="Успешный ответ. Список всех фаз",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Список всех фаз"),
  *             @OA\Property(
  *                 property="data",
  *                 ref="#/components/schemas/PhaseList"
@@ -82,6 +84,7 @@ class GetAllPhases {}
  *         description="Успешный ответ. Детальная информация о фазе с привязанными тренировками",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Детальная информация о фазе"),
  *             @OA\Property(
  *                 property="data",
  *                 ref="#/components/schemas/PhaseWithWorkouts"
@@ -120,10 +123,18 @@ class GetPhaseDetails {}
  *     @OA\Response(
  *         response=200,
  *         description="Цель успешно обновлена",
- *         @OA\JsonContent(ref="#/components/schemas/UpdateWeeklyGoalResponse")
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Недельная цель обновлена"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 @OA\Property(property="weekly_goal", type="integer", example=5)
+ *             )
+ *         )
  *     ),
  *     @OA\Response(
- *         response=400,
+ *         response=422,
  *         description="Ошибка валидации",
  *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorWeeklyGoal")
  *     ),

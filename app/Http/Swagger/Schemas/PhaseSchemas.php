@@ -56,6 +56,8 @@ class PhaseNextSchema {}
  *     @OA\Property(property="duration_minutes", type="string", example="32"),
  *     @OA\Property(property="type", type="string", example="general"),
  *     @OA\Property(property="is_active", type="boolean", example=true),
+ *     @OA\Property(property="image", type="string", nullable=true, example="workouts/morning-workout.jpg"),
+ *     @OA\Property(property="image_url", type="string", nullable=true, example="http://localhost/storage/workouts/morning-workout.jpg"),
  *     @OA\Property(property="created_at", type="string", format="date-time", example="2026-03-05T07:29:23.000000Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", example="2026-03-05T07:29:23.000000Z")
  * )

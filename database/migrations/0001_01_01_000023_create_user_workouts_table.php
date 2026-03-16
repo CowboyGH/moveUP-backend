@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('workout_id')->constrained()->onDelete('cascade');
             $table->timestamp('started_at')->nullable();
             $table->timestamp('completed_at')->nullable();
-            $table->enum('status', ['started', 'completed'])->default('started');
+            $table->enum('status', ['assigned','started', 'completed'])->default('assigned');
             $table->timestamps();
         });
     }

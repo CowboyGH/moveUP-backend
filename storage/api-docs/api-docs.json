@@ -8276,6 +8276,10 @@
                                             "type": "boolean",
                                             "example": true
                                         },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Текущая фаза пользователя"
+                                        },
                                         "data": {
                                             "$ref": "#/components/schemas/UserPhaseProgress"
                                         }
@@ -8330,6 +8334,10 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Список всех фаз"
                                         },
                                         "data": {
                                             "$ref": "#/components/schemas/PhaseList"
@@ -8397,6 +8405,10 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Детальная информация о фазе"
                                         },
                                         "data": {
                                             "$ref": "#/components/schemas/PhaseWithWorkouts"
@@ -8468,12 +8480,31 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UpdateWeeklyGoalResponse"
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Недельная цель обновлена"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "weekly_goal": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
                     },
-                    "400": {
+                    "422": {
                         "description": "Ошибка валидации",
                         "content": {
                             "application/json": {
@@ -14262,6 +14293,16 @@
                     "is_active": {
                         "type": "boolean",
                         "example": true
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "workouts/morning-workout.jpg",
+                        "nullable": true
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "http://localhost/storage/workouts/morning-workout.jpg",
+                        "nullable": true
                     },
                     "created_at": {
                         "type": "string",

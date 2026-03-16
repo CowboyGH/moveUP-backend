@@ -16,26 +16,33 @@ class WorkoutStartController extends Controller
         ]);
 
         $user = $request->user();
-
-        $existingWorkout = UserWorkout::where('user_id', $user->id)
-            ->where('status', 'started')
+        $existingStarted = UserWorkout::where('user_id', $user->id)
+            ->where('status', UserWorkout::STATUS_STARTED)
             ->first();
 
-        if ($existingWorkout) {
+        if ($existingStarted) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
                 'У вас уже есть активная тренировка',
                 409
             );
         }
+        $userWorkout = UserWorkout::where('user_id', $user->id)
+            ->where('workout_id', $request->workout_id)
+            ->where('status', UserWorkout::STATUS_ASSIGNED)
+            ->first();
 
-        $userWorkout = UserWorkout::create([
-            'user_id' => $user->id,
-            'workout_id' => $request->workout_id,
+        if (!$userWorkout) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Тренировка не найдена или уже начата',
+                404
+            );
+        }
+        $userWorkout->update([
+            'status' => UserWorkout::STATUS_STARTED,
             'started_at' => now(),
-            'status' => 'started'
         ]);
-
         return ApiResponse::success('Тренировка начата', [
             'user_workout_id' => $userWorkout->id,
             'started_at' => $userWorkout->started_at

@@ -25,6 +25,10 @@ class UserWorkout extends Model
         'status' => 'string',
     ];
 
+    public const STATUS_ASSIGNED = 'assigned';
+    public const STATUS_STARTED = 'started';
+    public const STATUS_COMPLETED = 'completed';
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -43,5 +47,18 @@ class UserWorkout extends Model
     public function userWarmupPerformances(): HasMany
     {
         return $this->hasMany(UserWarmupPerformance::class);
+    }
+
+    public function canBeStarted(): bool
+    {
+        return $this->status === self::STATUS_ASSIGNED;
+    }
+    public function isStarted(): bool
+    {
+        return $this->status === self::STATUS_STARTED;
+    }
+    public function isCompleted(): bool
+    {
+        return $this->status === self::STATUS_COMPLETED;
     }
 }
