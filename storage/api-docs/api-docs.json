@@ -12395,14 +12395,14 @@
                 ]
             }
         },
-        "/my-workout-history": {
+        "/api/my-workout-history": {
             "get": {
                 "tags": [
                     "Workouts"
                 ],
                 "summary": "Получить историю тренировок пользователя",
                 "description": "Возвращает историю тренировок пользователя с детальной информацией о прогрессе",
-                "operationId": "765ab611fe6d475edf48e9ff351bd998",
+                "operationId": "042d3497801521be772a874adfc8b298",
                 "responses": {
                     "200": {
                         "description": "Успешный ответ",

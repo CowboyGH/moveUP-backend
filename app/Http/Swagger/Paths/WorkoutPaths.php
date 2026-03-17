@@ -34,7 +34,7 @@ class WorkoutPaths {}
 
 /**
  * @OA\Get(
- *     path="/my-workout-history",
+ *     path="/api/my-workout-history",
  *     summary="Получить историю тренировок пользователя",
  *     description="Возвращает историю тренировок пользователя с детальной информацией о прогрессе",
  *     tags={"Workouts"},
