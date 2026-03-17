@@ -117,6 +117,12 @@ Route::middleware(['jwt.custom', 'track.activity'])->prefix('payment')->group(fu
 });
 
 Route::middleware(['jwt.custom', 'admin', 'track.activity'])->prefix('admin')->group(function () {
+
+    Route::get('/overview', [App\Http\Controllers\Admin\StatisticsController::class, 'overview']);
+    Route::get('/revenue', [App\Http\Controllers\Admin\StatisticsController::class, 'revenue']);
+    Route::get('/subscriptions/count', [App\Http\Controllers\Admin\StatisticsController::class, 'subscriptionsCount']);
+    Route::get('/subscriptions/period', [App\Http\Controllers\Admin\StatisticsController::class, 'subscriptionsByPeriod']);
+
     Route::get('/subscriptions', [SubscriptionController::class, 'index']);
     Route::post('/subscriptions', [SubscriptionController::class, 'store']);
     Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);

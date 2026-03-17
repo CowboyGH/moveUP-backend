@@ -106,6 +106,15 @@ class SubscriptionController extends Controller
 
     public function show(int $id): JsonResponse
     {
+        // Добавляем проверку, что ID действительно число
+        if (!is_numeric($id)) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Подписка не найдена',
+                404
+            );
+        }
+
         $subscription = Subscription::find($id);
 
         if (!$subscription) {
@@ -116,7 +125,6 @@ class SubscriptionController extends Controller
             );
         }
 
-        // Используем success с сообщением вместо data
         return ApiResponse::success('success', $subscription);
     }
 

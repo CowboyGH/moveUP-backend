@@ -3,15 +3,20 @@
 namespace Database\Seeders;
 
 use App\Models\Payment;
+use App\Models\UserSubscription;
 use Illuminate\Database\Seeder;
 
 class PaymentSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        Payment::factory(25)->create();
+        $userSubscriptions = UserSubscription::all();
+
+        foreach ($userSubscriptions as $userSubscription) {
+            Payment::factory()
+                ->forUserSubscription($userSubscription)
+                ->completed()
+                ->create();
+        }
     }
 }

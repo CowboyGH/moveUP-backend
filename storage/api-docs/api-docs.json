@@ -1542,6 +1542,267 @@
                 ]
             }
         },
+        "/api/admin/overview": {
+            "get": {
+                "tags": [
+                    "Admin Statistics"
+                ],
+                "summary": "Получить общую статистику",
+                "description": "Возвращает общую статистику по выручке и подпискам",
+                "operationId": "getStatisticsOverview",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StatisticsOverviewResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/revenue": {
+            "get": {
+                "tags": [
+                    "Admin Statistics"
+                ],
+                "summary": "Получить статистику выручки по месяцам",
+                "description": "Возвращает выручку по месяцам за указанный год. Значения в тысячах рублей.",
+                "operationId": "getRevenueStatistics",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Год для статистики (по умолчанию текущий)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2026
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RevenueResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации параметров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/subscriptions/count": {
+            "get": {
+                "tags": [
+                    "Admin Statistics"
+                ],
+                "summary": "Получить статистику количества подписок по месяцам",
+                "description": "Возвращает количество купленных подписок по месяцам за указанный год",
+                "operationId": "getSubscriptionsCountStatistics",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Год для статистики (по умолчанию текущий)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2026
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubscriptionsCountResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации параметров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/subscriptions/period": {
+            "get": {
+                "tags": [
+                    "Admin Statistics"
+                ],
+                "summary": "Получить статистику подписок за период",
+                "description": "Возвращает количество подписок по месяцам за указанный период (1, 3, 6 или 12 месяцев)",
+                "operationId": "getSubscriptionsByPeriod",
+                "parameters": [
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "Период в месяцах",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "enum": [
+                                1,
+                                3,
+                                6,
+                                12
+                            ],
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubscriptionsByPeriodResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации параметров (период должен быть 1, 3, 6 или 12)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/subscriptions": {
             "get": {
                 "tags": [
@@ -15283,6 +15544,220 @@
                     }
                 ]
             },
+            "StatisticsOverview": {
+                "title": "Общая статистика",
+                "properties": {
+                    "total_revenue": {
+                        "description": "Общая выручка в тысячах рублей",
+                        "type": "number",
+                        "format": "float",
+                        "example": 125.5
+                    },
+                    "total_subscriptions": {
+                        "description": "Всего подписок",
+                        "type": "integer",
+                        "example": 234
+                    },
+                    "active_subscriptions": {
+                        "description": "Активных подписок",
+                        "type": "integer",
+                        "example": 89
+                    },
+                    "current_month_revenue": {
+                        "description": "Выручка за текущий месяц в тысячах рублей",
+                        "type": "number",
+                        "format": "float",
+                        "example": 25.3
+                    },
+                    "revenue_growth": {
+                        "description": "Рост выручки относительно прошлого месяца в процентах",
+                        "type": "number",
+                        "format": "float",
+                        "example": 12.5
+                    }
+                },
+                "type": "object"
+            },
+            "StatisticsOverviewResponse": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "$ref": "#/components/schemas/StatisticsOverview"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "MonthlyStatItem": {
+                "title": "Элемент месячной статистики",
+                "properties": {
+                    "month": {
+                        "description": "Номер месяца (1-12)",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "month_name": {
+                        "description": "Название месяца",
+                        "type": "string",
+                        "example": "мар"
+                    },
+                    "value": {
+                        "description": "Значение (выручка в тыс. руб или количество подписок)",
+                        "type": "number",
+                        "format": "float",
+                        "example": 25.5
+                    }
+                },
+                "type": "object"
+            },
+            "RevenueData": {
+                "title": "Данные по выручке",
+                "properties": {
+                    "year": {
+                        "description": "Год",
+                        "type": "integer",
+                        "example": 2026
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MonthlyStatItem"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "RevenueResponse": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "$ref": "#/components/schemas/RevenueData"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "SubscriptionsCountData": {
+                "title": "Данные по количеству подписок",
+                "properties": {
+                    "year": {
+                        "description": "Год",
+                        "type": "integer",
+                        "example": 2026
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MonthlyStatItem"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SubscriptionsCountResponse": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "$ref": "#/components/schemas/SubscriptionsCountData"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "PeriodStatItem": {
+                "title": "Элемент статистики за период",
+                "properties": {
+                    "month": {
+                        "description": "Номер месяца (1-12)",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "month_name": {
+                        "description": "Название месяца",
+                        "type": "string",
+                        "example": "мар"
+                    },
+                    "year": {
+                        "description": "Год",
+                        "type": "integer",
+                        "example": 2026
+                    },
+                    "label": {
+                        "description": "Подпись для графика",
+                        "type": "string",
+                        "example": "мар 2026"
+                    },
+                    "value": {
+                        "description": "Количество подписок",
+                        "type": "integer",
+                        "example": 25
+                    }
+                },
+                "type": "object"
+            },
+            "SubscriptionsByPeriodData": {
+                "title": "Данные по подпискам за период",
+                "properties": {
+                    "period": {
+                        "description": "Период в месяцах (1, 3, 6, 12)",
+                        "type": "integer",
+                        "example": 12
+                    },
+                    "start_date": {
+                        "description": "Начальная дата периода",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-03-17"
+                    },
+                    "end_date": {
+                        "description": "Конечная дата периода",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-17"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PeriodStatItem"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SubscriptionsByPeriodResponse": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "$ref": "#/components/schemas/SubscriptionsByPeriodData"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
             "TestingExercise": {
                 "properties": {
                     "id": {
@@ -16715,6 +17190,10 @@
         {
             "name": "Admin Exercises",
             "description": "Admin Exercises"
+        },
+        {
+            "name": "Admin Statistics",
+            "description": "Admin Statistics"
         },
         {
             "name": "Admin Subscriptions",
