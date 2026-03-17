@@ -206,7 +206,7 @@ class TestAttemptController extends Controller
         $user = auth()->user();
         $this->regenerateWorkoutsAfterTest($user);
 
-        return ApiResponse::success('Тест успешно завершён', [
+        return ApiResponse::success('Тест успешно завершён! Тренировки сгенерированы!', [
             'attempt_id' => $attempt->id,
             'completed_at' => $attempt->completed_at,
             'pulse' => $attempt->pulse,

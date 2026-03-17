@@ -7241,105 +7241,6 @@
                 ]
             }
         },
-        "/api/workouts/start": {
-            "post": {
-                "tags": [
-                    "Workouts"
-                ],
-                "summary": "Начать тренировку",
-                "description": "Создает запись о начале тренировки",
-                "operationId": "e448881a4a7f98099d316b4ea035897f",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "workout_id"
-                                ],
-                                "properties": {
-                                    "workout_id": {
-                                        "type": "integer",
-                                        "example": 999
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Тренировка начата",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Тренировка начата"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "user_workout_id": {
-                                                    "type": "integer",
-                                                    "example": 121
-                                                },
-                                                "started_at": {
-                                                    "type": "string",
-                                                    "format": "date-time"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Неавторизован",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedResponse"
-                                }
-                            }
-                        }
-                    },
-                    "409": {
-                        "description": "Уже есть активная тренировка",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ConflictResponse"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Ошибка валидации",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/fcm/token": {
             "post": {
                 "tags": [
@@ -11536,6 +11437,140 @@
                 ]
             }
         },
+        "/api/workouts/start": {
+            "post": {
+                "tags": [
+                    "Workout Execution"
+                ],
+                "summary": "Начать тренировку",
+                "description": "Меняет статус тренировки с assigned на started и фиксирует время начала",
+                "operationId": "70ae685627100523fd4303128f7b287f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "workout_id"
+                                ],
+                                "properties": {
+                                    "workout_id": {
+                                        "type": "integer",
+                                        "example": 76
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Тренировка успешно начата",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тренировка начата"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user_workout_id": {
+                                                    "type": "integer",
+                                                    "example": 926
+                                                },
+                                                "started_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-03-16T05:13:25.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Тренировка не принадлежит пользователю",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тренировка не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Уже есть активная тренировка",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "code": {
+                                            "type": "string",
+                                            "example": "conflict"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "У вас уже есть активная тренировка"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/workout-execution/{userWorkout}/next-warmup": {
             "post": {
                 "tags": [
@@ -11543,7 +11578,7 @@
                 ],
                 "summary": "Получить следующее упражнение разминки",
                 "description": "Возвращает следующее упражнение разминки или переходит к первому упражнению тренировки, если разминка закончена",
-                "operationId": "7a1dcf66be27a524d35e224e920f92c5",
+                "operationId": "8c958280b6beaea2d98236da06198369",
                 "parameters": [
                     {
                         "name": "userWorkout",
@@ -11662,7 +11697,7 @@
                 ],
                 "summary": "Получить следующее упражнение",
                 "description": "Возвращает следующее упражнение или сигнал о завершении тренировки",
-                "operationId": "3738fd18b59b6d91747256f782d3e76a",
+                "operationId": "4ed372a1e141b969749eebd7a2566e65",
                 "parameters": [
                     {
                         "name": "userWorkout",
@@ -11799,7 +11834,7 @@
                 ],
                 "summary": "Сохранить результат выполнения упражнения",
                 "description": "Сохраняет результат выполнения упражнения, включая реакцию пользователя и использованный вес",
-                "operationId": "9deff930fb2d89ea3cce6f42b126c72d",
+                "operationId": "8d6fc7e979006e0edaa3a3d895103647",
                 "parameters": [
                     {
                         "name": "userWorkout",
@@ -11901,7 +11936,7 @@
                 ],
                 "summary": "Завершить тренировку",
                 "description": "Завершает тренировку, обновляет статус и прогресс пользователя",
-                "operationId": "394bea02944bb856ad66dbd51539d65f",
+                "operationId": "47956cd75226a8bc1d5f31dc040bf2aa",
                 "parameters": [
                     {
                         "name": "userWorkout",
@@ -11988,6 +12023,66 @@
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/workouts": {
+            "get": {
+                "tags": [
+                    "Workouts"
+                ],
+                "summary": "Получить список тренировок пользователя",
+                "description": "Возвращает список тренировок пользователя, сгруппированный по статусам assigned и started",
+                "operationId": "5774be4d4b0098a157a33d4c33753e72",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/WorkoutsListResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
@@ -15633,54 +15728,6 @@
                 },
                 "type": "object"
             },
-            "WorkoutsListResponse": {
-                "title": "Список тренировок пользователя",
-                "properties": {
-                    "assigned": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/UserWorkoutSimple"
-                        }
-                    },
-                    "started": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/UserWorkoutSimple"
-                        }
-                    },
-                    "has_active": {
-                        "type": "boolean",
-                        "example": false
-                    }
-                },
-                "type": "object"
-            },
-            "WorkoutStartRequest": {
-                "required": [
-                    "workout_id"
-                ],
-                "properties": {
-                    "workout_id": {
-                        "type": "integer",
-                        "example": 76
-                    }
-                },
-                "type": "object"
-            },
-            "WorkoutStartResponse": {
-                "properties": {
-                    "user_workout_id": {
-                        "type": "integer",
-                        "example": 926
-                    },
-                    "started_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-03-16T05:13:25.000000Z"
-                    }
-                },
-                "type": "object"
-            },
             "WarmupItem": {
                 "properties": {
                     "id": {
@@ -16570,6 +16617,53 @@
                             },
                             "type": "object"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutsListResponse": {
+                "properties": {
+                    "assigned": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserWorkoutSimple"
+                        }
+                    },
+                    "started": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserWorkoutSimple"
+                        }
+                    },
+                    "has_active": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutStartRequest": {
+                "required": [
+                    "workout_id"
+                ],
+                "properties": {
+                    "workout_id": {
+                        "type": "integer",
+                        "example": 76
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutStartResponse": {
+                "properties": {
+                    "user_workout_id": {
+                        "type": "integer",
+                        "example": 926
+                    },
+                    "started_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-16T05:13:25.000000Z"
                     }
                 },
                 "type": "object"

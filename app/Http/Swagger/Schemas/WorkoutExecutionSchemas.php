@@ -37,46 +37,6 @@ class WorkoutExecutionSchemas {}
 
 /**
  * @OA\Schema(
- *     schema="WorkoutsListResponse",
- *     type="object",
- *     title="Список тренировок пользователя",
- *     @OA\Property(
- *         property="assigned",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/UserWorkoutSimple")
- *     ),
- *     @OA\Property(
- *         property="started",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/UserWorkoutSimple")
- *     ),
- *     @OA\Property(property="has_active", type="boolean", example=false)
- * )
- */
-class WorkoutsListResponseSchema {}
-
-/**
- * @OA\Schema(
- *     schema="WorkoutStartRequest",
- *     type="object",
- *     required={"workout_id"},
- *     @OA\Property(property="workout_id", type="integer", example=76)
- * )
- */
-class WorkoutStartRequestSchema {}
-
-/**
- * @OA\Schema(
- *     schema="WorkoutStartResponse",
- *     type="object",
- *     @OA\Property(property="user_workout_id", type="integer", example=926),
- *     @OA\Property(property="started_at", type="string", format="date-time", example="2026-03-16T05:13:25.000000Z")
- * )
- */
-class WorkoutStartResponseSchema {}
-
-/**
- * @OA\Schema(
  *     schema="WarmupItem",
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),

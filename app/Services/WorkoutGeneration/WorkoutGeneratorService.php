@@ -37,6 +37,13 @@ class WorkoutGeneratorService
      */
     public function generateForPhase(User $user, Phase $phase): Collection
     {
+        Log::info("🎯 Генерация для фазы", [
+            'user_id' => $user->id,
+            'phase_id' => $phase->id,
+            'goal_id' => $user->userParameters?->goal_id,
+            'level_id' => $user->userParameters?->level_id
+        ]);
+
         $context = new UserContext($user, $this->exerciseLoadService);
 
         $allWorkouts = Workout::where('phase_id', $phase->id)

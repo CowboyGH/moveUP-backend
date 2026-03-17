@@ -147,8 +147,14 @@ class UserParameterController extends Controller
     /**
      * Перегенерирует тренировки пользователя при необходимости
      */
-    private function regenerateWorkouts(User $user, bool $force = false): void
+    public function regenerateWorkouts(User $user, bool $force = false): void
     {
+        Log::info("🔄 regenerateWorkouts вызван", [
+            'user_id' => $user->id,
+            'force' => $force,
+            'all_parameters_filled' => $this->allParametersFilled($user)
+        ]);
+
         $params = $user->userParameters;
 
         if (!$this->allParametersFilled($user)) {
@@ -177,6 +183,10 @@ class UserParameterController extends Controller
 
         // Генерируем новые, если их нет или мы их удалили
         if ($force || !$hasActiveWorkouts) {
+            Log::info("✅ Начинаем генерацию тренировок", [
+                'user_id' => $user->id,
+                'phase_id' => $currentProgress->phase_id
+            ]);
             $workouts = $this->workoutGenerator->generateForPhase($user, $currentProgress->phase);
 
             if ($workouts->isNotEmpty()) {
