@@ -203,3 +203,91 @@ class WorkoutStartRequestSchema{}
  * )
  */
 class WorkoutStartResponseSchema{}
+
+/**
+ * @OA\Schema(
+ *     schema="ActiveWorkoutInfo",
+ *     type="object",
+ *     title="Информация об активной тренировке",
+ *     @OA\Property(property="id", type="integer", example=926),
+ *     @OA\Property(property="workout_id", type="integer", example=76),
+ *     @OA\Property(property="title", type="string", example="Базовая силовая тренировка"),
+ *     @OA\Property(property="started_at", type="string", format="date-time", example="2026-03-16T05:13:25.000000Z"),
+ *     @OA\Property(property="duration_minutes", type="integer", example=45)
+ * )
+ */
+class ActiveWorkoutInfoSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="WorkoutHistoryStatistics",
+ *     type="object",
+ *     title="Статистика тренировок",
+ *     @OA\Property(property="total_workouts_assigned", type="integer", example=25),
+ *     @OA\Property(property="total_workouts_completed", type="integer", example=18),
+ *     @OA\Property(property="total_workouts_in_progress", type="integer", example=1),
+ *     @OA\Property(property="total_workouts_pending", type="integer", example=6),
+ *     @OA\Property(property="last_workout_date", type="string", format="date-time", nullable=true, example="2026-03-15T10:30:00.000000Z")
+ * )
+ */
+class WorkoutHistoryStatisticsSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="WorkoutProgress",
+ *     type="object",
+ *     title="Прогресс тренировки",
+ *     @OA\Property(property="exercises_completed", type="integer", example=8),
+ *     @OA\Property(property="exercises_total", type="integer", example=10),
+ *     @OA\Property(property="warmups_completed", type="integer", example=3),
+ *     @OA\Property(property="warmups_total", type="integer", example=3)
+ * )
+ */
+class WorkoutProgressSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="WorkoutHistoryItem",
+ *     type="object",
+ *     title="Элемент истории тренировок",
+ *     @OA\Property(property="id", type="integer", example=925),
+ *     @OA\Property(
+ *         property="workout",
+ *         type="object",
+ *         @OA\Property(property="id", type="integer", example=75),
+ *         @OA\Property(property="title", type="string", example="Кардио тренировка")
+ *     ),
+ *     @OA\Property(property="started_at", type="string", format="date-time", example="2026-03-14T08:20:00.000000Z"),
+ *     @OA\Property(property="completed_at", type="string", format="date-time", example="2026-03-14T09:05:00.000000Z"),
+ *     @OA\Property(property="status", type="string", enum={"assigned", "started", "completed"}, example="completed"),
+ *     @OA\Property(property="duration", type="integer", nullable=true, example=45),
+ *     @OA\Property(
+ *         property="progress",
+ *         ref="#/components/schemas/WorkoutProgress"
+ *     )
+ * )
+ */
+class WorkoutHistoryItemSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="WorkoutHistoryResponse",
+ *     type="object",
+ *     title="Ответ с историей тренировок",
+ *     @OA\Property(
+ *         property="active",
+ *         ref="#/components/schemas/ActiveWorkoutInfo",
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="statistics",
+ *         ref="#/components/schemas/WorkoutHistoryStatistics"
+ *     ),
+ *     @OA\Property(
+ *         property="history",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/WorkoutHistoryItem")
+ *     )
+ * )
+ */
+class WorkoutHistoryResponseSchema {}

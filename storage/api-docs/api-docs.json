@@ -12394,6 +12394,66 @@
                     }
                 ]
             }
+        },
+        "/my-workout-history": {
+            "get": {
+                "tags": [
+                    "Workouts"
+                ],
+                "summary": "Получить историю тренировок пользователя",
+                "description": "Возвращает историю тренировок пользователя с детальной информацией о прогрессе",
+                "operationId": "765ab611fe6d475edf48e9ff351bd998",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/WorkoutHistoryResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -17168,6 +17228,156 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2026-03-16T05:13:25.000000Z"
+                    }
+                },
+                "type": "object"
+            },
+            "ActiveWorkoutInfo": {
+                "title": "Информация об активной тренировке",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 926
+                    },
+                    "workout_id": {
+                        "type": "integer",
+                        "example": 76
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Базовая силовая тренировка"
+                    },
+                    "started_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-16T05:13:25.000000Z"
+                    },
+                    "duration_minutes": {
+                        "type": "integer",
+                        "example": 45
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutHistoryStatistics": {
+                "title": "Статистика тренировок",
+                "properties": {
+                    "total_workouts_assigned": {
+                        "type": "integer",
+                        "example": 25
+                    },
+                    "total_workouts_completed": {
+                        "type": "integer",
+                        "example": 18
+                    },
+                    "total_workouts_in_progress": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "total_workouts_pending": {
+                        "type": "integer",
+                        "example": 6
+                    },
+                    "last_workout_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-15T10:30:00.000000Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutProgress": {
+                "title": "Прогресс тренировки",
+                "properties": {
+                    "exercises_completed": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "exercises_total": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "warmups_completed": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "warmups_total": {
+                        "type": "integer",
+                        "example": 3
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutHistoryItem": {
+                "title": "Элемент истории тренировок",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 925
+                    },
+                    "workout": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 75
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Кардио тренировка"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "started_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-14T08:20:00.000000Z"
+                    },
+                    "completed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-14T09:05:00.000000Z"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "assigned",
+                            "started",
+                            "completed"
+                        ],
+                        "example": "completed"
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "example": 45,
+                        "nullable": true
+                    },
+                    "progress": {
+                        "$ref": "#/components/schemas/WorkoutProgress"
+                    }
+                },
+                "type": "object"
+            },
+            "WorkoutHistoryResponse": {
+                "title": "Ответ с историей тренировок",
+                "properties": {
+                    "active": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/ActiveWorkoutInfo"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "statistics": {
+                        "$ref": "#/components/schemas/WorkoutHistoryStatistics"
+                    },
+                    "history": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WorkoutHistoryItem"
+                        }
                     }
                 },
                 "type": "object"

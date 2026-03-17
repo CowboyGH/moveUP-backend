@@ -17,6 +17,13 @@ class WorkoutController extends Controller
 {
     public function index(): JsonResponse
     {
+        if (!auth()->check()) {
+            return ApiResponse::error(
+                ErrorResponse::UNAUTHORIZED,
+                'Неавторизован.',
+                401
+            );
+        }
         $user = auth()->user();
 
         $userWorkouts = UserWorkout::with(['workout.phase', 'workout.exercises', 'workout.warmups'])
