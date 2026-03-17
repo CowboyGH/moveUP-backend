@@ -6608,6 +6608,7 @@
                     "Avatar"
                 ],
                 "summary": "Публичное получение аватара пользователя",
+                "description": "Возвращает файл изображения аватара пользователя. Не требует авторизации.",
                 "operationId": "0cb5eb932a7d79d5aefdbdaa74c520e7",
                 "parameters": [
                     {
@@ -6625,7 +6626,25 @@
                     "200": {
                         "description": "Изображение аватара",
                         "content": {
-                            "image/*": {
+                            "image/jpeg": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "image/png": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "image/gif": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "image/webp": {
                                 "schema": {
                                     "type": "string",
                                     "format": "binary"
@@ -6634,11 +6653,21 @@
                         }
                     },
                     "404": {
-                        "description": "Аватар не найден, возвращается JSON ошибка (если нет дефолтного изображения)",
+                        "description": "Аватар не найден",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/AvatarNotFoundResponse"
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "not_found"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Аватар не найден"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -12408,6 +12437,26 @@
                 },
                 "type": "object"
             },
+            "AvatarNotFoundResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ErrorResponse"
+                    },
+                    {
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "example": "not_found"
+                            },
+                            "message": {
+                                "type": "string",
+                                "example": "Аватар не найден"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
             "Category": {
                 "title": "Категория теста",
                 "properties": {
@@ -12798,26 +12847,6 @@
                             },
                             "message": {
                                 "example": "Неверный или истекший код."
-                            }
-                        },
-                        "type": "object"
-                    }
-                ]
-            },
-            "AvatarNotFoundResponse": {
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/ErrorResponse"
-                    },
-                    {
-                        "properties": {
-                            "code": {
-                                "type": "string",
-                                "example": "not_found"
-                            },
-                            "message": {
-                                "type": "string",
-                                "example": "Аватар не найден"
                             }
                         },
                         "type": "object"

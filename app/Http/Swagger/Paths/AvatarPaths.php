@@ -81,6 +81,7 @@ class DeleteAvatarPath {}
  * @OA\Get(
  *     path="/api/avatars/{userId}",
  *     summary="Публичное получение аватара пользователя",
+ *     description="Возвращает файл изображения аватара пользователя. Не требует авторизации.",
  *     tags={"Avatar"},
  *     @OA\Parameter(
  *         name="userId",
@@ -93,14 +94,29 @@ class DeleteAvatarPath {}
  *         response=200,
  *         description="Изображение аватара",
  *         @OA\MediaType(
- *             mediaType="image/*",
+ *             mediaType="image/jpeg",
+ *             @OA\Schema(type="string", format="binary")
+ *         ),
+ *         @OA\MediaType(
+ *             mediaType="image/png",
+ *             @OA\Schema(type="string", format="binary")
+ *         ),
+ *         @OA\MediaType(
+ *             mediaType="image/gif",
+ *             @OA\Schema(type="string", format="binary")
+ *         ),
+ *         @OA\MediaType(
+ *             mediaType="image/webp",
  *             @OA\Schema(type="string", format="binary")
  *         )
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Аватар не найден, возвращается JSON ошибка (если нет дефолтного изображения)",
- *         @OA\JsonContent(ref="#/components/schemas/AvatarNotFoundResponse")
+ *         description="Аватар не найден",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="code", type="string", example="not_found"),
+ *             @OA\Property(property="message", type="string", example="Аватар не найден")
+ *         )
  *     )
  * )
  */

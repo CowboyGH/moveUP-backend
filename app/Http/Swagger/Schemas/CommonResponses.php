@@ -262,20 +262,6 @@ class InvalidResetCodeResponseSchema {}
 
 /**
  * @OA\Schema(
- *     schema="AvatarNotFoundResponse",
- *     allOf={
- *         @OA\Schema(ref="#/components/schemas/ErrorResponse"),
- *         @OA\Schema(
- *             @OA\Property(property="code", type="string", example="not_found"),
- *             @OA\Property(property="message", type="string", example="Аватар не найден")
- *         )
- *     }
- * )
- */
-class AvatarNotFoundResponseSchema {}
-
-/**
- * @OA\Schema(
  *     schema="PaginatedResponse",
  *     type="object",
  *     title="Ответ с пагинацией",
