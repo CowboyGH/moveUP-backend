@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Profile\UpdateAvatarRequest;
 use Illuminate\Http\UploadedFile;
+use App\Models\UserWorkout;
+use App\Models\TestAttempt;
 
 class ProfileController extends Controller
 {
@@ -27,26 +29,24 @@ class ProfileController extends Controller
         $this->cardService = $cardService;
     }
 
-    /**
-     * Получить полный профиль пользователя
-     */
     public function show(): JsonResponse
     {
         $user = auth()->user();
 
-        // Загружаем связанные данные
         $user->load(['userParameters.goal', 'userParameters.level', 'userParameters.equipment']);
 
-        // Получаем активные подписки
         $activeSubscription = $user->userSubscriptions()
             ->with('subscription')
             ->where('is_active', true)
             ->where('end_date', '>', now())
             ->first();
 
-        // Получаем ВСЮ историю подписок (не только активные)
         $subscriptionsHistory = $user->userSubscriptions()
             ->with('subscription')
+            ->where(function ($query) {
+                $query->where('is_active', false)
+                    ->orWhere('end_date', '<=', now());
+            })
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($userSubscription) {
@@ -64,13 +64,50 @@ class ProfileController extends Controller
                 ];
             });
 
-        // Получаем текущую фазу
+        $workoutsHistory = $user->userWorkouts()
+            ->with('workout')
+            ->where('status', UserWorkout::STATUS_COMPLETED)
+            ->orderBy('completed_at', 'desc')
+            ->get()
+            ->map(function ($userWorkout) {
+                return [
+                    'id' => $userWorkout->id,
+                    'workout' => [
+                        'id' => $userWorkout->workout?->id,
+                        'title' => $userWorkout->workout?->title ?? 'Тренировка удалена',
+                    ],
+                    'completed_at' => $userWorkout->completed_at?->format('Y-m-d H:i:s'),
+                    'duration_minutes' => $userWorkout->completed_at && $userWorkout->started_at
+                        ? (int) $userWorkout->started_at->diffInMinutes($userWorkout->completed_at)
+                        : null,
+                ];
+            });
+
+        $testAttempts = TestAttempt::whereHas('testResults', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->with('testing')
+            ->whereNotNull('completed_at')
+            ->orderBy('completed_at', 'desc')
+            ->get();
+
+        $testsHistory = $testAttempts->map(function ($attempt) {
+            return [
+                'attempt_id' => $attempt->id,
+                'testing' => [
+                    'id' => $attempt->testing->id,
+                    'title' => $attempt->testing->title,
+                ],
+                'completed_at' => $attempt->completed_at->format('Y-m-d H:i:s'),
+                'pulse' => $attempt->pulse,
+                'exercises_count' => $attempt->testResults->count(),
+            ];
+        });
+
         $phaseProgress = $this->phaseService->getUserPhaseProgress($user);
 
-        // Получаем сохраненные карты
         $cards = $this->cardService->getUserCards($user);
 
-        // Статистика (пустой массив, так как еще не реализовано)
         $statistics = [];
 
         $data = [
@@ -101,6 +138,12 @@ class ProfileController extends Controller
                     'days_left' => max(0, now()->diffInDays($activeSubscription->end_date, false)),
                 ] : null,
                 'history' => $subscriptionsHistory,
+            ],
+            'workouts' => [
+                'history' => $workoutsHistory,
+            ],
+            'tests' => [
+                'history' => $testsHistory,
             ],
             'phase' => $phaseProgress,
             'cards' => $cards,

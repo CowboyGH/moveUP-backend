@@ -15203,21 +15203,21 @@
                 "properties": {
                     "id": {
                         "type": "integer",
-                        "example": 21
+                        "example": 1
                     },
                     "subscription": {
                         "properties": {
                             "id": {
                                 "type": "integer",
-                                "example": 2
+                                "example": 1
                             },
                             "name": {
                                 "type": "string",
-                                "example": "3 месяца"
+                                "example": "1 месяц"
                             },
                             "price": {
                                 "type": "string",
-                                "example": "1400.00"
+                                "example": "500.00"
                             }
                         },
                         "type": "object"
@@ -15225,16 +15225,16 @@
                     "start_date": {
                         "type": "string",
                         "format": "date",
-                        "example": "2026-03-15"
+                        "example": "2026-01-15"
                     },
                     "end_date": {
                         "type": "string",
                         "format": "date",
-                        "example": "2026-06-13"
+                        "example": "2026-02-15"
                     },
                     "is_active": {
                         "type": "boolean",
-                        "example": true
+                        "example": false
                     },
                     "status": {
                         "type": "string",
@@ -15244,7 +15244,7 @@
                             "cancelled",
                             "inactive"
                         ],
-                        "example": "active"
+                        "example": "expired"
                     }
                 },
                 "type": "object"
@@ -15291,6 +15291,95 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/SubscriptionHistoryItem"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileWorkoutHistoryItem": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "workout": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 5
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Утренняя зарядка"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "completed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-15 10:30:00"
+                    },
+                    "duration_minutes": {
+                        "type": "integer",
+                        "example": 45,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileWorkouts": {
+                "properties": {
+                    "history": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProfileWorkoutHistoryItem"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileTestHistoryItem": {
+                "properties": {
+                    "attempt_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "testing": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Базовый тест"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "completed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-14 15:20:00"
+                    },
+                    "pulse": {
+                        "type": "integer",
+                        "example": 120
+                    },
+                    "exercises_count": {
+                        "type": "integer",
+                        "example": 5
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileTests": {
+                "properties": {
+                    "history": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProfileTestHistoryItem"
                         }
                     }
                 },
@@ -15490,6 +15579,12 @@
                             },
                             "subscriptions": {
                                 "$ref": "#/components/schemas/ProfileSubscriptions"
+                            },
+                            "workouts": {
+                                "$ref": "#/components/schemas/ProfileWorkouts"
+                            },
+                            "tests": {
+                                "$ref": "#/components/schemas/ProfileTests"
                             },
                             "phase": {
                                 "$ref": "#/components/schemas/ProfilePhase"

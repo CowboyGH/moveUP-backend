@@ -58,22 +58,22 @@ class UserParametersInProfileSchema {}
  * @OA\Schema(
  *     schema="SubscriptionHistoryItem",
  *     type="object",
- *     @OA\Property(property="id", type="integer", example=21),
+ *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(
  *         property="subscription",
  *         type="object",
- *         @OA\Property(property="id", type="integer", example=2),
- *         @OA\Property(property="name", type="string", example="3 месяца"),
- *         @OA\Property(property="price", type="string", example="1400.00")
+ *         @OA\Property(property="id", type="integer", example=1),
+ *         @OA\Property(property="name", type="string", example="1 месяц"),
+ *         @OA\Property(property="price", type="string", example="500.00")
  *     ),
- *     @OA\Property(property="start_date", type="string", format="date", example="2026-03-15"),
- *     @OA\Property(property="end_date", type="string", format="date", example="2026-06-13"),
- *     @OA\Property(property="is_active", type="boolean", example=true),
+ *     @OA\Property(property="start_date", type="string", format="date", example="2026-01-15"),
+ *     @OA\Property(property="end_date", type="string", format="date", example="2026-02-15"),
+ *     @OA\Property(property="is_active", type="boolean", example=false),
  *     @OA\Property(
  *         property="status",
  *         type="string",
  *         enum={"active", "expired", "cancelled", "inactive"},
- *         example="active"
+ *         example="expired"
  *     )
  * )
  */
@@ -107,6 +107,67 @@ class ActiveSubscriptionInProfileSchema {}
  * )
  */
 class ProfileSubscriptionsSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="ProfileWorkoutHistoryItem",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(
+ *         property="workout",
+ *         type="object",
+ *         @OA\Property(property="id", type="integer", example=5),
+ *         @OA\Property(property="title", type="string", example="Утренняя зарядка")
+ *     ),
+ *     @OA\Property(property="completed_at", type="string", format="date-time", example="2026-03-15 10:30:00"),
+ *     @OA\Property(property="duration_minutes", type="integer", nullable=true, example=45)
+ * )
+ */
+class ProfileWorkoutHistoryItemSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="ProfileWorkouts",
+ *     type="object",
+ *     @OA\Property(
+ *         property="history",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/ProfileWorkoutHistoryItem")
+ *     )
+ * )
+ */
+class ProfileWorkoutsSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="ProfileTestHistoryItem",
+ *     type="object",
+ *     @OA\Property(property="attempt_id", type="integer", example=3),
+ *     @OA\Property(
+ *         property="testing",
+ *         type="object",
+ *         @OA\Property(property="id", type="integer", example=2),
+ *         @OA\Property(property="title", type="string", example="Базовый тест")
+ *     ),
+ *     @OA\Property(property="completed_at", type="string", format="date-time", example="2026-03-14 15:20:00"),
+ *     @OA\Property(property="pulse", type="integer", example=120),
+ *     @OA\Property(property="exercises_count", type="integer", example=5)
+ * )
+ */
+class ProfileTestHistoryItemSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="ProfileTests",
+ *     type="object",
+ *     @OA\Property(
+ *         property="history",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/ProfileTestHistoryItem")
+ *     )
+ * )
+ */
+class ProfileTestsSchema {}
 
 /**
  * @OA\Schema(
@@ -208,6 +269,8 @@ class ProfilePhaseSchema {}
  *         @OA\Property(property="user", ref="#/components/schemas/UserInProfile"),
  *         @OA\Property(property="parameters", ref="#/components/schemas/UserParametersInProfile"),
  *         @OA\Property(property="subscriptions", ref="#/components/schemas/ProfileSubscriptions"),
+ *         @OA\Property(property="workouts", ref="#/components/schemas/ProfileWorkouts"),
+ *         @OA\Property(property="tests", ref="#/components/schemas/ProfileTests"),
  *         @OA\Property(property="phase", ref="#/components/schemas/ProfilePhase"),
  *         @OA\Property(
  *             property="cards",
