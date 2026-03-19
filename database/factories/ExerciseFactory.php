@@ -3,153 +3,84 @@
 namespace Database\Factories;
 
 use App\Models\Equipment;
-
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class ExerciseFactory extends Factory
 {
+    private array $realExercises = [
+        // Грудь
+        ['title' => 'Жим штанги лежа', 'muscle_group' => 'Грудь', 'type' => 'strength'],
+        ['title' => 'Жим гантелей на наклонной скамье', 'muscle_group' => 'Грудь', 'type' => 'strength'],
+        ['title' => 'Сведение рук в кроссовере', 'muscle_group' => 'Грудь', 'type' => 'isolation'],
+        ['title' => 'Отжимания на брусьях', 'muscle_group' => 'Грудь', 'type' => 'strength'],
+
+        // Спина
+        ['title' => 'Тяга верхнего блока к груди', 'muscle_group' => 'Спина', 'type' => 'strength'],
+        ['title' => 'Тяга гантели в наклоне', 'muscle_group' => 'Спина', 'type' => 'strength'],
+        ['title' => 'Подтягивания широким хватом', 'muscle_group' => 'Спина', 'type' => 'strength'],
+        ['title' => 'Становая тяга', 'muscle_group' => 'Спина', 'type' => 'strength'],
+
+        // Ноги
+        ['title' => 'Приседания со штангой', 'muscle_group' => 'Ноги', 'type' => 'strength'],
+        ['title' => 'Румынская тяга', 'muscle_group' => 'Ноги', 'type' => 'strength'],
+        ['title' => 'Выпады с гантелями', 'muscle_group' => 'Ноги', 'type' => 'strength'],
+        ['title' => 'Жим ногами в тренажере', 'muscle_group' => 'Ноги', 'type' => 'strength'],
+
+        // Плечи
+        ['title' => 'Жим гантелей сидя', 'muscle_group' => 'Плечи', 'type' => 'strength'],
+        ['title' => 'Махи гантелями в стороны', 'muscle_group' => 'Плечи', 'type' => 'isolation'],
+        ['title' => 'Тяга штанги к подбородку', 'muscle_group' => 'Плечи', 'type' => 'strength'],
+
+        // Добавим еще упражнений до 20
+        ['title' => 'Отжимания от пола', 'muscle_group' => 'Грудь', 'type' => 'strength'],
+        ['title' => 'Тяга нижнего блока', 'muscle_group' => 'Спина', 'type' => 'strength'],
+        ['title' => 'Приседания с гантелями', 'muscle_group' => 'Ноги', 'type' => 'strength'],
+        ['title' => 'Подъем на носки стоя', 'muscle_group' => 'Ноги', 'type' => 'isolation'],
+        ['title' => 'Разведение гантелей лежа', 'muscle_group' => 'Грудь', 'type' => 'isolation'],
+    ];
+
+    private array $descriptions = [
+        'Грудь' => 'Базовое упражнение для развития грудных мышц. Выполняется лежа на скамье.',
+        'Спина' => 'Упражнение для развития широчайших мышц спины.',
+        'Ноги' => 'Базовое упражнение для развития мышц ног и ягодиц.',
+        'Плечи' => 'Упражнение для развития дельтовидных мышц.',
+        'Пресс' => 'Упражнение для развития мышц брюшного пресса.',
+        'Ягодицы' => 'Упражнение для развития ягодичных мышц.',
+        'Кардио' => 'Кардио-упражнение для развития выносливости и сжигания калорий.',
+    ];
+
     public function definition(): array
     {
-        $muscleGroups = [
-            'Грудь', 'Спина', 'Плечи', 'Бицепс', 'Трицепс',
-            'Ноги', 'Ягодицы', 'Пресс', 'Кардио', 'Все тело'
-        ];
+        $exercise = $this->faker->randomElement($this->realExercises);
 
         return [
-            'equipment_id' => Equipment::inRandomOrder()->first()->id
-                ?? Equipment::factory()->create()->id,
-            'title' => fake()->unique()->words(3, true),
-            'description' => fake()->paragraph(3),
-            'image' => 'exercises/exercise-' . fake()->numberBetween(1, 20) . '.jpg',
-            'muscle_group' => fake()->randomElement($muscleGroups),
+            'equipment_id' => $this->getEquipmentForExercise($exercise['title']),
+            'title' => $exercise['title'],
+            'description' => $this->descriptions[$exercise['muscle_group']] ?? 'Описание упражнения',
+            'image' => 'exercises/' . $this->getImageName($exercise['title']),
+            'muscle_group' => $exercise['muscle_group'],
         ];
     }
 
-    public function forGym(): static
+    private function getEquipmentForExercise(string $title): int
     {
-        return $this->state(function (array $attributes) {
-            $gymEquipment = Equipment::where('name', 'Зал')->first();
+        // Логика определения оборудования для упражнения
+        $gymExercises = ['Жим штанги', 'Тяга верхнего блока', 'Приседания со штангой', 'Становая тяга', 'Жим ногами'];
+        $isGym = collect($gymExercises)->contains(fn($item) => str_contains($title, $item));
 
-            return [
-                'equipment_id' => $gymEquipment ? $gymEquipment->id : Equipment::factory()->gym()->create()->id,
-                'title' => fake()->words(2, true) . ' для зала',
-            ];
-        });
+        $equipment = Equipment::where('name', $isGym ? 'Зал' : 'Смешанное')->first();
+
+        if (!$equipment) {
+            $equipment = Equipment::factory()->create(['name' => $isGym ? 'Зал' : 'Смешанное']);
+        }
+
+        return $equipment->id;
     }
 
-    public function forMixed(): static
+    private function getImageName(string $title): string
     {
-        return $this->state(function (array $attributes) {
-            $mixedEquipment = Equipment::where('name', 'Смешанное')->first();
-
-            return [
-                'equipment_id' => $mixedEquipment ? $mixedEquipment->id : Equipment::factory()->mixed()->create()->id,
-                'title' => fake()->words(2, true) . ' универсальное',
-            ];
-        });
-    }
-
-    public function chest(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'muscle_group' => 'Грудь',
-            'title' => fake()->words(2, true) . ' для груди',
-        ]);
-    }
-
-    public function back(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'muscle_group' => 'Спина',
-            'title' => fake()->words(2, true) . ' для спины',
-        ]);
-    }
-
-    public function shoulders(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'muscle_group' => 'Плечи',
-            'title' => fake()->words(2, true) . ' для плеч',
-        ]);
-    }
-
-    public function legs(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'muscle_group' => 'Ноги',
-            'title' => fake()->words(2, true) . ' для ног',
-        ]);
-    }
-
-    public function glutes(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'muscle_group' => 'Ягодицы',
-            'title' => fake()->words(2, true) . ' для ягодиц',
-        ]);
-    }
-
-    public function abs(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'muscle_group' => 'Пресс',
-            'title' => fake()->words(2, true) . ' для пресса',
-        ]);
-    }
-
-    public function cardio(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'muscle_group' => 'Кардио',
-            'title' => fake()->words(2, true) . ' кардио упражнение',
-        ]);
-    }
-
-    public function fullBody(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'muscle_group' => 'Все тело',
-            'title' => fake()->words(2, true) . ' комплексное упражнение',
-        ]);
-    }
-
-    // Состояния для разных типов упражнений
-    public function strength(): static
-    {
-        $strengthExercises = [
-            'title' => fake()->randomElement([
-                    'Жим штанги', 'Тяга блока', 'Приседания', 'Становая тяга',
-                    'Жим гантелей', 'Подтягивания', 'Отжимания', 'Выпады'
-                ]) . ' ' . fake()->word(),
-            'description' => 'Силовое упражнение для развития мышц и увеличения силы.',
-        ];
-
-        return $this->state(fn (array $attributes) => $strengthExercises);
-    }
-
-    public function endurance(): static
-    {
-        $enduranceExercises = [
-            'title' => fake()->randomElement([
-                    'Берпи', 'Скакалка', 'Бег на месте', 'Велотренажер',
-                    'Прыжки', 'Альпинист', 'Бокс', 'Планка'
-                ]) . ' ' . fake()->word(),
-            'description' => 'Упражнение на выносливость и кардио-систему.',
-        ];
-
-        return $this->state(fn (array $attributes) => $enduranceExercises);
-    }
-
-    public function stretching(): static
-    {
-        $stretchingExercises = [
-            'title' => fake()->randomElement([
-                'Растяжка ног', 'Наклоны', 'Мостик', 'Бабочка',
-                'Скручивания', 'Наклон к ногам', 'Растяжка спины'
-            ]),
-            'description' => 'Упражнения на растяжку и гибкость.',
-        ];
-
-        return $this->state(fn (array $attributes) => $stretchingExercises);
+        $slug = Str::slug($title);
+        return "exercise-{$slug}.jpg";
     }
 }

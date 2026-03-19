@@ -19,11 +19,13 @@ class TestingCategoryFactory extends Factory
         $currentCount = $testingCategoryCounts[$testingId] ?? 0;
 
         if ($currentCount >= 4) {
-            $testingId = Testing::whereDoesntHave('testingCategories', function($q) {
-                $q->groupBy('testing_id')
-                    ->havingRaw('COUNT(*) < 4');
-            })->inRandomOrder()->first()?->id
-                ?? Testing::factory()->create()->id;
+            $testing = Testing::whereDoesntHave('categories', function($q) {
+                $q->select(\DB::raw('count(*)'));
+            }, '<', 4)
+                ->inRandomOrder()
+                ->first();
+
+            $testingId = $testing?->id ?? Testing::factory()->create()->id;
         }
 
         $testingCategoryCounts[$testingId] = ($testingCategoryCounts[$testingId] ?? 0) + 1;
