@@ -124,28 +124,3 @@ class ChangePasswordPath {}
  * )
  */
 class DeleteProfilePath {}
-
-/**
- * @OA\Get(
- *     path="/api/profile/statistics",
- *     summary="Получение статистики (заглушка)",
- *     tags={"Profile"},
- *     security={{"bearerAuth":{}}},
- *     @OA\Response(
- *         response=200,
- *         description="Успешный ответ",
- *         @OA\JsonContent(ref="#/components/schemas/StatisticsResponse")
- *     ),
- *     @OA\Response(
- *         response=401,
- *         description="Неавторизован",
- *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
- *     ),
- *     @OA\Response(
- *         response=500,
- *         description="Внутренняя ошибка сервера",
- *         @OA\JsonContent(ref="#/components/schemas/ServerErrorResponse")
- *     )
- * )
- */
-class GetStatisticsPath {}

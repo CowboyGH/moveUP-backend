@@ -8986,17 +8986,113 @@
         "/api/profile/statistics": {
             "get": {
                 "tags": [
-                    "Profile"
+                    "Profile Statistics"
                 ],
-                "summary": "Получение статистики (заглушка)",
-                "operationId": "513f74cf4943dcfb218da633d3438e2d",
+                "summary": "Получить всю статистику профиля",
+                "description": "Возвращает текущую фазу пользователя, статистику объема, тренда и частоты",
+                "operationId": "getProfileStatistics",
+                "parameters": [
+                    {
+                        "name": "exercise_id",
+                        "in": "query",
+                        "description": "ID упражнения для статистики объема (если не указан, берется последнее использованное)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 17
+                        }
+                    },
+                    {
+                        "name": "week_offset",
+                        "in": "query",
+                        "description": "Смещение недели для объема (0 - текущая, 1 - прошлая и т.д.)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0,
+                            "minimum": 0,
+                            "example": 0
+                        }
+                    },
+                    {
+                        "name": "workout_id",
+                        "in": "query",
+                        "description": "ID тренировки для статистики тренда (если не указан, берется последняя)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 231
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Успешный ответ",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/StatisticsResponse"
+                                    "$ref": "#/components/schemas/ProfileStatisticsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/statistics/volume": {
+            "get": {
+                "tags": [
+                    "Profile Statistics"
+                ],
+                "summary": "Получить статистику объема",
+                "description": "Возвращает объем тренировок по дням недели для указанного упражнения",
+                "operationId": "getVolumeStatistics",
+                "parameters": [
+                    {
+                        "name": "exercise_id",
+                        "in": "query",
+                        "description": "ID упражнения (если не указан, берется последнее использованное)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "week_offset",
+                        "in": "query",
+                        "description": "Смещение недели (0 - текущая, 1 - прошлая и т.д.)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0,
+                            "minimum": 0,
+                            "example": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VolumeResponse"
                                 }
                             }
                         }
@@ -9011,12 +9107,276 @@
                             }
                         }
                     },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
+                    "404": {
+                        "description": "Упражнение не найдено",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/statistics/trend": {
+            "get": {
+                "tags": [
+                    "Profile Statistics"
+                ],
+                "summary": "Получить статистику тренда",
+                "description": "Возвращает оценки упражнений из выбранной тренировки",
+                "operationId": "getTrendStatistics",
+                "parameters": [
+                    {
+                        "name": "workout_id",
+                        "in": "query",
+                        "description": "ID тренировки (если не указан, берется последняя)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 231
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TrendResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тренировка не найдена или не принадлежит пользователю",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/statistics/frequency": {
+            "get": {
+                "tags": [
+                    "Profile Statistics"
+                ],
+                "summary": "Получить статистику частоты",
+                "description": "Возвращает количество тренировок по неделям за выбранный период",
+                "operationId": "getFrequencyStatistics",
+                "parameters": [
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "Период для статистики",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "month",
+                            "enum": [
+                                "week",
+                                "month",
+                                "3months",
+                                "6months",
+                                "year"
+                            ],
+                            "example": "month"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Смещение периода (0 - текущий, 1 - прошлый и т.д.)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0,
+                            "minimum": 0,
+                            "example": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FrequencyResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/statistics/exercises": {
+            "get": {
+                "tags": [
+                    "Profile Statistics"
+                ],
+                "summary": "Получить список упражнений",
+                "description": "Возвращает список упражнений, которые пользователь когда-либо выполнял",
+                "operationId": "getProfileExercisesList",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ProfileExerciseItem"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/statistics/workouts": {
+            "get": {
+                "tags": [
+                    "Profile Statistics"
+                ],
+                "summary": "Получить список тренировок",
+                "description": "Возвращает список завершенных тренировок пользователя для выбора в статистике тренда",
+                "operationId": "getProfileWorkoutsList",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ProfileWorkoutItem"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
                                 }
                             }
                         }
@@ -15594,14 +15954,6 @@
                                 "items": {
                                     "$ref": "#/components/schemas/CardInProfile"
                                 }
-                            },
-                            "statistics": {
-                                "description": "Пустой массив, статистика еще не реализована",
-                                "type": "array",
-                                "items": {
-                                    "type": "object"
-                                },
-                                "example": []
                             }
                         },
                         "type": "object"
@@ -15667,20 +16019,6 @@
                 },
                 "type": "object"
             },
-            "StatisticsResponse": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "data": {
-                        "description": "Данные статистики (заглушка)",
-                        "type": "object",
-                        "example": []
-                    }
-                },
-                "type": "object"
-            },
             "InvalidCurrentPasswordResponse": {
                 "allOf": [
                     {
@@ -15698,6 +16036,557 @@
                         "type": "object"
                     }
                 ]
+            },
+            "ProfilePhaseProgress": {
+                "title": "Прогресс фазы в профиле",
+                "properties": {
+                    "has_progress": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Пользователю не назначена фаза"
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileExerciseInfo": {
+                "title": "Информация об упражнении в профиле",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 17
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Скручивания на пресс"
+                    },
+                    "muscle_group": {
+                        "type": "string",
+                        "example": "Пресс"
+                    }
+                },
+                "type": "object"
+            },
+            "VolumePeriod": {
+                "title": "Период статистики объема",
+                "properties": {
+                    "start": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-16"
+                    },
+                    "end": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-22"
+                    },
+                    "label": {
+                        "type": "string",
+                        "example": "Неделя 4"
+                    },
+                    "week_number": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "week_offset": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "can_go_previous": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "can_go_next": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "VolumeSummary": {
+                "title": "Сводка по объему",
+                "properties": {
+                    "total_volume": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 5225
+                    },
+                    "workout_count": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "average_volume_per_workout": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1741.7
+                    }
+                },
+                "type": "object"
+            },
+            "VolumeChartItem": {
+                "title": "Элемент графика объема",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Чт"
+                    },
+                    "total_volume": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 5225
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-19",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "VolumeStatistics": {
+                "title": "Статистика объема",
+                "properties": {
+                    "has_data": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "exercise": {
+                        "$ref": "#/components/schemas/ProfileExerciseInfo"
+                    },
+                    "average_score": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 66.7
+                    },
+                    "average_score_percent": {
+                        "type": "integer",
+                        "example": 66
+                    },
+                    "average_score_label": {
+                        "type": "string",
+                        "example": "Нормально"
+                    },
+                    "period": {
+                        "$ref": "#/components/schemas/VolumePeriod"
+                    },
+                    "summary": {
+                        "$ref": "#/components/schemas/VolumeSummary"
+                    },
+                    "chart": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VolumeChartItem"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "TrendWorkoutInfo": {
+                "title": "Информация о тренировке в тренде",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 231
+                    },
+                    "workout_id": {
+                        "type": "integer",
+                        "example": 6
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Силовая: Грудь + трицепс"
+                    },
+                    "completed_at": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-18"
+                    },
+                    "completed_at_formatted": {
+                        "type": "string",
+                        "example": "18.03.2026 08:32"
+                    },
+                    "duration_minutes": {
+                        "type": "integer",
+                        "example": 0
+                    }
+                },
+                "type": "object"
+            },
+            "TrendChartItem": {
+                "title": "Элемент графика тренда",
+                "properties": {
+                    "exercise_number": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "exercise_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "exercise_name": {
+                        "type": "string",
+                        "example": "Жим штанги лежа"
+                    },
+                    "reaction": {
+                        "type": "string",
+                        "enum": [
+                            "good",
+                            "normal",
+                            "bad"
+                        ],
+                        "example": "good"
+                    },
+                    "score": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "score_percent": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "score_label": {
+                        "type": "string",
+                        "example": "Отлично"
+                    },
+                    "weight_used": {
+                        "type": "string",
+                        "example": "60.0"
+                    },
+                    "sets_completed": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "reps_completed": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "sets_planned": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "reps_planned": {
+                        "type": "integer",
+                        "example": 10
+                    }
+                },
+                "type": "object"
+            },
+            "AvailableWorkout": {
+                "title": "Доступная тренировка для выбора",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 231
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Силовая: Грудь + трицепс"
+                    },
+                    "date": {
+                        "type": "string",
+                        "example": "18.03.2026"
+                    },
+                    "is_current": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "TrendStatistics": {
+                "title": "Статистика тренда",
+                "properties": {
+                    "has_data": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "workout": {
+                        "$ref": "#/components/schemas/TrendWorkoutInfo"
+                    },
+                    "average_score": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100
+                    },
+                    "average_score_percent": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "average_score_label": {
+                        "type": "string",
+                        "example": "Отлично"
+                    },
+                    "chart": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TrendChartItem"
+                        }
+                    },
+                    "available_workouts": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AvailableWorkout"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "FrequencyPeriodInfo": {
+                "title": "Информация о периоде частоты",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "week",
+                            "month",
+                            "3months",
+                            "6months",
+                            "year"
+                        ],
+                        "example": "month"
+                    },
+                    "offset": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "label": {
+                        "type": "string",
+                        "example": "Текущий месяц"
+                    },
+                    "items_count": {
+                        "type": "integer",
+                        "example": 4
+                    }
+                },
+                "type": "object"
+            },
+            "FrequencySummary": {
+                "title": "Сводка по частоте",
+                "properties": {
+                    "total_workouts": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "average_per_week": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 2.3
+                    },
+                    "current_streak": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "longest_streak": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "weekly_goal": {
+                        "type": "integer",
+                        "example": 4
+                    }
+                },
+                "type": "object"
+            },
+            "FrequencyChartItem": {
+                "title": "Элемент графика частоты",
+                "properties": {
+                    "week_index": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "week_number": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "type": "string",
+                        "example": "Нед 1"
+                    },
+                    "short_label": {
+                        "type": "string",
+                        "example": "1"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-02-23"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-01"
+                    },
+                    "count": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "goal": {
+                        "type": "integer",
+                        "example": 4
+                    }
+                },
+                "type": "object"
+            },
+            "FrequencyStatistics": {
+                "title": "Статистика частоты",
+                "properties": {
+                    "has_data": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "period_info": {
+                        "$ref": "#/components/schemas/FrequencyPeriodInfo"
+                    },
+                    "summary": {
+                        "$ref": "#/components/schemas/FrequencySummary"
+                    },
+                    "chart": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FrequencyChartItem"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileStatisticsResponse": {
+                "title": "Ответ со всей статистикой профиля",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "properties": {
+                                    "current_phase": {
+                                        "$ref": "#/components/schemas/ProfilePhaseProgress"
+                                    },
+                                    "volume": {
+                                        "$ref": "#/components/schemas/VolumeStatistics"
+                                    },
+                                    "trend": {
+                                        "$ref": "#/components/schemas/TrendStatistics"
+                                    },
+                                    "frequency": {
+                                        "$ref": "#/components/schemas/FrequencyStatistics"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "VolumeResponse": {
+                "title": "Ответ со статистикой объема",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "$ref": "#/components/schemas/VolumeStatistics"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "TrendResponse": {
+                "title": "Ответ со статистикой тренда",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "$ref": "#/components/schemas/TrendStatistics"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "FrequencyResponse": {
+                "title": "Ответ со статистикой частоты",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "$ref": "#/components/schemas/FrequencyStatistics"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "ProfileExerciseItem": {
+                "title": "Элемент списка упражнений в профиле",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 6
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Подтягивания"
+                    },
+                    "last_used": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-19"
+                    },
+                    "last_used_formatted": {
+                        "type": "string",
+                        "example": "19.03.2026"
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileWorkoutItem": {
+                "title": "Элемент списка тренировок в профиле",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 231
+                    },
+                    "workout_id": {
+                        "type": "integer",
+                        "example": 6
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Силовая: Грудь + трицепс"
+                    },
+                    "completed_at": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-18"
+                    },
+                    "completed_at_formatted": {
+                        "type": "string",
+                        "example": "18.03.2026"
+                    },
+                    "duration_minutes": {
+                        "type": "integer",
+                        "example": 0
+                    }
+                },
+                "type": "object"
             },
             "StatisticsOverview": {
                 "title": "Общая статистика",
@@ -17563,6 +18452,10 @@
         {
             "name": "Profile",
             "description": "Profile"
+        },
+        {
+            "name": "Profile Statistics",
+            "description": "Profile Statistics"
         },
         {
             "name": "Cards",

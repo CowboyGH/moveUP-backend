@@ -108,8 +108,6 @@ class ProfileController extends Controller
 
         $cards = $this->cardService->getUserCards($user);
 
-        $statistics = [];
-
         $data = [
             'user' => [
                 'id' => $user->id,
@@ -147,7 +145,6 @@ class ProfileController extends Controller
             ],
             'phase' => $phaseProgress,
             'cards' => $cards,
-            'statistics' => $statistics,
         ];
 
         return ApiResponse::success('success', $data);
@@ -225,42 +222,6 @@ class ProfileController extends Controller
         $user->delete();
 
         return ApiResponse::success('Профиль успешно удален');
-    }
-
-    /**
-     * Статистика (заглушка)
-     */
-    public function statistics(): JsonResponse
-    {
-        // Заглушка, как в show методе
-        $statistics = [
-            'volume' => [
-                'total' => 1250,
-                'by_month' => [
-                    ['month' => '2024-01', 'value' => 320],
-                    ['month' => '2024-02', 'value' => 450],
-                    ['month' => '2024-03', 'value' => 480],
-                ]
-            ],
-            'frequency' => [
-                'total_workouts' => 24,
-                'average_per_week' => 3.2,
-                'current_streak' => 5,
-                'max_streak' => 12,
-            ],
-            'trend' => [
-                'direction' => 'up',
-                'percentage' => 15,
-                'compared_to' => 'last_month',
-            ],
-            'categories' => [
-                ['name' => 'Силовые', 'count' => 15, 'percentage' => 62.5],
-                ['name' => 'Кардио', 'count' => 6, 'percentage' => 25],
-                ['name' => 'Растяжка', 'count' => 3, 'percentage' => 12.5],
-            ],
-        ];
-
-        return ApiResponse::data($statistics);
     }
 
     /**

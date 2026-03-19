@@ -65,7 +65,13 @@ Route::middleware(['jwt.custom', 'track.activity'])->prefix('profile')->group(fu
     Route::delete('/avatar', [App\Http\Controllers\ProfileController::class, 'deleteAvatar']);
     Route::post('/change-password', [App\Http\Controllers\ProfileController::class, 'changePassword']);
     Route::delete('/', [App\Http\Controllers\ProfileController::class, 'destroy']);
-    Route::get('/statistics', [App\Http\Controllers\ProfileController::class, 'statistics']);
+
+    Route::get('statistics', [App\Http\Controllers\ProfileStatisticsController::class, 'index']);
+    Route::get('statistics/volume', [App\Http\Controllers\ProfileStatisticsController::class, 'volume']);
+    Route::get('statistics/frequency', [App\Http\Controllers\ProfileStatisticsController::class, 'frequency']);
+    Route::get('statistics/trend', [App\Http\Controllers\ProfileStatisticsController::class, 'trend']);
+    Route::get('statistics/exercises', [App\Http\Controllers\ProfileStatisticsController::class, 'exercises']);
+    Route::get('statistics/workouts', [App\Http\Controllers\ProfileStatisticsController::class, 'workouts']);
 });
 
 Route::middleware(['jwt.custom', 'track.activity'])->group(function () {

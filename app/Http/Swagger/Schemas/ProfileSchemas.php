@@ -277,13 +277,6 @@ class ProfilePhaseSchema {}
  *             type="array",
  *             @OA\Items(ref="#/components/schemas/CardInProfile")
  *         ),
- *         @OA\Property(
- *             property="statistics",
- *             type="array",
- *             description="Пустой массив, статистика еще не реализована",
- *             @OA\Items(type="object"),
- *             example={}
- *         )
  *     )
  * )
  */
@@ -325,21 +318,6 @@ class ChangePasswordResponseSchema {}
  * )
  */
 class DeleteProfileResponseSchema {}
-
-/**
- * @OA\Schema(
- *     schema="StatisticsResponse",
- *     type="object",
- *     @OA\Property(property="success", type="boolean", example=true),
- *     @OA\Property(
- *         property="data",
- *         type="object",
- *         description="Данные статистики (заглушка)",
- *         example={}
- *     )
- * )
- */
-class StatisticsResponseSchema {}
 
 /**
  * @OA\Schema(
