@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\WorkoutExecution;
 
+use App\Http\Requests\Workout\NextExerciseRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\UserWorkout;
@@ -39,18 +40,13 @@ class ExerciseController extends BaseWorkoutController
         ]);
     }
 
-    public function nextExercise(UserWorkout $userWorkout, Request $request)
+    public function nextExercise(UserWorkout $userWorkout, NextExerciseRequest $request)
     {
         $user = request()->user();
 
         if ($error = $this->checkOwnership($userWorkout)) {
             return $error;
         }
-
-        $request->validate([
-            'current_exercise_id' => 'required|exists:exercises,id',
-            'weight_used' => 'nullable|numeric|min:0|max:500',
-        ]);
 
         $exercises = $this->getSortedExercises($userWorkout);
 

@@ -37,7 +37,7 @@ class WorkoutGeneratorService
      */
     public function generateForPhase(User $user, Phase $phase): Collection
     {
-        Log::info("🎯 Генерация для фазы", [
+        Log::info("Генерация для фазы", [
             'user_id' => $user->id,
             'phase_id' => $phase->id,
             'goal_id' => $user->userParameters?->goal_id,

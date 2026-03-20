@@ -2,33 +2,26 @@
 
 namespace App\Http\Controllers\WorkoutExecution;
 
+use App\Http\Requests\Workout\NextWarmupRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\UserWorkout;
-use Illuminate\Http\Request;
 
 class WarmupController extends BaseWorkoutController
 {
     /**
      * Получить следующее упражнение разминки
      */
-    public function nextWarmup(UserWorkout $userWorkout, Request $request)
+    public function nextWarmup(UserWorkout $userWorkout, NextWarmupRequest $request)
     {
         if ($error = $this->checkOwnership($userWorkout)) {
             return $error;
         }
-
-        $request->validate([
-            'current_warmup_id' => 'nullable|exists:warmups,id',
-        ]);
-
         $warmups = $this->getSortedWarmups($userWorkout);
 
-        // Если это начало разминки, возвращаем первое упражнение
         if (!$request->current_warmup_id) {
             $firstWarmup = $warmups->first();
 
             if (!$firstWarmup) {
-                // Если разминки нет, сразу переходим к первому упражнению
                 return app(ExerciseController::class)->getFirstExercise($userWorkout);
             }
 
@@ -68,8 +61,6 @@ class WarmupController extends BaseWorkoutController
                 ],
             ]);
         }
-
-        // Разминка закончена - переходим к первому упражнению
         return app(ExerciseController::class)->getFirstExercise($userWorkout);
     }
 }
