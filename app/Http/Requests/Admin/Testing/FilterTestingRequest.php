@@ -10,9 +10,6 @@ class FilterTestingRequest extends BaseFilterRequest
     {
         return array_merge(parent::rules(), [
             'category_id' => 'nullable|integer|exists:categories,id',
-            'has_results' => 'nullable|boolean',
-            'duration_min' => 'nullable|integer|min:1',
-            'duration_max' => 'nullable|integer|min:1',
         ]);
     }
 

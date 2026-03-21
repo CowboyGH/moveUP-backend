@@ -8,8 +8,6 @@ class FilterWarmupRequest extends BaseFilterRequest
 {
     public function rules(): array
     {
-        return array_merge(parent::rules(), [
-            'has_workouts' => 'nullable|boolean',
-        ]);
+        return parent::rules();
     }
 }

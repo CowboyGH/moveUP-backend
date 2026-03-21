@@ -8,8 +8,6 @@ class FilterCategoryRequest extends BaseFilterRequest
 {
     public function rules(): array
     {
-        return array_merge(parent::rules(), [
-            // Специфичные для категорий правила
-        ]);
+        return parent::rules();
     }
 }

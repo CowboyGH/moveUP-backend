@@ -8,10 +8,7 @@ class FilterTestingExerciseRequest extends BaseFilterRequest
 {
     public function rules(): array
     {
-        return array_merge(parent::rules(), [
-            'exercise_id' => 'nullable|integer|exists:exercises,id',
-            'has_testings' => 'nullable|boolean',
-        ]);
+        return parent::rules();
     }
 
     public function messages(): array

@@ -31,34 +31,6 @@ class TestingController extends Controller
             });
         }
 
-        // Фильтр по длительности
-        if ($request->filled('duration_min')) {
-            $query->where('duration_minutes', '>=', $request->duration_min);
-        }
-        if ($request->filled('duration_max')) {
-            $query->where('duration_minutes', '<=', $request->duration_max);
-        }
-
-        // Фильтр по статусу
-        if ($request->filled('is_active')) {
-            $query->where('is_active', $request->is_active);
-        }
-
-        // Фильтр по наличию результатов
-        if ($request->filled('has_results')) {
-            if ($request->has_results) {
-                $query->has('testResults');
-            } else {
-                $query->doesntHave('testResults');
-            }
-        }
-
-        // Фильтр по датам
-        $query->dateFilter($request->date_from, $request->date_to);
-
-        // Сортировка
-        $query->orderBy($request->getSortBy(), $request->getSortDir());
-
         // Пагинация
         $testings = $query->paginate($request->getPerPage());
 
@@ -80,7 +52,7 @@ class TestingController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'success', // Добавлено поле message
+            'message' => 'success',
             'data' => $formattedTestings,
             'meta' => [
                 'current_page' => $testings->currentPage(),

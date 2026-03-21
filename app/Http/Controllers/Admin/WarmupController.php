@@ -15,32 +15,14 @@ use Illuminate\Support\Facades\Storage;
 
 class WarmupController extends Controller
 {
-    /**
-     * Получить список всех разминок
-     */
     public function index(FilterWarmupRequest $request): JsonResponse
     {
         $query = Warmup::withCount('workouts');
 
-        // Поиск по названию и описанию
+        // Только поиск по названию и описанию
         if ($request->filled('search')) {
             $query->search($request->search, ['name', 'description']);
         }
-
-        // Фильтр по наличию в тренировках
-        if ($request->filled('has_workouts')) {
-            if ($request->has_workouts) {
-                $query->has('workouts');
-            } else {
-                $query->doesntHave('workouts');
-            }
-        }
-
-        // Фильтр по датам
-        $query->dateFilter($request->date_from, $request->date_to);
-
-        // Сортировка
-        $query->orderBy($request->getSortBy(), $request->getSortDir());
 
         // Пагинация
         $warmups = $query->paginate($request->getPerPage());

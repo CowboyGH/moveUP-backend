@@ -22,7 +22,8 @@ class BaseFilterRequest extends ApiFormRequest
 
     public function getPerPage(): int
     {
-        return $this->input('per_page', 15);
+        // Пагинация по умолчанию = 10
+        return $this->input('per_page', 10);
     }
 
     public function getSortBy(): string

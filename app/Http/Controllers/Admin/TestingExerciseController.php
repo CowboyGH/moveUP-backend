@@ -18,30 +18,10 @@ class TestingExerciseController extends Controller
         $query = TestingExercise::with('exercise')
             ->withCount('testings');
 
-        // Поиск по описанию
+        // Только поиск по описанию
         if ($request->filled('search')) {
             $query->search($request->search, ['description']);
         }
-
-        // Фильтр по ID упражнения
-        if ($request->filled('exercise_id')) {
-            $query->where('exercise_id', $request->exercise_id);
-        }
-
-        // Фильтр по наличию в тестах
-        if ($request->filled('has_testings')) {
-            if ($request->has_testings) {
-                $query->has('testings');
-            } else {
-                $query->doesntHave('testings');
-            }
-        }
-
-        // Фильтр по датам
-        $query->dateFilter($request->date_from, $request->date_to);
-
-        // Сортировка
-        $query->orderBy($request->getSortBy(), $request->getSortDir());
 
         // Пагинация
         $exercises = $query->paginate($request->getPerPage());
@@ -64,7 +44,7 @@ class TestingExerciseController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'success', // Добавлено поле message
+            'message' => 'success',
             'data' => $formattedExercises,
             'meta' => [
                 'current_page' => $exercises->currentPage(),

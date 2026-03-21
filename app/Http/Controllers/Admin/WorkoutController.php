@@ -16,53 +16,15 @@ use Illuminate\Support\Facades\Storage;
 
 class WorkoutController extends Controller
 {
-    /**
-     * Получить список всех тренировок
-     */
     public function index(FilterWorkoutRequest $request): JsonResponse
     {
         $query = Workout::with(['phase'])
             ->withCount(['exercises', 'warmups', 'userWorkouts']);
 
-        // Поиск по текстовым полям
+        // Только поиск по текстовым полям
         if ($request->filled('search')) {
             $query->search($request->search, ['title', 'description']);
         }
-
-        // Фильтр по фазе
-        if ($request->filled('phase_id')) {
-            $query->where('phase_id', $request->phase_id);
-        }
-
-        // Фильтр по длительности
-        if ($request->filled('duration_min')) {
-            $query->where('duration_minutes', '>=', $request->duration_min);
-        }
-        if ($request->filled('duration_max')) {
-            $query->where('duration_minutes', '<=', $request->duration_max);
-        }
-
-        // Фильтр по количеству упражнений
-        if ($request->filled('exercises_count_min') || $request->filled('exercises_count_max')) {
-            // Уже есть withCount, используем having
-            if ($request->filled('exercises_count_min')) {
-                $query->having('exercises_count', '>=', $request->exercises_count_min);
-            }
-            if ($request->filled('exercises_count_max')) {
-                $query->having('exercises_count', '<=', $request->exercises_count_max);
-            }
-        }
-
-        // Фильтр по статусу активности
-        if ($request->filled('is_active')) {
-            $query->where('is_active', $request->is_active);
-        }
-
-        // Фильтр по датам
-        $query->dateFilter($request->date_from, $request->date_to);
-
-        // Сортировка
-        $query->orderBy($request->getSortBy(), $request->getSortDir());
 
         // Пагинация
         $workouts = $query->paginate($request->getPerPage());

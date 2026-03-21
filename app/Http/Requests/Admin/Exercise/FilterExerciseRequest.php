@@ -8,11 +8,7 @@ class FilterExerciseRequest extends BaseFilterRequest
 {
     public function rules(): array
     {
-        return array_merge(parent::rules(), [
-            'muscle_group' => 'nullable|string|max:100',
-            'equipment_id' => 'nullable|integer|exists:equipments,id',
-            'has_workouts' => 'nullable|boolean',
-        ]);
+        return parent::rules();
     }
 
     public function messages(): array

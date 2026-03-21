@@ -5,8 +5,8 @@ namespace App\Http\Swagger\Paths\Admin;
 /**
  * @OA\Get(
  *     path="/api/admin/testing-exercises",
- *     summary="Получить список всех тестовых упражнений с фильтрацией",
- *     description="Возвращает список всех тестовых упражнений с количеством тестов, в которых они используются. Поддерживает поиск, фильтрацию и пагинацию",
+ *     summary="Получить список всех тестовых упражнений",
+ *     description="Возвращает список всех тестовых упражнений с количеством тестов, в которых они используются. Поддерживает поиск и пагинацию",
  *     operationId="getTestingExercisesList",
  *     tags={"Admin Testing Exercises"},
  *     security={{"bearerAuth":{}}},
@@ -19,25 +19,11 @@ namespace App\Http\Swagger\Paths\Admin;
  *         @OA\Schema(type="string", maxLength=100, example="отжимания")
  *     ),
  *     @OA\Parameter(
- *         name="exercise_id",
- *         in="query",
- *         description="Фильтр по ID основного упражнения",
- *         required=false,
- *         @OA\Schema(type="integer", example=5)
- *     ),
- *     @OA\Parameter(
- *         name="has_testings",
- *         in="query",
- *         description="Фильтр по наличию в тестах (true/false)",
- *         required=false,
- *         @OA\Schema(type="boolean", example=true)
- *     ),
- *     @OA\Parameter(
  *         name="per_page",
  *         in="query",
  *         description="Количество элементов на странице (1-100)",
  *         required=false,
- *         @OA\Schema(type="integer", default=15, minimum=1, maximum=100)
+ *         @OA\Schema(type="integer", default=10, minimum=1, maximum=100)
  *     ),
  *     @OA\Parameter(
  *         name="page",
@@ -45,34 +31,6 @@ namespace App\Http\Swagger\Paths\Admin;
  *         description="Номер страницы",
  *         required=false,
  *         @OA\Schema(type="integer", default=1, minimum=1)
- *     ),
- *     @OA\Parameter(
- *         name="sort_by",
- *         in="query",
- *         description="Поле для сортировки",
- *         required=false,
- *         @OA\Schema(type="string", enum={"id", "exercise_id", "created_at", "updated_at"}, default="created_at")
- *     ),
- *     @OA\Parameter(
- *         name="sort_dir",
- *         in="query",
- *         description="Направление сортировки",
- *         required=false,
- *         @OA\Schema(type="string", enum={"asc", "desc"}, default="desc")
- *     ),
- *     @OA\Parameter(
- *         name="date_from",
- *         in="query",
- *         description="Начальная дата создания (Y-m-d)",
- *         required=false,
- *         @OA\Schema(type="string", format="date", example="2026-01-01")
- *     ),
- *     @OA\Parameter(
- *         name="date_to",
- *         in="query",
- *         description="Конечная дата создания (Y-m-d)",
- *         required=false,
- *         @OA\Schema(type="string", format="date", example="2026-12-31")
  *     ),
  *
  *     @OA\Response(
@@ -100,10 +58,10 @@ namespace App\Http\Swagger\Paths\Admin;
  *                 type="object",
  *                 @OA\Property(property="current_page", type="integer", example=1),
  *                 @OA\Property(property="last_page", type="integer", example=5),
- *                 @OA\Property(property="per_page", type="integer", example=15),
- *                 @OA\Property(property="total", type="integer", example=75),
+ *                 @OA\Property(property="per_page", type="integer", example=10),
+ *                 @OA\Property(property="total", type="integer", example=50),
  *                 @OA\Property(property="from", type="integer", example=1),
- *                 @OA\Property(property="to", type="integer", example=15)
+ *                 @OA\Property(property="to", type="integer", example=10)
  *             )
  *         )
  *     ),

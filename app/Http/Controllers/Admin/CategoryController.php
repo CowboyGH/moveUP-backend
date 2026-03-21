@@ -17,21 +17,10 @@ class CategoryController extends Controller
     {
         $query = Category::withCount('testings');
 
-        // Поиск по названию
+        // Только поиск по названию
         if ($request->filled('search')) {
             $query->search($request->search, ['name']);
         }
-
-        // Фильтр по датам
-        $query->dateFilter($request->date_from, $request->date_to);
-
-        // Фильтр по статусу (если есть is_active)
-        if ($request->filled('is_active')) {
-            $query->status($request->is_active);
-        }
-
-        // Сортировка
-        $query->orderBy($request->getSortBy(), $request->getSortDir());
 
         // Пагинация
         $categories = $query->paginate($request->getPerPage());

@@ -19,34 +19,10 @@ class SubscriptionController extends Controller
     {
         $query = Subscription::query();
 
-        // Поиск по названию и описанию
+        // Только поиск по названию и описанию
         if ($request->filled('search')) {
             $query->search($request->search, ['name', 'description']);
         }
-
-        // Фильтр по цене
-        if ($request->filled('price_min')) {
-            $query->where('price', '>=', $request->price_min);
-        }
-        if ($request->filled('price_max')) {
-            $query->where('price', '<=', $request->price_max);
-        }
-
-        // Фильтр по длительности
-        if ($request->filled('duration_days')) {
-            $query->where('duration_days', $request->duration_days);
-        }
-
-        // Фильтр по статусу
-        if ($request->filled('is_active')) {
-            $query->where('is_active', $request->is_active);
-        }
-
-        // Фильтр по датам
-        $query->dateFilter($request->date_from, $request->date_to);
-
-        // Сортировка
-        $query->orderBy($request->getSortBy(), $request->getSortDir());
 
         // Пагинация
         $subscriptions = $query->paginate($request->getPerPage());
@@ -67,7 +43,7 @@ class SubscriptionController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'success', // Добавлено поле message
+            'message' => 'success',
             'data' => $formattedSubscriptions,
             'meta' => [
                 'current_page' => $subscriptions->currentPage(),

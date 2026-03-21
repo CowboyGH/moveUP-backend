@@ -15,42 +15,14 @@ use Illuminate\Support\Facades\Storage;
 
 class ExerciseController extends Controller
 {
-    /**
-     * Получить список всех упражнений
-     */
     public function index(FilterExerciseRequest $request): JsonResponse
     {
         $query = Exercise::with(['equipment'])->withCount('workouts');
 
-        // Поиск по текстовым полям
+        // Только поиск по текстовым полям
         if ($request->filled('search')) {
             $query->search($request->search, ['title', 'description', 'muscle_group']);
         }
-
-        // Фильтр по группе мышц
-        if ($request->filled('muscle_group')) {
-            $query->where('muscle_group', 'LIKE', '%' . $request->muscle_group . '%');
-        }
-
-        // Фильтр по оборудованию
-        if ($request->filled('equipment_id')) {
-            $query->where('equipment_id', $request->equipment_id);
-        }
-
-        // Фильтр по датам
-        $query->dateFilter($request->date_from, $request->date_to);
-
-        // Фильтр по наличию в тренировках
-        if ($request->filled('has_workouts')) {
-            if ($request->has_workouts) {
-                $query->has('workouts');
-            } else {
-                $query->doesntHave('workouts');
-            }
-        }
-
-        // Сортировка
-        $query->orderBy($request->getSortBy(), $request->getSortDir());
 
         // Пагинация
         $exercises = $query->paginate($request->getPerPage());

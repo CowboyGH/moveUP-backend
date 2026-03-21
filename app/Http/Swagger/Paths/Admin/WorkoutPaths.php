@@ -5,8 +5,8 @@ namespace App\Http\Swagger\Paths\Admin;
 /**
  * @OA\Get(
  *     path="/api/admin/workouts",
- *     summary="Получить список всех тренировок с фильтрацией",
- *     description="Возвращает список всех тренировок с детальной информацией. Поддерживает поиск, фильтрацию и пагинацию",
+ *     summary="Получить список всех тренировок",
+ *     description="Возвращает список всех тренировок с детальной информацией. Поддерживает поиск и пагинацию",
  *     operationId="getWorkoutsList",
  *     tags={"Admin Workouts"},
  *     security={{"bearerAuth":{}}},
@@ -19,53 +19,11 @@ namespace App\Http\Swagger\Paths\Admin;
  *         @OA\Schema(type="string", maxLength=100, example="утренняя")
  *     ),
  *     @OA\Parameter(
- *         name="phase_id",
- *         in="query",
- *         description="Фильтр по ID фазы",
- *         required=false,
- *         @OA\Schema(type="integer", example=1)
- *     ),
- *     @OA\Parameter(
- *         name="duration_min",
- *         in="query",
- *         description="Минимальная длительность в минутах",
- *         required=false,
- *         @OA\Schema(type="string", minimum=1, example=20)
- *     ),
- *     @OA\Parameter(
- *         name="duration_max",
- *         in="query",
- *         description="Максимальная длительность в минутах",
- *         required=false,
- *         @OA\Schema(type="string", minimum=1, example=60)
- *     ),
- *     @OA\Parameter(
- *         name="exercises_count_min",
- *         in="query",
- *         description="Минимальное количество упражнений",
- *         required=false,
- *         @OA\Schema(type="integer", minimum=0, example=3)
- *     ),
- *     @OA\Parameter(
- *         name="exercises_count_max",
- *         in="query",
- *         description="Максимальное количество упражнений",
- *         required=false,
- *         @OA\Schema(type="integer", minimum=0, example=10)
- *     ),
- *     @OA\Parameter(
- *         name="is_active",
- *         in="query",
- *         description="Фильтр по статусу активности",
- *         required=false,
- *         @OA\Schema(type="boolean", example=true)
- *     ),
- *     @OA\Parameter(
  *         name="per_page",
  *         in="query",
  *         description="Количество элементов на странице (1-100)",
  *         required=false,
- *         @OA\Schema(type="integer", default=15, minimum=1, maximum=100)
+ *         @OA\Schema(type="integer", default=10, minimum=1, maximum=100)
  *     ),
  *     @OA\Parameter(
  *         name="page",
@@ -73,34 +31,6 @@ namespace App\Http\Swagger\Paths\Admin;
  *         description="Номер страницы",
  *         required=false,
  *         @OA\Schema(type="integer", default=1, minimum=1)
- *     ),
- *     @OA\Parameter(
- *         name="sort_by",
- *         in="query",
- *         description="Поле для сортировки",
- *         required=false,
- *         @OA\Schema(type="string", enum={"id", "title", "duration_minutes", "is_active", "created_at", "updated_at"}, default="created_at")
- *     ),
- *     @OA\Parameter(
- *         name="sort_dir",
- *         in="query",
- *         description="Направление сортировки",
- *         required=false,
- *         @OA\Schema(type="string", enum={"asc", "desc"}, default="desc")
- *     ),
- *     @OA\Parameter(
- *         name="date_from",
- *         in="query",
- *         description="Начальная дата создания (Y-m-d)",
- *         required=false,
- *         @OA\Schema(type="string", format="date", example="2026-01-01")
- *     ),
- *     @OA\Parameter(
- *         name="date_to",
- *         in="query",
- *         description="Конечная дата создания (Y-m-d)",
- *         required=false,
- *         @OA\Schema(type="string", format="date", example="2026-12-31")
  *     ),
  *
  *     @OA\Response(
@@ -116,7 +46,7 @@ namespace App\Http\Swagger\Paths\Admin;
  *                     @OA\Property(property="id", type="integer", example=1),
  *                     @OA\Property(property="title", type="string", example="Утренняя зарядка"),
  *                     @OA\Property(property="description", type="string", example="Комплекс упражнений для пробуждения"),
- *                     @OA\Property(property="duration_minutes", type="string", example=30),
+ *                     @OA\Property(property="duration_minutes", type="integer", example=30),
  *                     @OA\Property(property="image", type="string", nullable=true, example="workouts/morning-workout.jpg"),
  *                     @OA\Property(property="image_url", type="string", nullable=true, example="http://localhost/storage/workouts/morning-workout.jpg"),
  *                     @OA\Property(property="is_active", type="boolean", example=true),
@@ -139,10 +69,10 @@ namespace App\Http\Swagger\Paths\Admin;
  *                 type="object",
  *                 @OA\Property(property="current_page", type="integer", example=1),
  *                 @OA\Property(property="last_page", type="integer", example=5),
- *                 @OA\Property(property="per_page", type="integer", example=15),
- *                 @OA\Property(property="total", type="integer", example=75),
+ *                 @OA\Property(property="per_page", type="integer", example=10),
+ *                 @OA\Property(property="total", type="integer", example=50),
  *                 @OA\Property(property="from", type="integer", example=1),
- *                 @OA\Property(property="to", type="integer", example=15)
+ *                 @OA\Property(property="to", type="integer", example=10)
  *             )
  *         )
  *     ),
