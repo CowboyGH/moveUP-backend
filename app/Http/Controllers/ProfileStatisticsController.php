@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Http\Responses\ErrorResponse;
 
 class ProfileStatisticsController extends Controller
 {
@@ -64,13 +65,42 @@ class ProfileStatisticsController extends Controller
     public function volume(Request $request): JsonResponse
     {
         $request->validate([
-            'exercise_id' => 'nullable|exists:exercises,id',
+            'exercise_id' => 'nullable|integer|min:1',
             'week_offset' => 'nullable|integer|min:0',
         ]);
 
         $user = $request->user();
         $exerciseId = $request->get('exercise_id');
         $weekOffset = $request->get('week_offset', 0);
+
+        // Если exercise_id передан, проверяем его существование и наличие данных
+        if ($exerciseId) {
+            // Проверяем существование упражнения в таблице exercises
+            $exerciseExists = \App\Models\Exercise::where('id', $exerciseId)->exists();
+
+            if (!$exerciseExists) {
+                return ApiResponse::error(
+                    ErrorResponse::NOT_FOUND,
+                    'Упражнение не найдено',
+                    404
+                );
+            }
+
+            // Проверяем, выполнял ли пользователь это упражнение
+            $hasData = ExercisePerformance::where('exercise_id', $exerciseId)
+                ->whereHas('userWorkout', function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                })
+                ->exists();
+
+            if (!$hasData) {
+                return ApiResponse::error(
+                    'no_data',
+                    'У вас нет данных по этому упражнению',
+                    404
+                );
+            }
+        }
 
         $volumeStats = $this->getVolumeStatistics($user, $exerciseId, $weekOffset);
 
@@ -83,28 +113,29 @@ class ProfileStatisticsController extends Controller
     public function trend(Request $request): JsonResponse
     {
         $request->validate([
-            'workout_id' => 'nullable|exists:user_workouts,id',
+            'workout_id' => 'nullable|integer|min:1', // только проверка формата
         ]);
 
         $user = $request->user();
+        $workoutId = $request->get('workout_id');
 
-        // Проверяем, что тренировка принадлежит пользователю
-        if ($request->workout_id) {
-            $workout = UserWorkout::where('id', $request->workout_id)
+        if ($workoutId) {
+            $workout = UserWorkout::where('id', $workoutId)
                 ->where('user_id', $user->id)
                 ->where('status', 'completed')
+                ->whereNotNull('completed_at')
                 ->first();
 
             if (!$workout) {
                 return ApiResponse::error(
-                    'not_found',
-                    'Тренировка не найдена или не принадлежит пользователю',
+                    ErrorResponse::NOT_FOUND,
+                    'Тренировка не найдена',
                     404
                 );
             }
         }
 
-        $trendStats = $this->getTrendStatistics($user, $request->workout_id);
+        $trendStats = $this->getTrendStatistics($user, $workoutId);
 
         return ApiResponse::data($trendStats);
     }
