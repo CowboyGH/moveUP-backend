@@ -287,7 +287,7 @@ class ExerciseUpdatePaths {}
  *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
  *     ),
  *     @OA\Response(
- *         response=422,
+ *         response=409,
  *         description="Нельзя удалить упражнение, которое используется в тренировках или есть результаты тестов",
  *         @OA\JsonContent(ref="#/components/schemas/ConflictResponse")
  *     )

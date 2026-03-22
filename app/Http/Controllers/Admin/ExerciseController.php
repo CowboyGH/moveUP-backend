@@ -228,7 +228,7 @@ class ExerciseController extends Controller
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
                 'Нельзя удалить упражнение, которое используется в тренировках',
-                422
+                409
             );
         }
 
@@ -236,7 +236,7 @@ class ExerciseController extends Controller
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
                 'Нельзя удалить упражнение, для которого есть результаты тестов',
-                422
+                409
             );
         }
 

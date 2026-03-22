@@ -204,7 +204,7 @@ class WarmupController extends Controller
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
                 'Нельзя удалить разминку, которая используется в тренировках',
-                422
+                409
             );
         }
 

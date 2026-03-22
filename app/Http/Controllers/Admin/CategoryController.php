@@ -96,7 +96,7 @@ class CategoryController extends Controller
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
                 'Нельзя удалить категорию, к которой привязаны тесты',
-                422
+                409
             );
         }
         $category->delete();

@@ -120,7 +120,7 @@ class TestingExerciseController extends Controller
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
                 'Нельзя удалить упражнение, которое используется в тестах',
-                422
+                409
             );
         }
         $exercise->delete();

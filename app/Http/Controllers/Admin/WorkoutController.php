@@ -224,7 +224,7 @@ class WorkoutController extends Controller
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
                 'Нельзя удалить тренировку, которая уже была назначена пользователям',
-                422
+                409
             );
         }
 

@@ -152,7 +152,7 @@ class SubscriptionController extends Controller
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
                 'Нельзя удалить подписку, которая используется пользователями',
-                422
+                409
             );
         }
         if ($subscription->getRawOriginal('image')) {

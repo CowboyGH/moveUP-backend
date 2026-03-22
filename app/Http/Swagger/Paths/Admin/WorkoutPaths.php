@@ -293,7 +293,7 @@ class WorkoutUpdatePaths {}
  *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
  *     ),
  *     @OA\Response(
- *         response=422,
+ *         response=409,
  *         description="Нельзя удалить тренировку, которая уже была назначена пользователям",
  *         @OA\JsonContent(ref="#/components/schemas/ConflictResponse")
  *     )

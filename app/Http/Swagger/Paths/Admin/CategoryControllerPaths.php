@@ -307,7 +307,7 @@ class UpdateCategory {}
  *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
  *     ),
  *     @OA\Response(
- *         response=422,
+ *         response=409,
  *         description="Нельзя удалить категорию, к которой привязаны тесты",
  *         @OA\JsonContent(ref="#/components/schemas/ConflictResponse")
  *     )
