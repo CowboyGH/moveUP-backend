@@ -143,7 +143,7 @@ class CreateTestingExercise {}
  * @OA\Get(
  *     path="/api/admin/testing-exercises/{id}",
  *     summary="Получить тестовое упражнение по ID",
- *     description="Возвращает информацию о конкретном тестовом упражнении с тестами, в которых оно используется",
+ *     description="Возвращает информацию о конкретном тестовом упражнении и тестах, в которых оно используется",
  *     operationId="getTestingExerciseById",
  *     tags={"Admin Testing Exercises"},
  *     security={{"bearerAuth":{}}},
@@ -152,7 +152,7 @@ class CreateTestingExercise {}
  *         in="path",
  *         required=true,
  *         description="ID тестового упражнения",
- *         @OA\Schema(type="integer", example=1)
+ *         @OA\Schema(type="integer", example=4)
  *     ),
  *     @OA\Response(
  *         response=200,
@@ -163,34 +163,34 @@ class CreateTestingExercise {}
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
- *                 @OA\Property(property="id", type="integer", example=1),
- *                 @OA\Property(property="exercise_id", type="integer", example=1),
- *                 @OA\Property(property="description", type="string", example="Отжимания от пола - максимальное количество за 1 минуту"),
- *                 @OA\Property(property="image", type="string", example="/uploads/exercises/pushups.jpg"),
- *                 @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:20:35.000000Z"),
- *                 @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-20T08:20:35.000000Z"),
- *                 @OA\Property(property="testings_count", type="integer", example=2),
+ *                 @OA\Property(property="id", type="integer", example=4),
+ *                 @OA\Property(property="exercise_id", type="integer", example=9),
+ *                 @OA\Property(property="description", type="string", example="Определение максимального веса в жиме лежа. Выполняются подходы с постепенным увеличением веса до достижения одноповторного максимума."),
+ *                 @OA\Property(property="image", type="string", example="testing-exercises/bench-press-1rm.jpg"),
+ *                 @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
+ *                 @OA\Property(property="updated_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
  *                 @OA\Property(
  *                     property="testings",
  *                     type="array",
+ *                     description="Список тестов, в которых используется это упражнение",
  *                     @OA\Items(
  *                         type="object",
- *                         @OA\Property(property="id", type="integer", example=72),
- *                         @OA\Property(property="title", type="string", example="Базовая диагностика"),
- *                         @OA\Property(property="description", type="string", example="Тест для определения базового уровня физической подготовки"),
- *                         @OA\Property(property="duration_minutes", type="string", example="15-20 минут"),
- *                         @OA\Property(property="image", type="string", example="/uploads/tests/basic-diagnostic.jpg"),
+ *                         @OA\Property(property="id", type="integer", example=2),
+ *                         @OA\Property(property="title", type="string", example="Гарвардский степ-тест"),
+ *                         @OA\Property(property="description", type="string", example="Оценка восстановления сердечно-сосудистой системы после нагрузки."),
+ *                         @OA\Property(property="duration_minutes", type="string", example="15"),
+ *                         @OA\Property(property="image", type="string", example="tests/harvard-step.jpg"),
  *                         @OA\Property(property="is_active", type="boolean", example=true),
- *                         @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z"),
- *                         @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z"),
+ *                         @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
+ *                         @OA\Property(property="updated_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
  *                         @OA\Property(
  *                             property="pivot",
  *                             type="object",
- *                             @OA\Property(property="testing_exercise_id", type="integer", example=1),
- *                             @OA\Property(property="testing_id", type="integer", example=72),
- *                             @OA\Property(property="order_number", type="integer", example=0),
- *                             @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z"),
- *                             @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z")
+ *                             @OA\Property(property="testing_exercise_id", type="integer", example=4),
+ *                             @OA\Property(property="testing_id", type="integer", example=2),
+ *                             @OA\Property(property="order_number", type="integer", example=1),
+ *                             @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
+ *                             @OA\Property(property="updated_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z")
  *                         )
  *                     )
  *                 )

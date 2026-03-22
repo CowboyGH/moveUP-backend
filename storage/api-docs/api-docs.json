@@ -3013,7 +3013,7 @@
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "example": 72
+                            "example": 1
                         }
                     }
                 ],
@@ -3036,23 +3036,23 @@
                                             "properties": {
                                                 "id": {
                                                     "type": "integer",
-                                                    "example": 72
+                                                    "example": 1
                                                 },
                                                 "title": {
                                                     "type": "string",
-                                                    "example": "Базовая диагностика"
+                                                    "example": "Тест Купера (12-минутный бег)"
                                                 },
                                                 "description": {
                                                     "type": "string",
-                                                    "example": "Тест для определения базового уровня физической подготовки"
+                                                    "example": "Измерение аэробной выносливости. Необходимо пробежать максимальную дистанцию за 12 минут."
                                                 },
                                                 "duration_minutes": {
                                                     "type": "string",
-                                                    "example": "15-20 минут"
+                                                    "example": "12"
                                                 },
                                                 "image": {
                                                     "type": "string",
-                                                    "example": "/uploads/tests/basic-diagnostic.jpg"
+                                                    "example": "tests/cooper-test.jpg"
                                                 },
                                                 "is_active": {
                                                     "type": "boolean",
@@ -3061,18 +3061,19 @@
                                                 "created_at": {
                                                     "type": "string",
                                                     "format": "datetime",
-                                                    "example": "2026-02-20T08:37:48.000000Z"
+                                                    "example": "2026-03-20T08:57:06.000000Z"
                                                 },
                                                 "updated_at": {
                                                     "type": "string",
                                                     "format": "datetime",
-                                                    "example": "2026-02-20T08:37:48.000000Z"
+                                                    "example": "2026-03-20T08:57:06.000000Z"
                                                 },
                                                 "test_results_count": {
                                                     "type": "integer",
-                                                    "example": 0
+                                                    "example": 10
                                                 },
                                                 "categories": {
+                                                    "description": "Категории теста",
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
@@ -3082,23 +3083,24 @@
                                                             },
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "Бокс и единоборства"
+                                                                "example": "Сила"
                                                             },
                                                             "created_at": {
                                                                 "type": "string",
                                                                 "format": "datetime",
-                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                                "example": "2026-03-20T08:57:01.000000Z"
                                                             },
                                                             "updated_at": {
                                                                 "type": "string",
                                                                 "format": "datetime",
-                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                                "example": "2026-03-20T08:57:01.000000Z"
                                                             }
                                                         },
                                                         "type": "object"
                                                     }
                                                 },
-                                                "exercises": {
+                                                "test_exercises": {
+                                                    "description": "Упражнения теста",
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
@@ -3106,29 +3108,33 @@
                                                                 "type": "integer",
                                                                 "example": 1
                                                             },
+                                                            "exercise_id": {
+                                                                "type": "integer",
+                                                                "example": 12
+                                                            },
                                                             "description": {
                                                                 "type": "string",
-                                                                "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                                                "example": "За 12 минут необходимо пробежать максимально возможную дистанцию."
                                                             },
                                                             "image": {
                                                                 "type": "string",
-                                                                "example": "/uploads/exercises/pushups.jpg"
+                                                                "example": "testing-exercises/cooper-run.jpg"
                                                             },
                                                             "created_at": {
                                                                 "type": "string",
                                                                 "format": "datetime",
-                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                                "example": "2026-03-20T08:57:06.000000Z"
                                                             },
                                                             "updated_at": {
                                                                 "type": "string",
                                                                 "format": "datetime",
-                                                                "example": "2026-02-20T08:20:35.000000Z"
+                                                                "example": "2026-03-20T08:57:06.000000Z"
                                                             },
                                                             "pivot": {
                                                                 "properties": {
                                                                     "testing_id": {
                                                                         "type": "integer",
-                                                                        "example": 72
+                                                                        "example": 1
                                                                     },
                                                                     "testing_exercise_id": {
                                                                         "type": "integer",
@@ -3136,17 +3142,17 @@
                                                                     },
                                                                     "order_number": {
                                                                         "type": "integer",
-                                                                        "example": 0
+                                                                        "example": 1
                                                                     },
                                                                     "created_at": {
                                                                         "type": "string",
                                                                         "format": "datetime",
-                                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                                        "example": "2026-03-20T08:57:06.000000Z"
                                                                     },
                                                                     "updated_at": {
                                                                         "type": "string",
                                                                         "format": "datetime",
-                                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                                        "example": "2026-03-20T08:57:06.000000Z"
                                                                     }
                                                                 },
                                                                 "type": "object"
@@ -3156,6 +3162,7 @@
                                                     }
                                                 },
                                                 "test_results": {
+                                                    "description": "Результаты теста",
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
@@ -3165,39 +3172,90 @@
                                                             },
                                                             "user_id": {
                                                                 "type": "integer",
-                                                                "example": 5
+                                                                "example": 40
                                                             },
                                                             "testing_id": {
                                                                 "type": "integer",
-                                                                "example": 72
+                                                                "example": 1
                                                             },
-                                                            "exercise_id": {
+                                                            "testing_exercise_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "test_attempt_id": {
                                                                 "type": "integer",
                                                                 "example": 1
                                                             },
                                                             "result_value": {
                                                                 "type": "integer",
-                                                                "example": 25
-                                                            },
-                                                            "pulse": {
-                                                                "type": "integer",
-                                                                "example": 120,
-                                                                "nullable": true
+                                                                "example": 1
                                                             },
                                                             "test_date": {
                                                                 "type": "string",
-                                                                "format": "date",
-                                                                "example": "2026-02-20"
+                                                                "format": "datetime",
+                                                                "example": "2026-03-15T17:00:00.000000Z"
                                                             },
                                                             "created_at": {
                                                                 "type": "string",
                                                                 "format": "datetime",
-                                                                "example": "2026-02-20T08:37:48.000000Z"
+                                                                "example": "2026-03-20T08:57:08.000000Z"
                                                             },
                                                             "updated_at": {
                                                                 "type": "string",
                                                                 "format": "datetime",
-                                                                "example": "2026-02-20T08:37:48.000000Z"
+                                                                "example": "2026-03-20T08:57:08.000000Z"
+                                                            },
+                                                            "user": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 40
+                                                                    },
+                                                                    "role_id": {
+                                                                        "type": "integer",
+                                                                        "example": 2
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "Westley Roberts"
+                                                                    },
+                                                                    "email": {
+                                                                        "type": "string",
+                                                                        "example": "mclaughlin.caesar@example.org"
+                                                                    },
+                                                                    "email_verified_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-03-20T08:57:01.000000Z",
+                                                                        "nullable": true
+                                                                    },
+                                                                    "avatar": {
+                                                                        "type": "string",
+                                                                        "example": null,
+                                                                        "nullable": true
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-03-20T08:57:01.000000Z"
+                                                                    },
+                                                                    "updated_at": {
+                                                                        "type": "string",
+                                                                        "format": "datetime",
+                                                                        "example": "2026-03-20T08:57:01.000000Z"
+                                                                    },
+                                                                    "fcm_token": {
+                                                                        "type": "string",
+                                                                        "example": null,
+                                                                        "nullable": true
+                                                                    },
+                                                                    "avatar_url": {
+                                                                        "type": "string",
+                                                                        "example": null,
+                                                                        "nullable": true
+                                                                    }
+                                                                },
+                                                                "type": "object"
                                                             }
                                                         },
                                                         "type": "object"
@@ -4025,7 +4083,7 @@
                     "Admin Testing Exercises"
                 ],
                 "summary": "Получить тестовое упражнение по ID",
-                "description": "Возвращает информацию о конкретном тестовом упражнении с тестами, в которых оно используется",
+                "description": "Возвращает информацию о конкретном тестовом упражнении и тестах, в которых оно используется",
                 "operationId": "getTestingExerciseById",
                 "parameters": [
                     {
@@ -4035,7 +4093,7 @@
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "example": 1
+                            "example": 4
                         }
                     }
                 ],
@@ -4058,57 +4116,54 @@
                                             "properties": {
                                                 "id": {
                                                     "type": "integer",
-                                                    "example": 1
+                                                    "example": 4
                                                 },
                                                 "exercise_id": {
                                                     "type": "integer",
-                                                    "example": 1
+                                                    "example": 9
                                                 },
                                                 "description": {
                                                     "type": "string",
-                                                    "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                                    "example": "Определение максимального веса в жиме лежа. Выполняются подходы с постепенным увеличением веса до достижения одноповторного максимума."
                                                 },
                                                 "image": {
                                                     "type": "string",
-                                                    "example": "/uploads/exercises/pushups.jpg"
+                                                    "example": "testing-exercises/bench-press-1rm.jpg"
                                                 },
                                                 "created_at": {
                                                     "type": "string",
                                                     "format": "datetime",
-                                                    "example": "2026-02-20T08:20:35.000000Z"
+                                                    "example": "2026-03-20T08:57:06.000000Z"
                                                 },
                                                 "updated_at": {
                                                     "type": "string",
                                                     "format": "datetime",
-                                                    "example": "2026-02-20T08:20:35.000000Z"
-                                                },
-                                                "testings_count": {
-                                                    "type": "integer",
-                                                    "example": 2
+                                                    "example": "2026-03-20T08:57:06.000000Z"
                                                 },
                                                 "testings": {
+                                                    "description": "Список тестов, в которых используется это упражнение",
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
                                                             "id": {
                                                                 "type": "integer",
-                                                                "example": 72
+                                                                "example": 2
                                                             },
                                                             "title": {
                                                                 "type": "string",
-                                                                "example": "Базовая диагностика"
+                                                                "example": "Гарвардский степ-тест"
                                                             },
                                                             "description": {
                                                                 "type": "string",
-                                                                "example": "Тест для определения базового уровня физической подготовки"
+                                                                "example": "Оценка восстановления сердечно-сосудистой системы после нагрузки."
                                                             },
                                                             "duration_minutes": {
                                                                 "type": "string",
-                                                                "example": "15-20 минут"
+                                                                "example": "15"
                                                             },
                                                             "image": {
                                                                 "type": "string",
-                                                                "example": "/uploads/tests/basic-diagnostic.jpg"
+                                                                "example": "tests/harvard-step.jpg"
                                                             },
                                                             "is_active": {
                                                                 "type": "boolean",
@@ -4117,36 +4172,36 @@
                                                             "created_at": {
                                                                 "type": "string",
                                                                 "format": "datetime",
-                                                                "example": "2026-02-20T08:37:48.000000Z"
+                                                                "example": "2026-03-20T08:57:06.000000Z"
                                                             },
                                                             "updated_at": {
                                                                 "type": "string",
                                                                 "format": "datetime",
-                                                                "example": "2026-02-20T08:37:48.000000Z"
+                                                                "example": "2026-03-20T08:57:06.000000Z"
                                                             },
                                                             "pivot": {
                                                                 "properties": {
                                                                     "testing_exercise_id": {
                                                                         "type": "integer",
-                                                                        "example": 1
+                                                                        "example": 4
                                                                     },
                                                                     "testing_id": {
                                                                         "type": "integer",
-                                                                        "example": 72
+                                                                        "example": 2
                                                                     },
                                                                     "order_number": {
                                                                         "type": "integer",
-                                                                        "example": 0
+                                                                        "example": 1
                                                                     },
                                                                     "created_at": {
                                                                         "type": "string",
                                                                         "format": "datetime",
-                                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                                        "example": "2026-03-20T08:57:06.000000Z"
                                                                     },
                                                                     "updated_at": {
                                                                         "type": "string",
                                                                         "format": "datetime",
-                                                                        "example": "2026-02-20T08:37:48.000000Z"
+                                                                        "example": "2026-03-20T08:57:06.000000Z"
                                                                     }
                                                                 },
                                                                 "type": "object"

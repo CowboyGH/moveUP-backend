@@ -231,7 +231,7 @@ class CreateTesting {}
  *         in="path",
  *         required=true,
  *         description="ID теста",
- *         @OA\Schema(type="integer", example=72)
+ *         @OA\Schema(type="integer", example=1)
  *     ),
  *     @OA\Response(
  *         response=200,
@@ -242,61 +242,79 @@ class CreateTesting {}
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
- *                 @OA\Property(property="id", type="integer", example=72),
- *                 @OA\Property(property="title", type="string", example="Базовая диагностика"),
- *                 @OA\Property(property="description", type="string", example="Тест для определения базового уровня физической подготовки"),
- *                 @OA\Property(property="duration_minutes", type="string", example="15-20 минут"),
- *                 @OA\Property(property="image", type="string", example="/uploads/tests/basic-diagnostic.jpg"),
+ *                 @OA\Property(property="id", type="integer", example=1),
+ *                 @OA\Property(property="title", type="string", example="Тест Купера (12-минутный бег)"),
+ *                 @OA\Property(property="description", type="string", example="Измерение аэробной выносливости. Необходимо пробежать максимальную дистанцию за 12 минут."),
+ *                 @OA\Property(property="duration_minutes", type="string", example="12"),
+ *                 @OA\Property(property="image", type="string", example="tests/cooper-test.jpg"),
  *                 @OA\Property(property="is_active", type="boolean", example=true),
- *                 @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z"),
- *                 @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z"),
- *                 @OA\Property(property="test_results_count", type="integer", example=0),
+ *                 @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
+ *                 @OA\Property(property="updated_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
+ *                 @OA\Property(property="test_results_count", type="integer", example=10),
  *                 @OA\Property(
  *                     property="categories",
  *                     type="array",
+ *                     description="Категории теста",
  *                     @OA\Items(
  *                         type="object",
  *                         @OA\Property(property="id", type="integer", example=1),
- *                         @OA\Property(property="name", type="string", example="Бокс и единоборства"),
- *                         @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:20:35.000000Z"),
- *                         @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-20T08:20:35.000000Z")
+ *                         @OA\Property(property="name", type="string", example="Сила"),
+ *                         @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:01.000000Z"),
+ *                         @OA\Property(property="updated_at", type="string", format="datetime", example="2026-03-20T08:57:01.000000Z")
  *                     )
  *                 ),
  *                 @OA\Property(
- *                     property="exercises",
+ *                     property="test_exercises",
  *                     type="array",
+ *                     description="Упражнения теста",
  *                     @OA\Items(
  *                         type="object",
  *                         @OA\Property(property="id", type="integer", example=1),
- *                         @OA\Property(property="description", type="string", example="Отжимания от пола - максимальное количество за 1 минуту"),
- *                         @OA\Property(property="image", type="string", example="/uploads/exercises/pushups.jpg"),
- *                         @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:20:35.000000Z"),
- *                         @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-20T08:20:35.000000Z"),
+ *                         @OA\Property(property="exercise_id", type="integer", example=12),
+ *                         @OA\Property(property="description", type="string", example="За 12 минут необходимо пробежать максимально возможную дистанцию."),
+ *                         @OA\Property(property="image", type="string", example="testing-exercises/cooper-run.jpg"),
+ *                         @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
+ *                         @OA\Property(property="updated_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
  *                         @OA\Property(
  *                             property="pivot",
  *                             type="object",
- *                             @OA\Property(property="testing_id", type="integer", example=72),
+ *                             @OA\Property(property="testing_id", type="integer", example=1),
  *                             @OA\Property(property="testing_exercise_id", type="integer", example=1),
- *                             @OA\Property(property="order_number", type="integer", example=0),
- *                             @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z"),
- *                             @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z")
+ *                             @OA\Property(property="order_number", type="integer", example=1),
+ *                             @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
+ *                             @OA\Property(property="updated_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z")
  *                         )
  *                     )
  *                 ),
  *                 @OA\Property(
  *                     property="test_results",
  *                     type="array",
+ *                     description="Результаты теста",
  *                     @OA\Items(
  *                         type="object",
  *                         @OA\Property(property="id", type="integer", example=1),
- *                         @OA\Property(property="user_id", type="integer", example=5),
- *                         @OA\Property(property="testing_id", type="integer", example=72),
- *                         @OA\Property(property="exercise_id", type="integer", example=1),
- *                         @OA\Property(property="result_value", type="integer", example=25),
- *                         @OA\Property(property="pulse", type="integer", example=120, nullable=true),
- *                         @OA\Property(property="test_date", type="string", format="date", example="2026-02-20"),
- *                         @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z"),
- *                         @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-20T08:37:48.000000Z")
+ *                         @OA\Property(property="user_id", type="integer", example=40),
+ *                         @OA\Property(property="testing_id", type="integer", example=1),
+ *                         @OA\Property(property="testing_exercise_id", type="integer", example=1),
+ *                         @OA\Property(property="test_attempt_id", type="integer", example=1),
+ *                         @OA\Property(property="result_value", type="integer", example=1),
+ *                         @OA\Property(property="test_date", type="string", format="datetime", example="2026-03-15T17:00:00.000000Z"),
+ *                         @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:08.000000Z"),
+ *                         @OA\Property(property="updated_at", type="string", format="datetime", example="2026-03-20T08:57:08.000000Z"),
+ *                         @OA\Property(
+ *                             property="user",
+ *                             type="object",
+ *                             @OA\Property(property="id", type="integer", example=40),
+ *                             @OA\Property(property="role_id", type="integer", example=2),
+ *                             @OA\Property(property="name", type="string", example="Westley Roberts"),
+ *                             @OA\Property(property="email", type="string", example="mclaughlin.caesar@example.org"),
+ *                             @OA\Property(property="email_verified_at", type="string", format="datetime", nullable=true, example="2026-03-20T08:57:01.000000Z"),
+ *                             @OA\Property(property="avatar", type="string", nullable=true, example=null),
+ *                             @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:01.000000Z"),
+ *                             @OA\Property(property="updated_at", type="string", format="datetime", example="2026-03-20T08:57:01.000000Z"),
+ *                             @OA\Property(property="fcm_token", type="string", nullable=true, example=null),
+ *                             @OA\Property(property="avatar_url", type="string", nullable=true, example=null)
+ *                         )
  *                     )
  *                 )
  *             )
