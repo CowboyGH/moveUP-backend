@@ -111,6 +111,9 @@ Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
         Route::post('/{userWorkout}/next-exercise', [WorkoutExecutionController::class, 'nextExercise'])->name('workout-execution.next-exercise');
         Route::post('/{userWorkout}/save-exercise-result', [WorkoutExecutionController::class, 'saveExerciseResult'])->name('workout-execution.save-exercise-result');
         Route::post('/{userWorkout}/complete', [WorkoutExecutionController::class, 'complete'])->name('workout-execution.complete');
+
+        Route::post('/{userWorkout}/start-warmup', [WorkoutExecutionController::class, 'startWarmup']);
+        Route::post('/{userWorkout}/complete-warmup', [WorkoutExecutionController::class, 'completeWarmup']);
     });
 });
 

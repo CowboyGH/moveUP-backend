@@ -32,7 +32,14 @@ class WorkoutExecutionController extends Controller
     {
         return $this->showController->show($userWorkout);
     }
-
+    public function startWarmup(UserWorkout $userWorkout)
+    {
+        return $this->warmupController->startWarmup($userWorkout);
+    }
+    public function completeWarmup(UserWorkout $userWorkout)
+    {
+        return $this->warmupController->completeWarmup($userWorkout);
+    }
     public function nextWarmup(UserWorkout $userWorkout, NextWarmupRequest $request)
     {
         return $this->warmupController->nextWarmup($userWorkout, $request);

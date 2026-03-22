@@ -198,8 +198,13 @@ class WorkoutStartRequestSchema{}
  * @OA\Schema(
  *     schema="WorkoutStartResponse",
  *     type="object",
- *     @OA\Property(property="user_workout_id", type="integer", example=926),
- *     @OA\Property(property="started_at", type="string", format="date-time", example="2026-03-16T05:13:25.000000Z")
+ *     @OA\Property(property="user_workout_id", type="integer", example=815),
+ *     @OA\Property(property="started_at", type="string", format="date-time", nullable=true, example="2026-03-22T09:08:14.000000Z"),
+ *     @OA\Property(property="type", type="string", enum={"warmup", "exercise"}),
+ *     @OA\Property(property="needs_weight_input", type="boolean", example=true),
+ *     @OA\Property(property="warmup", ref="#/components/schemas/WarmupItem", nullable=true),
+ *     @OA\Property(property="exercise", ref="#/components/schemas/ExerciseItem", nullable=true),
+ *     @OA\Property(property="total_warmups", type="integer", nullable=true, example=2)
  * )
  */
 class WorkoutStartResponseSchema{}

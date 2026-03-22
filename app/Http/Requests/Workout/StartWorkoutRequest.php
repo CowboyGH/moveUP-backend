@@ -14,7 +14,8 @@ class StartWorkoutRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'workout_id' => 'required|integer'
+            'workout_id' => 'required|integer',
+            'with_warmup' => 'nullable|boolean'
         ];
     }
 

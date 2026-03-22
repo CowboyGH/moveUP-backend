@@ -12,6 +12,13 @@ class ExerciseController extends BaseWorkoutController
 {
     public function getFirstExercise(UserWorkout $userWorkout)
     {
+        if ($userWorkout->status !== UserWorkout::STATUS_STARTED) {
+            $userWorkout->update([
+                'status' => UserWorkout::STATUS_STARTED,
+                'started_at' => now(),
+            ]);
+        }
+
         $exercises = $this->getSortedExercises($userWorkout);
         $firstExercise = $exercises->first();
 
@@ -23,6 +30,7 @@ class ExerciseController extends BaseWorkoutController
 
         return ApiResponse::data([
             'type' => 'exercise',
+            'user_workout_id' => $userWorkout->id,
             'needs_weight_input' => $weight === null,
             'exercise' => [
                 'id' => $firstExercise->id,
@@ -131,9 +139,44 @@ class ExerciseController extends BaseWorkoutController
             app(RegenerationController::class)->checkAndRegenerateWorkouts($user, $request->exercise_id);
         }
 
-        return ApiResponse::success('Результат упражнения сохранен', [
+        // Получаем следующее упражнение
+        $exercises = $this->getSortedExercises($userWorkout);
+        $currentExercise = $exercises->firstWhere('id', $request->exercise_id);
+        $currentIndex = $exercises->search(function ($item) use ($currentExercise) {
+            return $item->id === $currentExercise->id;
+        });
+
+        $nextExercise = $exercises->get($currentIndex + 1);
+
+        $responseData = [
             'exercise_result' => $result,
-            'next_url' => route('workout-execution.next-exercise', ['userWorkout' => $userWorkout->id]),
-        ]);
+        ];
+
+        if ($nextExercise) {
+            // Если есть следующее упражнение, возвращаем его
+            $weight = $this->exerciseLoadService->getUserCurrentWeight($user->id, $nextExercise->id);
+
+            $responseData['next_exercise'] = [
+                'type' => 'exercise',
+                'needs_weight_input' => $weight === null,
+                'exercise' => [
+                    'id' => $nextExercise->id,
+                    'title' => $nextExercise->title,
+                    'description' => $nextExercise->description,
+                    'image' => $nextExercise->image_url,
+                    'sets' => $nextExercise->pivot->sets,
+                    'reps' => $nextExercise->pivot->reps,
+                    'order_number' => $nextExercise->pivot->order_number,
+                    'current_weight' => $weight,
+                    'is_last' => $currentIndex + 1 === $exercises->count() - 1,
+                    'exercise_number' => $currentIndex + 2,
+                    'total_exercises' => $exercises->count(),
+                ],
+            ];
+        } else {
+            $responseData['all_exercises_completed'] = true;
+            $responseData['message'] = 'Упражнений больше нет, завершите тренировку!';
+        }
+        return ApiResponse::success('Результат упражнения сохранен', $responseData);
     }
 }
