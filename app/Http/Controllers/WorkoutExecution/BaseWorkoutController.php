@@ -52,4 +52,9 @@ abstract class BaseWorkoutController extends Controller
         $workout = $userWorkout->workout()->with('warmups')->first();
         return $workout->warmups->sortBy('pivot.order_number');
     }
+
+    public function getExerciseLoadService(): ExerciseLoadService
+    {
+        return $this->exerciseLoadService;
+    }
 }

@@ -95,9 +95,9 @@ class WorkoutStartController extends Controller
             'started_at' => now(),
         ]);
 
-        // Получаем первое упражнение
-        $exerciseController = app(ExerciseController::class);
-        $exercises = $exerciseController->getSortedExercises($userWorkout);
+        // Получаем упражнения напрямую
+        $workout = $userWorkout->workout()->with('exercises')->first();
+        $exercises = $workout->exercises->sortBy('pivot.order_number');
         $firstExercise = $exercises->first();
 
         if (!$firstExercise) {
@@ -108,7 +108,9 @@ class WorkoutStartController extends Controller
             );
         }
 
-        $weight = $exerciseController->exerciseLoadService->getUserCurrentWeight(
+        // Используем метод-геттер вместо прямого доступа к свойству
+        $exerciseController = app(ExerciseController::class);
+        $weight = $exerciseController->getExerciseLoadService()->getUserCurrentWeight(
             $userWorkout->user_id,
             $firstExercise->id
         );

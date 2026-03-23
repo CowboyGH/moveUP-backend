@@ -14,6 +14,10 @@ class AlternativeExerciseFinder
      */
     public function find(Exercise $original, int $equipmentId, array $excludeIds = []): ?Exercise
     {
+        if (!$equipmentId) {
+            return null;
+        }
+
         $query = Exercise::where('muscle_group', $original->muscle_group)
             ->where('equipment_id', $equipmentId)
             ->where('id', '!=', $original->id);

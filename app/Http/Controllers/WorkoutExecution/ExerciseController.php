@@ -141,7 +141,18 @@ class ExerciseController extends BaseWorkoutController
 
         // Получаем следующее упражнение
         $exercises = $this->getSortedExercises($userWorkout);
+
+        // Проверяем, существует ли текущее упражнение
         $currentExercise = $exercises->firstWhere('id', $request->exercise_id);
+
+        if (!$currentExercise) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Упражнение не найдено в этой тренировке',
+                404
+            );
+        }
+
         $currentIndex = $exercises->search(function ($item) use ($currentExercise) {
             return $item->id === $currentExercise->id;
         });
