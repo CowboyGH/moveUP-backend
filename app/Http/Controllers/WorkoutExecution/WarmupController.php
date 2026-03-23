@@ -4,7 +4,9 @@ namespace App\Http\Controllers\WorkoutExecution;
 
 use App\Http\Requests\Workout\NextWarmupRequest;
 use App\Http\Responses\ApiResponse;
+use App\Http\Responses\ErrorResponse;
 use App\Models\UserWorkout;
+use Illuminate\Support\Facades\Auth;
 
 class WarmupController extends BaseWorkoutController
 {
@@ -13,25 +15,26 @@ class WarmupController extends BaseWorkoutController
      */
     public function startWarmup(UserWorkout $userWorkout)
     {
+        if (!Auth::check()) {
+            return ApiResponse::error(
+                ErrorResponse::UNAUTHORIZED,
+                'Пользователь не авторизован',
+                401
+            );
+        }
         if ($error = $this->checkOwnership($userWorkout)) {
             return $error;
         }
-
-        // Проверяем, выбрана ли разминка
         $warmups = $this->getSortedWarmups($userWorkout);
 
         if ($warmups->isEmpty()) {
-            // Если разминки нет, сразу начинаем тренировку
             return $this->startWorkout($userWorkout);
         }
-
-        // Обновляем статус тренировки на started
         $userWorkout->update([
             'status' => UserWorkout::STATUS_STARTED,
             'started_at' => now(),
         ]);
 
-        // Возвращаем первое упражнение разминки
         $firstWarmup = $warmups->first();
 
         return ApiResponse::data([
@@ -56,8 +59,6 @@ class WarmupController extends BaseWorkoutController
             'status' => UserWorkout::STATUS_STARTED,
             'started_at' => now(),
         ]);
-
-        // Получаем первое упражнение тренировки
         return app(ExerciseController::class)->getFirstExercise($userWorkout);
     }
 
@@ -66,9 +67,17 @@ class WarmupController extends BaseWorkoutController
      */
     public function nextWarmup(UserWorkout $userWorkout, NextWarmupRequest $request)
     {
+        if (!Auth::check()) {
+            return ApiResponse::error(
+                ErrorResponse::UNAUTHORIZED,
+                'Пользователь не авторизован',
+                401
+            );
+        }
         if ($error = $this->checkOwnership($userWorkout)) {
             return $error;
         }
+
         $warmups = $this->getSortedWarmups($userWorkout);
 
         if (!$request->current_warmup_id) {
@@ -114,16 +123,30 @@ class WarmupController extends BaseWorkoutController
         }
         return $this->startWorkout($userWorkout);
     }
+
     /**
      * Завершение разминки
      */
     public function completeWarmup(UserWorkout $userWorkout)
     {
+        if (!Auth::check()) {
+            return ApiResponse::error(
+                ErrorResponse::UNAUTHORIZED,
+                'Пользователь не авторизован',
+                401
+            );
+        }
         if ($error = $this->checkOwnership($userWorkout)) {
             return $error;
         }
 
-        // Автоматически переходим к тренировке
+        if ($userWorkout->status !== UserWorkout::STATUS_STARTED) {
+            return ApiResponse::error(
+                ErrorResponse::CONFLICT,
+                'Тренировка не в статусе "начата"',
+                409
+            );
+        }
         return $this->startWorkout($userWorkout);
     }
 }

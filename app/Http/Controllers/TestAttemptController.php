@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\WorkoutGeneration\WorkoutGeneratorService;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\TestAttempt;
@@ -16,6 +17,13 @@ use Illuminate\Support\Facades\Validator;
 
 class TestAttemptController extends Controller
 {
+    protected WorkoutGeneratorService $workoutGenerator;
+
+    public function __construct(WorkoutGeneratorService $workoutGenerator)
+    {
+        $this->workoutGenerator = $workoutGenerator;
+    }
+
     /**
      * Начать прохождение теста
      */

@@ -128,7 +128,7 @@ class WorkoutExecutionStartPath {}
  * @OA\Post(
  *     path="/api/workout-execution/{userWorkout}/next-warmup",
  *     summary="Получить следующее упражнение разминки",
- *     description="Возвращает следующее упражнение разминки или автоматически переходит к первому упражнению тренировки, если разминка завершена",
+ *     description="Возвращает следующее упражнение разминки. Если передать current_warmup_id = null или не передать, вернет первое упражнение. При завершении разминки автоматически переходит к основной тренировке.",
  *     tags={"Workout Execution"},
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
@@ -141,12 +141,18 @@ class WorkoutExecutionStartPath {}
  *     @OA\RequestBody(
  *         required=false,
  *         @OA\JsonContent(
- *             @OA\Property(property="current_warmup_id", type="integer", nullable=true, description="ID текущего упражнения разминки (если не указан, возвращается первое)")
+ *             @OA\Property(
+ *                 property="current_warmup_id",
+ *                 type="integer",
+ *                 nullable=true,
+ *                 description="ID текущего выполненного упражнения разминки. Если не указан или null, возвращается первое упражнение.",
+ *                 example=1
+ *             )
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Успешный ответ",
+ *         description="Успешный ответ. Возвращает следующее упражнение разминки или переход к основной тренировке",
  *         @OA\JsonContent(
  *             oneOf={
  *                 @OA\Schema(
@@ -186,6 +192,26 @@ class WorkoutExecutionStartPath {}
  *                 )
  *             }
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Не авторизован",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Тренировка не принадлежит пользователю",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Тренировка не найдена",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибка валидации",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
  *     )
  * )
  */
@@ -348,7 +374,6 @@ class WorkoutExecutionSaveResultPath {}
  *         response=409,
  *         description="Тренировка уже завершена",
  *         @OA\JsonContent(
- *             @OA\Property(property="success", type="boolean", example=false),
  *             @OA\Property(property="code", type="string", example="conflict"),
  *             @OA\Property(property="message", type="string", example="Тренировка уже завершена")
  *         )
@@ -366,7 +391,7 @@ class WorkoutExecutionCompletePath {}
  * @OA\Post(
  *     path="/api/workout-execution/{userWorkout}/start-warmup",
  *     summary="Начать разминку",
- *     description="Начинает разминку и возвращает первое упражнение разминки",
+ *     description="Начинает разминку и возвращает первое упражнение разминки. Если у тренировки нет разминки, сразу переходит к основной тренировке.",
  *     tags={"Workout Execution"},
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
@@ -378,28 +403,47 @@ class WorkoutExecutionCompletePath {}
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Разминка начата",
+ *         description="Успешный ответ. Возвращает первое упражнение разминки или переход к основной тренировке",
  *         @OA\JsonContent(
- *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="message", type="string", example="Разминка начата"),
- *             @OA\Property(
- *                 property="data",
- *                 type="object",
- *                 @OA\Property(property="type", type="string", example="warmup"),
- *                 @OA\Property(property="user_workout_id", type="integer", example=815),
- *                 @OA\Property(
- *                     property="warmup",
- *                     type="object",
- *                     @OA\Property(property="id", type="integer", example=1),
- *                     @OA\Property(property="name", type="string", example="Дыхание: Капалабхати"),
- *                     @OA\Property(property="description", type="string", example="Очистительное дыхание..."),
- *                     @OA\Property(property="image", type="string", example="http://localhost:8000/storage/warmups/breathing-kapalabhati.jpg"),
- *                     @OA\Property(property="duration_seconds", type="integer", example=60),
- *                     @OA\Property(property="order_number", type="integer", example=1),
- *                     @OA\Property(property="is_last", type="boolean", example=false)
+ *             oneOf={
+ *                 @OA\Schema(
+ *                     @OA\Property(property="success", type="boolean", example=true),
+ *                     @OA\Property(property="message", type="string", example="Разминка начата"),
+ *                     @OA\Property(
+ *                         property="data",
+ *                         type="object",
+ *                         @OA\Property(property="type", type="string", example="warmup"),
+ *                         @OA\Property(property="user_workout_id", type="integer", example=815),
+ *                         @OA\Property(
+ *                             property="warmup",
+ *                             type="object",
+ *                             @OA\Property(property="id", type="integer", example=1),
+ *                             @OA\Property(property="name", type="string", example="Дыхание: Капалабхати"),
+ *                             @OA\Property(property="description", type="string", example="Очистительное дыхание: короткие активные выдохи, пассивные вдохи."),
+ *                             @OA\Property(property="image", type="string", example="http://localhost:8000/storage/warmups/breathing-kapalabhati.jpg"),
+ *                             @OA\Property(property="duration_seconds", type="integer", example=60),
+ *                             @OA\Property(property="order_number", type="integer", example=1),
+ *                             @OA\Property(property="is_last", type="boolean", example=false)
+ *                         ),
+ *                         @OA\Property(property="total_warmups", type="integer", example=2)
+ *                     )
  *                 ),
- *                 @OA\Property(property="total_warmups", type="integer", example=2)
- *             )
+ *                 @OA\Schema(
+ *                     @OA\Property(property="success", type="boolean", example=true),
+ *                     @OA\Property(property="message", type="string", example="Тренировка начата"),
+ *                     @OA\Property(
+ *                         property="data",
+ *                         type="object",
+ *                         @OA\Property(property="type", type="string", example="exercise"),
+ *                         @OA\Property(property="user_workout_id", type="integer", example=815),
+ *                         @OA\Property(property="needs_weight_input", type="boolean", example=true),
+ *                         @OA\Property(
+ *                             property="exercise",
+ *                             ref="#/components/schemas/ExerciseItem"
+ *                         )
+ *                     )
+ *                 )
+ *             }
  *         )
  *     ),
  *     @OA\Response(
@@ -411,6 +455,11 @@ class WorkoutExecutionCompletePath {}
  *         response=403,
  *         description="Тренировка не принадлежит пользователю",
  *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Тренировка не найдена",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
  *     )
  * )
  */
@@ -420,7 +469,7 @@ class StartWarmupPath {}
  * @OA\Post(
  *     path="/api/workout-execution/{userWorkout}/complete-warmup",
  *     summary="Завершить разминку досрочно",
- *     description="Завершает разминку и автоматически переходит к первому упражнению тренировки",
+ *     description="Завершает разминку досрочно и автоматически переходит к первому упражнению основной тренировки. Тренировка должна быть в статусе 'started'.",
  *     tags={"Workout Execution"},
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
@@ -432,7 +481,7 @@ class StartWarmupPath {}
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Переход к основной тренировке",
+ *         description="Разминка завершена, переход к основной тренировке",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
  *             @OA\Property(property="message", type="string", example="success"),
@@ -447,6 +496,29 @@ class StartWarmupPath {}
  *                     ref="#/components/schemas/ExerciseItem"
  *                 )
  *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Не авторизован",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Тренировка не принадлежит пользователю",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Тренировка не найдена",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=409,
+ *         description="Тренировка не в статусе started",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="code", type="string", example="conflict"),
+ *             @OA\Property(property="message", type="string", example="Тренировка не в статусе started")
  *         )
  *     )
  * )
