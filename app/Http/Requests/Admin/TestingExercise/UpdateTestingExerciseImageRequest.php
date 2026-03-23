@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin\TestingExercise;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreTestingExerciseRequest extends FormRequest
+class UpdateTestingExerciseImageRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,18 +14,14 @@ class StoreTestingExerciseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'exercise_id' => 'required|integer|exists:exercises,id',
-            'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'exercise_id.required' => 'Необходимо указать ID основного упражнения',
-            'exercise_id.exists'   => 'Указанное упражнение не существует',
-            'description.required' => 'Описание упражнения обязательно',
+            'image.required' => 'Изображение обязательно',
             'image.image' => 'Файл должен быть изображением',
             'image.mimes' => 'Допустимые форматы: jpeg, png, jpg, gif',
             'image.max' => 'Максимальный размер изображения 5MB',

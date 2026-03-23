@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\TestingExercise\FilterTestingExerciseRequest;
 use App\Http\Requests\Admin\TestingExercise\StoreTestingExerciseRequest;
 use App\Http\Requests\Admin\TestingExercise\UpdateTestingExerciseRequest;
+use App\Http\Requests\Admin\TestingExercise\UpdateTestingExerciseImageRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\TestingExercise;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class TestingExerciseController extends Controller
 {
@@ -59,12 +61,17 @@ class TestingExerciseController extends Controller
 
     public function store(StoreTestingExerciseRequest $request): JsonResponse
     {
-        $exercise = TestingExercise::create([
+        $data = [
             'exercise_id' => $request->exercise_id,
             'description' => $request->description,
-            'image' => $request->image,
-        ]);
+        ];
 
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('testing-exercises', 'public');
+            $data['image'] = $path;
+        }
+
+        $exercise = TestingExercise::create($data);
         $data = [
             'id' => $exercise->id,
             'exercise_id' => $exercise->exercise_id,
@@ -125,5 +132,28 @@ class TestingExerciseController extends Controller
         }
         $exercise->delete();
         return ApiResponse::success('Тестовое упражнение успешно удалено');
+    }
+
+    public function updateImage(UpdateTestingExerciseImageRequest $request, int $id): JsonResponse
+    {
+        $exercise = TestingExercise::find($id);
+
+        if (!$exercise) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Тестовое упражнение не найдено',
+                404
+            );
+        }
+
+        if ($exercise->getRawOriginal('image')) {
+            Storage::disk('public')->delete($exercise->getRawOriginal('image'));
+        }
+
+        $path = $request->file('image')->store('testing-exercises', 'public');
+        $exercise->update(['image' => $path]);
+        $exercise->load('exercise');
+
+        return ApiResponse::success('Изображение тестового упражнения обновлено', $exercise);
     }
 }

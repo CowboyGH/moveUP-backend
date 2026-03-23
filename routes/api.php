@@ -151,12 +151,14 @@ Route::middleware(['jwt.custom', 'admin', 'track.activity'])->prefix('admin')->g
     Route::put('/testings/{id}', [TestingController::class, 'update']);
     Route::delete('/testings/{id}', [TestingController::class, 'destroy']);
     Route::patch('/testings/{id}/toggle-active', [TestingController::class, 'toggleActive']);
+    Route::post('/testings/{id}/image', [TestingController::class, 'updateImage']);
 
     Route::get('/testing-exercises', [TestingExerciseController::class, 'index']);
     Route::post('/testing-exercises', [TestingExerciseController::class, 'store']);
     Route::get('/testing-exercises/{id}', [TestingExerciseController::class, 'show']);
     Route::put('/testing-exercises/{id}', [TestingExerciseController::class, 'update']);
     Route::delete('/testing-exercises/{id}', [TestingExerciseController::class, 'destroy']);
+    Route::post('/testing-exercises/{id}/image', [TestingExerciseController::class, 'updateImage']);
 
     Route::get('/exercises', [ExerciseController::class, 'index']);
     Route::post('/exercises', [ExerciseController::class, 'store']);

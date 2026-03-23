@@ -2727,13 +2727,12 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "title",
                                     "description",
-                                    "duration_minutes",
-                                    "image"
+                                    "duration_minutes"
                                 ],
                                 "properties": {
                                     "title": {
@@ -2752,9 +2751,9 @@
                                         "example": "15-20 минут"
                                     },
                                     "image": {
-                                        "description": "Путь к изображению",
+                                        "description": "Изображение теста (jpg, png, gif, до 5MB)",
                                         "type": "string",
-                                        "example": "/uploads/tests/basic-diagnostic.jpg"
+                                        "format": "binary"
                                     },
                                     "is_active": {
                                         "description": "Активен ли тест",
@@ -3775,6 +3774,115 @@
                 ]
             }
         },
+        "/api/admin/testings/{id}/image": {
+            "post": {
+                "tags": [
+                    "Admin Testings"
+                ],
+                "summary": "Загрузить/обновить изображение теста",
+                "operationId": "c03dae28a2b5c3ef79e59aa208fe54c4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "image"
+                                ],
+                                "properties": {
+                                    "image": {
+                                        "description": "Изображение (jpg, png, gif, до 5MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Изображение обновлено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Изображение теста обновлено"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Testing"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тест не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации (файл не загружен или не соответствует требованиям)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/testing-exercises": {
             "get": {
                 "tags": [
@@ -3954,12 +4062,11 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "exercise_id",
-                                    "description",
-                                    "image"
+                                    "description"
                                 ],
                                 "properties": {
                                     "exercise_id": {
@@ -3973,9 +4080,9 @@
                                         "example": "Отжимания от пола - максимальное количество за 1 минуту"
                                     },
                                     "image": {
-                                        "description": "Путь к изображению",
+                                        "description": "Изображение упражнения (jpg, png, gif, до 5MB)",
                                         "type": "string",
-                                        "example": "/uploads/exercises/pushups.jpg"
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -4481,6 +4588,156 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ConflictResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/testing-exercises/{id}/image": {
+            "post": {
+                "tags": [
+                    "Admin Testing Exercises"
+                ],
+                "summary": "Загрузить/обновить изображение тестового упражнения",
+                "operationId": "2033e1accd9dd82c5f9f14c9751e7607",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "image"
+                                ],
+                                "properties": {
+                                    "image": {
+                                        "description": "Изображение (jpg, png, gif, до 5MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Изображение обновлено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Изображение тестового упражнения обновлено"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "exercise_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/storage/testing-exercises/abc.jpg"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-01-01T12:00:00Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-01-01T12:00:00Z"
+                                                },
+                                                "exercise": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 5
+                                                        },
+                                                        "title": {
+                                                            "type": "string",
+                                                            "example": "Отжимания"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тестовое упражнение не найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации (файл не загружен или не соответствует требованиям)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
                                 }
                             }
                         }

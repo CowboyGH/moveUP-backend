@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\Subscription;
+namespace App\Http\Requests\Admin\Testing;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateSubscriptionImageRequest extends FormRequest
+class UpdateTestingImageRequest extends FormRequest
 {
     public function authorize(): bool
     {

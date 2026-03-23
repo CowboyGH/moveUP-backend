@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Testing\FilterTestingRequest;
 use App\Http\Requests\Admin\Testing\StoreTestingRequest;
 use App\Http\Requests\Admin\Testing\UpdateTestingRequest;
+use App\Http\Requests\Admin\Testing\UpdateTestingImageRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\Testing;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class TestingController extends Controller
 {
@@ -67,13 +69,20 @@ class TestingController extends Controller
 
     public function store(StoreTestingRequest $request): JsonResponse
     {
-        $testing = Testing::create([
+        $data = [
             'title' => $request->title,
             'description' => $request->description,
             'duration_minutes' => $request->duration_minutes,
-            'image' => $request->image,
             'is_active' => $request->is_active ?? true,
-        ]);
+        ];
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('testings', 'public');
+            $data['image'] = $path;
+        }
+
+        $testing = Testing::create($data);
+
         if ($request->has('category_ids')) {
             $testing->categories()->sync($request->category_ids);
         }
@@ -97,7 +106,7 @@ class TestingController extends Controller
             'created_at' => $testing->created_at,
             'updated_at' => $testing->updated_at,
         ];
-        return ApiResponse::success('Тест успешно создан', $data,201);
+        return ApiResponse::success('Тест успешно создан', $data, 201);
     }
 
     public function show(int $id): JsonResponse
@@ -190,5 +199,28 @@ class TestingController extends Controller
         $testing->save();
         $status = $testing->is_active ? 'активирован' : 'деактивирован';
         return ApiResponse::success("Тест успешно {$status}", $testing);
+    }
+
+    public function updateImage(UpdateTestingImageRequest $request, int $id): JsonResponse
+    {
+        $testing = Testing::find($id);
+
+        if (!$testing) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Тест не найден',
+                404
+            );
+        }
+
+        if ($testing->getRawOriginal('image')) {
+            Storage::disk('public')->delete($testing->getRawOriginal('image'));
+        }
+        $path = $request->file('image')->store('testings', 'public');
+        $testing->update(['image' => $path]);
+
+        $testing->load(['categories', 'testExercises']);
+
+        return ApiResponse::success('Изображение теста обновлено', $testing);
     }
 }

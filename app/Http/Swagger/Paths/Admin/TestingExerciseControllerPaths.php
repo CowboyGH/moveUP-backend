@@ -94,11 +94,14 @@ class TestingExerciseControllerPaths {}
  *     security={{"bearerAuth":{}}},
  *     @OA\RequestBody(
  *         required=true,
- *         @OA\JsonContent(
- *             required={"exercise_id", "description", "image"},
- *             @OA\Property(property="exercise_id", type="integer", example=5, description="ID упражнения из таблицы exercises (основной каталог упражнений)"),
- *             @OA\Property(property="description", type="string", example="Отжимания от пола - максимальное количество за 1 минуту", description="Описание упражнения"),
- *             @OA\Property(property="image", type="string", example="/uploads/exercises/pushups.jpg", description="Путь к изображению")
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 required={"exercise_id", "description"},
+ *                 @OA\Property(property="exercise_id", type="integer", example=5, description="ID упражнения из таблицы exercises (основной каталог упражнений)"),
+ *                 @OA\Property(property="description", type="string", example="Отжимания от пола - максимальное количество за 1 минуту", description="Описание упражнения"),
+ *                 @OA\Property(property="image", type="string", format="binary", description="Изображение упражнения (jpg, png, gif, до 5MB)")
+ *             )
  *         )
  *     ),
  *     @OA\Response(
@@ -328,3 +331,78 @@ class UpdateTestingExercise {}
  * )
  */
 class DeleteTestingExercise {}
+
+/**
+ * @OA\Post(
+ *     path="/api/admin/testing-exercises/{id}/image",
+ *     summary="Загрузить/обновить изображение тестового упражнения",
+ *     tags={"Admin Testing Exercises"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 required={"image"},
+ *                 @OA\Property(
+ *                     property="image",
+ *                     type="string",
+ *                     format="binary",
+ *                     description="Изображение (jpg, png, gif, до 5MB)"
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Изображение обновлено",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Изображение тестового упражнения обновлено"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 @OA\Property(property="id", type="integer", example=1),
+ *                 @OA\Property(property="exercise_id", type="integer", example=5),
+ *                 @OA\Property(property="description", type="string", example="Отжимания от пола - максимальное количество за 1 минуту"),
+ *                 @OA\Property(property="image", type="string", example="http://localhost/storage/testing-exercises/abc.jpg"),
+ *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
+ *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
+ *                 @OA\Property(
+ *                     property="exercise",
+ *                     type="object",
+ *                     @OA\Property(property="id", type="integer", example=5),
+ *                     @OA\Property(property="title", type="string", example="Отжимания")
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Не авторизован",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Доступ запрещен (только для администраторов)",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Тестовое упражнение не найдено",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибка валидации (файл не загружен или не соответствует требованиям)",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+ *     )
+ * )
+ */
+class TestingExerciseUpdateImage {}

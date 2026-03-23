@@ -113,24 +113,27 @@ class TestingControllerPaths {}
  *     security={{"bearerAuth":{}}},
  *     @OA\RequestBody(
  *         required=true,
- *         @OA\JsonContent(
- *             required={"title", "description", "duration_minutes", "image"},
- *             @OA\Property(property="title", type="string", example="Базовая диагностика", description="Название теста"),
- *             @OA\Property(property="description", type="string", example="Тест для определения базового уровня физической подготовки", description="Описание теста"),
- *             @OA\Property(property="duration_minutes", type="string", example="15-20 минут", description="Длительность теста"),
- *             @OA\Property(property="image", type="string", example="/uploads/tests/basic-diagnostic.jpg", description="Путь к изображению"),
- *             @OA\Property(property="is_active", type="boolean", example=true, description="Активен ли тест"),
- *             @OA\Property(
- *                 property="category_ids",
- *                 type="array",
- *                 description="ID категорий теста",
- *                 @OA\Items(type="integer", example=1)
- *             ),
- *             @OA\Property(
- *                 property="exercise_ids",
- *                 type="array",
- *                 description="ID упражнений теста (порядок определяется индексом в массиве)",
- *                 @OA\Items(type="integer", example=1)
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 required={"title", "description", "duration_minutes"},
+ *                 @OA\Property(property="title", type="string", example="Базовая диагностика", description="Название теста"),
+ *                 @OA\Property(property="description", type="string", example="Тест для определения базового уровня физической подготовки", description="Описание теста"),
+ *                 @OA\Property(property="duration_minutes", type="string", example="15-20 минут", description="Длительность теста"),
+ *                 @OA\Property(property="image", type="string", format="binary", description="Изображение теста (jpg, png, gif, до 5MB)"),
+ *                 @OA\Property(property="is_active", type="boolean", example=true, description="Активен ли тест"),
+ *                 @OA\Property(
+ *                     property="category_ids",
+ *                     type="array",
+ *                     description="ID категорий теста",
+ *                     @OA\Items(type="integer", example=1)
+ *                 ),
+ *                 @OA\Property(
+ *                     property="exercise_ids",
+ *                     type="array",
+ *                     description="ID упражнений теста (порядок определяется индексом в массиве)",
+ *                     @OA\Items(type="integer", example=1)
+ *                 )
  *             )
  *         )
  *     ),
@@ -552,3 +555,66 @@ class DeleteTesting {}
  * )
  */
 class ToggleTestingActive {}
+
+/**
+ * @OA\Post(
+ *     path="/api/admin/testings/{id}/image",
+ *     summary="Загрузить/обновить изображение теста",
+ *     tags={"Admin Testings"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 required={"image"},
+ *                 @OA\Property(
+ *                     property="image",
+ *                     type="string",
+ *                     format="binary",
+ *                     description="Изображение (jpg, png, gif, до 5MB)"
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Изображение обновлено",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Изображение теста обновлено"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 ref="#/components/schemas/Testing"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Не авторизован",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Доступ запрещен (только для администраторов)",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Тест не найден",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибка валидации (файл не загружен или не соответствует требованиям)",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+ *     )
+ * )
+ */
+class TestingUpdateImage {}
