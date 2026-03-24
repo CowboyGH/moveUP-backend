@@ -14125,8 +14125,7 @@
                                 "nullable": true
                             },
                             "current_weight": {
-                                "type": "number",
-                                "format": "float",
+                                "type": "string",
                                 "example": 50
                             },
                             "recommendations": {
@@ -14312,8 +14311,7 @@
                         "example": "Приседания"
                     },
                     "current_weight": {
-                        "type": "number",
-                        "format": "float",
+                        "type": "string",
                         "example": 55
                     },
                     "adjustment_factor": {

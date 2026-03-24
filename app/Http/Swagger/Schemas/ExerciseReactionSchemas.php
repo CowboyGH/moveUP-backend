@@ -109,7 +109,7 @@ class ReactToExerciseRequestSchema {}
  *         @OA\Property(property="analysis", ref="#/components/schemas/ReactionAnalysis"),
  *         @OA\Property(property="adjustments", ref="#/components/schemas/LoadAdjustment"),
  *         @OA\Property(property="rest_phase", ref="#/components/schemas/RestPhase", nullable=true),
- *         @OA\Property(property="current_weight", type="number", format="float", example=50.0),
+ *         @OA\Property(property="current_weight", type="string", example=50.0),
  *         @OA\Property(property="recommendations", type="array", @OA\Items(type="string", example="Увеличьте вес с 50кг до 55кг"))
  *     )
  * )
@@ -208,7 +208,7 @@ class ReactionStatisticsResponseSchema {}
  *     type="object",
  *     @OA\Property(property="exercise_id", type="integer", example=999),
  *     @OA\Property(property="exercise_name", type="string", example="Приседания"),
- *     @OA\Property(property="current_weight", type="number", format="float", example=55.0),
+ *     @OA\Property(property="current_weight", type="string", example=55.0),
  *     @OA\Property(property="adjustment_factor", type="number", format="float", example=1.1)
  * )
  */
