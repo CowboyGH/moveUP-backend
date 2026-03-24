@@ -2872,7 +2872,7 @@
                                                         "type": "object"
                                                     }
                                                 },
-                                                "exercises": {
+                                                "test_exercises": {
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
@@ -3455,7 +3455,7 @@
                                                         "type": "object"
                                                     }
                                                 },
-                                                "exercises": {
+                                                "test_exercises": {
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
@@ -4689,6 +4689,32 @@
                                                         "title": {
                                                             "type": "string",
                                                             "example": "Отжимания"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                                        },
+                                                        "image": {
+                                                            "type": "string",
+                                                            "example": "http://localhost/storage/testing-exercises/abc.jpg"
+                                                        },
+                                                        "muscle_group": {
+                                                            "type": "string",
+                                                            "example": "Грудные мышцы"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2024-01-01T12:00:00Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2024-01-01T12:00:00Z"
+                                                        },
+                                                        "image_url": {
+                                                            "type": "string",
+                                                            "example": "http://localhost/storage/exercises/pushups.jpg"
                                                         }
                                                     },
                                                     "type": "object"
@@ -17039,7 +17065,7 @@
                             "$ref": "#/components/schemas/Category"
                         }
                     },
-                    "exercises": {
+                    "test_exercises": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/TestingExerciseWithPivot"

@@ -72,6 +72,7 @@ class TestingExerciseController extends Controller
         }
 
         $exercise = TestingExercise::create($data);
+        $exercise->refresh();
         $data = [
             'id' => $exercise->id,
             'exercise_id' => $exercise->exercise_id,
@@ -110,6 +111,7 @@ class TestingExerciseController extends Controller
             );
         }
         $exercise->update($request->only(['exercise_id', 'description', 'image']));
+        $exercise->refresh();
         return ApiResponse::success('Тестовое упражнение успешно обновлено', $exercise);
     }
 
@@ -152,6 +154,7 @@ class TestingExerciseController extends Controller
 
         $path = $request->file('image')->store('testing-exercises', 'public');
         $exercise->update(['image' => $path]);
+        $exercise->refresh();
         $exercise->load('exercise');
 
         return ApiResponse::success('Изображение тестового упражнения обновлено', $exercise);

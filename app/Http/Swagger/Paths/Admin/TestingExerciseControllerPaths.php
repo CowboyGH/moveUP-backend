@@ -378,7 +378,13 @@ class DeleteTestingExercise {}
  *                     property="exercise",
  *                     type="object",
  *                     @OA\Property(property="id", type="integer", example=5),
- *                     @OA\Property(property="title", type="string", example="Отжимания")
+ *                     @OA\Property(property="title", type="string", example="Отжимания"),
+ *                     @OA\Property(property="description", type="string", example="Отжимания от пола - максимальное количество за 1 минуту"),
+ *                     @OA\Property(property="image", type="string", example="http://localhost/storage/testing-exercises/abc.jpg"),
+ *                     @OA\Property(property="muscle_group", type="string", example="Грудные мышцы"),
+ *                     @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
+ *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
+ *                     @OA\Property(property="image_url", type="string", example="http://localhost/storage/exercises/pushups.jpg")
  *                 )
  *             )
  *         )
