@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\EquipmentController;
 use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\TestingController;
 use App\Http\Controllers\Admin\TestingExerciseController;
@@ -187,5 +188,6 @@ Route::middleware(['jwt.custom', 'admin', 'track.activity'])->prefix('admin')->g
     Route::post('/workouts/generate-for-user/{userId}', [WorkoutGeneratorController::class, 'generateForUser']);
     Route::post('/workouts/regenerate-for-user/{userId}', [WorkoutGeneratorController::class, 'regenerateForUser']);
 
-    Route::get('/equipments', [App\Http\Controllers\Admin\EquipmentController::class, 'index']);
+    Route::get('/equipment', [EquipmentController::class, 'index']);
+    Route::get('/equipment/{id}', [EquipmentController::class, 'show']);
 });
