@@ -671,6 +671,151 @@
                 ]
             }
         },
+        "/api/admin/equipment": {
+            "get": {
+                "tags": [
+                    "Admin Equipment"
+                ],
+                "summary": "Получить список всего оборудования",
+                "description": "Возвращает список всего оборудования для использования в формах создания и редактирования упражнений",
+                "operationId": "getEquipmentList",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Equipment"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/equipment/{id}": {
+            "get": {
+                "tags": [
+                    "Admin Equipment"
+                ],
+                "summary": "Получить оборудование по ID",
+                "description": "Возвращает информацию о конкретном оборудовании",
+                "operationId": "getEquipmentById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID оборудования",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Equipment"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Оборудование не найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/exercises": {
             "get": {
                 "tags": [
@@ -829,7 +974,7 @@
                                 ],
                                 "properties": {
                                     "equipment_id": {
-                                        "description": "ID оборудования",
+                                        "description": "ID оборудования (получить из GET /api/admin/equipments)",
                                         "type": "integer",
                                         "example": 1
                                     },
@@ -1028,7 +1173,7 @@
                             "schema": {
                                 "properties": {
                                     "equipment_id": {
-                                        "description": "ID оборудования",
+                                        "description": "ID оборудования (получить из GET /api/admin/equipments)",
                                         "type": "integer",
                                         "example": 1
                                     },
@@ -14311,7 +14456,8 @@
                         "example": "Приседания"
                     },
                     "current_weight": {
-                        "type": "string",
+                        "type": "number",
+                        "format": "float",
                         "example": 55
                     },
                     "adjustment_factor": {
@@ -14330,7 +14476,7 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Гантели"
+                        "example": "Зал"
                     }
                 },
                 "type": "object"
@@ -18712,6 +18858,10 @@
         {
             "name": "Admin Categories",
             "description": "Admin Categories"
+        },
+        {
+            "name": "Admin Equipment",
+            "description": "Admin Equipment"
         },
         {
             "name": "Admin Exercises",

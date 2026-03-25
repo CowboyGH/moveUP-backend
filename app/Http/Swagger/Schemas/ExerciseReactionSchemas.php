@@ -208,7 +208,7 @@ class ReactionStatisticsResponseSchema {}
  *     type="object",
  *     @OA\Property(property="exercise_id", type="integer", example=999),
  *     @OA\Property(property="exercise_name", type="string", example="Приседания"),
- *     @OA\Property(property="current_weight", type="string", example=55.0),
+ *     @OA\Property(property="current_weight", type="number", format="float", example=55.0),
  *     @OA\Property(property="adjustment_factor", type="number", format="float", example=1.1)
  * )
  */

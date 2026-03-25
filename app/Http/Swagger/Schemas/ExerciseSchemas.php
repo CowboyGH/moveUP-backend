@@ -7,7 +7,7 @@ namespace App\Http\Swagger\Schemas;
  *     schema="Equipment",
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="name", type="string", example="Гантели")
+ *     @OA\Property(property="name", type="string", example="Зал")
  * )
  */
 class ExerciseSchemas {}
