@@ -186,4 +186,6 @@ Route::middleware(['jwt.custom', 'admin', 'track.activity'])->prefix('admin')->g
 
     Route::post('/workouts/generate-for-user/{userId}', [WorkoutGeneratorController::class, 'generateForUser']);
     Route::post('/workouts/regenerate-for-user/{userId}', [WorkoutGeneratorController::class, 'regenerateForUser']);
+
+    Route::get('/equipments', [App\Http\Controllers\Admin\EquipmentController::class, 'index']);
 });

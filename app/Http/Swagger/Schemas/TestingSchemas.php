@@ -56,7 +56,7 @@ class TestingExerciseWithPivotSchema {}
  *         @OA\Items(ref="#/components/schemas/Category")
  *     ),
  *     @OA\Property(
- *         property="exercises",
+ *         property="test_exercises",
  *         type="array",
  *         @OA\Items(ref="#/components/schemas/TestingExerciseWithPivot")
  *     )

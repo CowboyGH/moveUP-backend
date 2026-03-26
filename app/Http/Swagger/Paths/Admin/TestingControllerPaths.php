@@ -172,7 +172,7 @@ class TestingControllerPaths {}
  *                     )
  *                 ),
  *                 @OA\Property(
- *                     property="exercises",
+ *                     property="test_exercises",
  *                     type="array",
  *                     @OA\Items(
  *                         type="object",
@@ -408,7 +408,7 @@ class GetTestingById {}
  *                     )
  *                 ),
  *                 @OA\Property(
- *                     property="exercises",
+ *                     property="test_exercises",
  *                     type="array",
  *                     @OA\Items(
  *                         type="object",

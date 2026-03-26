@@ -671,6 +671,69 @@
                 ]
             }
         },
+        "/api/admin/equipments": {
+            "get": {
+                "tags": [
+                    "Admin Equipment"
+                ],
+                "summary": "Получить список всего оборудования",
+                "description": "Возвращает список всего оборудования для использования в формах создания и редактирования упражнений",
+                "operationId": "getEquipmentList",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Equipment"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/exercises": {
             "get": {
                 "tags": [
@@ -829,7 +892,7 @@
                                 ],
                                 "properties": {
                                     "equipment_id": {
-                                        "description": "ID оборудования",
+                                        "description": "ID оборудования (получить из GET /api/admin/equipments)",
                                         "type": "integer",
                                         "example": 1
                                     },
@@ -1028,7 +1091,7 @@
                             "schema": {
                                 "properties": {
                                     "equipment_id": {
-                                        "description": "ID оборудования",
+                                        "description": "ID оборудования (получить из GET /api/admin/equipments)",
                                         "type": "integer",
                                         "example": 1
                                     },
@@ -2872,7 +2935,7 @@
                                                         "type": "object"
                                                     }
                                                 },
-                                                "exercises": {
+                                                "test_exercises": {
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
@@ -3455,7 +3518,7 @@
                                                         "type": "object"
                                                     }
                                                 },
-                                                "exercises": {
+                                                "test_exercises": {
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
@@ -4689,6 +4752,32 @@
                                                         "title": {
                                                             "type": "string",
                                                             "example": "Отжимания"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                                        },
+                                                        "image": {
+                                                            "type": "string",
+                                                            "example": "http://localhost/storage/testing-exercises/abc.jpg"
+                                                        },
+                                                        "muscle_group": {
+                                                            "type": "string",
+                                                            "example": "Грудные мышцы"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2024-01-01T12:00:00Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2024-01-01T12:00:00Z"
+                                                        },
+                                                        "image_url": {
+                                                            "type": "string",
+                                                            "example": "http://localhost/storage/exercises/pushups.jpg"
                                                         }
                                                     },
                                                     "type": "object"
@@ -14306,7 +14395,7 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Гантели"
+                        "example": "Зал"
                     }
                 },
                 "type": "object"
@@ -17039,7 +17128,7 @@
                             "$ref": "#/components/schemas/Category"
                         }
                     },
-                    "exercises": {
+                    "test_exercises": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/TestingExerciseWithPivot"
@@ -18688,6 +18777,10 @@
         {
             "name": "Admin Categories",
             "description": "Admin Categories"
+        },
+        {
+            "name": "Admin Equipment",
+            "description": "Admin Equipment"
         },
         {
             "name": "Admin Exercises",
