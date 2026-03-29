@@ -36,4 +36,9 @@ class TestingExercise extends Model
     {
         return $this->belongsTo(Exercise::class);
     }
+
+    public function testResults(): HasMany
+    {
+        return $this->hasMany(TestResult::class);
+    }
 }

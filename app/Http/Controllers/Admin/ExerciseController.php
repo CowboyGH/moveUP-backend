@@ -12,6 +12,7 @@ use App\Http\Responses\ErrorResponse;
 use App\Models\Exercise;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
+use App\Models\TestingExercise;
 
 class ExerciseController extends Controller
 {
@@ -224,6 +225,7 @@ class ExerciseController extends Controller
             );
         }
 
+        // Проверяем, используется ли упражнение в тренировках
         if ($exercise->workouts()->exists()) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
@@ -232,7 +234,10 @@ class ExerciseController extends Controller
             );
         }
 
-        if ($exercise->testResults()->exists()) {
+        // Проверяем, есть ли результаты тестов через TestingExercise
+        $testingExercise = TestingExercise::where('exercise_id', $exercise->id)->first();
+
+        if ($testingExercise && $testingExercise->testResults()->exists()) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
                 'Нельзя удалить упражнение, для которого есть результаты тестов',
