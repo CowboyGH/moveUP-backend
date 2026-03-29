@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
+use App\Http\Responses\ErrorResponse;
 use App\Models\Payment;
 use App\Models\UserSubscription;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use App\Http\Requests\Admin\Statistics\YearRequest;
 
 class StatisticsController extends Controller
 {
@@ -39,7 +42,7 @@ class StatisticsController extends Controller
             : 0;
 
         return ApiResponse::success('success', [
-            'total_revenue' => round($totalRevenue / 1000, 2), // в тысячах рублей
+            'total_revenue' => round($totalRevenue / 1000, 2),
             'total_subscriptions' => $totalSubscriptions,
             'active_subscriptions' => $activeSubscriptions,
             'current_month_revenue' => round($currentMonthRevenue / 1000, 2),
@@ -52,7 +55,34 @@ class StatisticsController extends Controller
      */
     public function revenue(Request $request): JsonResponse
     {
+        try {
+            $validated = $request->validate([
+                'year' => 'nullable|integer|min:2000|max:' . (date('Y') + 10),
+            ], [
+                'year.integer' => 'Год должен быть целым числом',
+                'year.min' => 'Год должен быть не ранее 2000',
+                'year.max' => 'Год не может быть позже ' . (date('Y') + 10),
+            ]);
+        } catch (ValidationException $e) {
+            return ApiResponse::error(
+                ErrorResponse::VALIDATION_FAILED,
+                'Ошибка валидации',
+                422,
+                $e->errors()
+            );
+        }
+
         $year = $request->get('year', Carbon::now()->year);
+
+        // Дополнительная проверка, что year является числом
+        if (!is_numeric($year) || $year < 2000 || $year > (date('Y') + 10)) {
+            return ApiResponse::error(
+                ErrorResponse::VALIDATION_FAILED,
+                'Некорректный формат года',
+                422,
+                ['year' => ['Поле year должно быть целым числом от 2000 до ' . (date('Y') + 10)]]
+            );
+        }
 
         $revenue = Payment::where('status', 'completed')
             ->whereYear('created_at', $year)
@@ -67,7 +97,7 @@ class StatisticsController extends Controller
             ->map(function ($item) {
                 return [
                     'month' => (int) $item->month,
-                    'total' => round($item->total / 1000, 2) // Конвертируем в тысячи рублей
+                    'total' => round($item->total / 1000, 2)
                 ];
             });
 
@@ -94,7 +124,29 @@ class StatisticsController extends Controller
      */
     public function subscriptionsCount(Request $request): JsonResponse
     {
+        try {
+            $validated = $request->validate([
+                'year' => 'nullable|integer|min:2000|max:' . (date('Y') + 10),
+            ]);
+        } catch (ValidationException $e) {
+            return ApiResponse::error(
+                ErrorResponse::VALIDATION_FAILED,
+                'Ошибка валидации',
+                422,
+                $e->errors()
+            );
+        }
+
         $year = $request->get('year', Carbon::now()->year);
+
+        if (!is_numeric($year) || $year < 2000 || $year > (date('Y') + 10)) {
+            return ApiResponse::error(
+                ErrorResponse::VALIDATION_FAILED,
+                'Некорректный формат года',
+                422,
+                ['year' => ['Поле year должно быть целым числом от 2000 до ' . (date('Y') + 10)]]
+            );
+        }
 
         $subscriptions = UserSubscription::whereYear('created_at', $year)
             ->select(
@@ -112,7 +164,6 @@ class StatisticsController extends Controller
                 ];
             });
 
-        // Формируем данные для всех 12 месяцев
         $months = ['янв', 'фев', 'мар', 'апр', 'май', 'июнь', 'июль', 'авг', 'сент', 'окт', 'нояб', 'дек'];
         $data = [];
 
@@ -135,11 +186,33 @@ class StatisticsController extends Controller
      */
     public function subscriptionsByPeriod(Request $request): JsonResponse
     {
+        try {
+            $validated = $request->validate([
+                'period' => 'nullable|integer|in:1,3,6,12',
+            ]);
+        } catch (ValidationException $e) {
+            return ApiResponse::error(
+                ErrorResponse::VALIDATION_FAILED,
+                'Ошибка валидации',
+                422,
+                $e->errors()
+            );
+        }
+
         $period = (int) $request->get('period', 12);
+
+        if (!in_array($period, [1, 3, 6, 12])) {
+            return ApiResponse::error(
+                ErrorResponse::VALIDATION_FAILED,
+                'Некорректный формат периода',
+                422,
+                ['period' => ['Поле period должно быть 1, 3, 6 или 12']]
+            );
+        }
+
         $endDate = Carbon::now();
         $startDate = Carbon::now()->subMonths($period - 1)->startOfMonth();
 
-        // Получаем данные по месяцам за указанный период
         $subscriptions = UserSubscription::whereBetween('created_at', [$startDate, $endDate])
             ->select(
                 DB::raw('YEAR(created_at) as year'),
@@ -154,7 +227,6 @@ class StatisticsController extends Controller
                 return $item->year . '-' . str_pad($item->month, 2, '0', STR_PAD_LEFT);
             });
 
-        // Формируем данные для графика
         $months = ['янв', 'фев', 'мар', 'апр', 'май', 'июнь', 'июль', 'авг', 'сент', 'окт', 'нояб', 'дек'];
         $data = [];
 
