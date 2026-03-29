@@ -188,39 +188,25 @@ class ExerciseShowPaths {}
  * @OA\Put(
  *     path="/api/admin/exercises/{id}",
  *     summary="Обновить упражнение",
- *     description="Обновляет существующее упражнение. Для обновления изображения используйте multipart/form-data",
+ *     description="Обновляет данные упражнения (без изображения). Для обновления изображения используйте POST /api/admin/exercises/{id}/image",
  *     operationId="updateExercise",
  *     tags={"Admin Exercises"},
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
  *         name="id",
- *           in="path",
- *           required=true,
- *           description="ID упражнения",
- *           @OA\Schema(type="integer", example=1)
- *       ),
- *       @OA\RequestBody(
- *           required=true,
- *           @OA\MediaType(
- *               mediaType="multipart/form-data",
- *               @OA\Schema(
- *                   @OA\Property(
- *                       property="equipment_id",
- *                       type="integer",
- *                       example=1,
- *                       description="ID оборудования (получить из GET /api/admin/equipments)"
- *                   ),
- *                   @OA\Property(property="title", type="string", example="Жим гантелей лежа", description="Название упражнения"),
- *                   @OA\Property(property="description", type="string", example="Базовое упражнение для развития грудных мышц", description="Описание упражнения"),
- *                   @OA\Property(property="muscle_group", type="string", example="Грудные", description="Группа мышц"),
- *                   @OA\Property(
- *                       property="image",
- *                       type="string",
- *                       format="binary",
- *                       description="Новый файл изображения (опционально)"
- *                   )
- *               )
- *           )
+ *         in="path",
+ *         required=true,
+ *         description="ID упражнения",
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             @OA\Property(property="equipment_id", type="integer", example=1, description="ID оборудования"),
+ *             @OA\Property(property="title", type="string", example="Жим гантелей лежа", description="Название упражнения"),
+ *             @OA\Property(property="description", type="string", example="Базовое упражнение для развития грудных мышц", description="Описание упражнения"),
+ *             @OA\Property(property="muscle_group", type="string", example="Грудные", description="Группа мышц")
+ *         )
  *     ),
  *     @OA\Response(
  *         response=200,
@@ -308,7 +294,7 @@ class ExerciseDestroyPaths {}
 /**
  * @OA\Post(
  *     path="/api/admin/exercises/{id}/image",
- *     summary="Загрузить изображение для упражнения",
+ *     summary="Загрузить/обновить изображение упражнения",
  *     description="Загружает новое изображение для существующего упражнения (старое изображение удаляется)",
  *     operationId="uploadExerciseImage",
  *     tags={"Admin Exercises"},

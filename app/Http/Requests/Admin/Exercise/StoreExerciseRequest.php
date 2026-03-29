@@ -17,7 +17,7 @@ class StoreExerciseRequest extends ApiFormRequest
             'equipment_id' => 'required|exists:equipments,id',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'muscle_group' => 'required|string|max:255',
         ];
     }
@@ -30,7 +30,6 @@ class StoreExerciseRequest extends ApiFormRequest
             'title.required' => 'Название упражнения обязательно',
             'title.max' => 'Название не может быть длиннее 255 символов',
             'description.required' => 'Описание упражнения обязательно',
-            'image.required' => 'Изображение упражнения обязательно',
             'image.image' => 'Файл должен быть изображением',
             'image.mimes' => 'Допустимые форматы: jpeg, png, jpg, gif, webp',
             'image.max' => 'Размер файла не должен превышать 5 МБ',

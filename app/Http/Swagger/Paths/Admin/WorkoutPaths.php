@@ -46,7 +46,7 @@ namespace App\Http\Swagger\Paths\Admin;
  *                     @OA\Property(property="id", type="integer", example=1),
  *                     @OA\Property(property="title", type="string", example="Утренняя зарядка"),
  *                     @OA\Property(property="description", type="string", example="Комплекс упражнений для пробуждения"),
- *                     @OA\Property(property="duration_minutes", type="integer", example=30),
+ *                     @OA\Property(property="duration_minutes", type="string", example="30"),
  *                     @OA\Property(property="image", type="string", nullable=true, example="workouts/morning-workout.jpg"),
  *                     @OA\Property(property="image_url", type="string", nullable=true, example="http://localhost/storage/workouts/morning-workout.jpg"),
  *                     @OA\Property(property="is_active", type="boolean", example=true),
@@ -188,7 +188,7 @@ class WorkoutShowPaths {}
  * @OA\Put(
  *     path="/api/admin/workouts/{id}",
  *     summary="Обновить тренировку",
- *     description="Обновляет существующую тренировку. Для обновления изображения используйте multipart/form-data",
+ *     description="Обновляет данные тренировки (без изображения). Для обновления изображения используйте POST /api/admin/workouts/{id}/image",
  *     operationId="updateWorkout",
  *     tags={"Admin Workouts"},
  *     security={{"bearerAuth":{}}},
@@ -201,19 +201,32 @@ class WorkoutShowPaths {}
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         @OA\MediaType(
- *             mediaType="multipart/form-data",
- *             @OA\Schema(
- *                 @OA\Property(property="phase_id", type="integer", nullable=true, example=1, description="ID фазы"),
- *                 @OA\Property(property="title", type="string", example="Утренняя зарядка", description="Название тренировки"),
- *                 @OA\Property(property="description", type="string", example="Комплекс упражнений для пробуждения", description="Описание тренировки"),
- *                 @OA\Property(property="duration_minutes", type="string", example=30, description="Длительность в минутах"),
- *                 @OA\Property(property="is_active", type="boolean", example=true, description="Активность тренировки"),
- *                 @OA\Property(
- *                     property="image",
- *                     type="string",
- *                     format="binary",
- *                     description="Новый файл изображения (опционально)"
+ *         @OA\JsonContent(
+ *             @OA\Property(property="phase_id", type="integer", nullable=true, example=1, description="ID фазы"),
+ *             @OA\Property(property="title", type="string", example="Утренняя зарядка", description="Название тренировки"),
+ *             @OA\Property(property="description", type="string", example="Комплекс упражнений для пробуждения", description="Описание тренировки"),
+ *             @OA\Property(property="duration_minutes", type="string", example="30", description="Длительность в минутах"),
+ *             @OA\Property(property="is_active", type="boolean", example=true, description="Активность тренировки"),
+ *             @OA\Property(
+ *                 property="exercises",
+ *                 type="array",
+ *                 description="Список упражнений",
+ *                 @OA\Items(
+ *                     type="object",
+ *                     @OA\Property(property="exercise_id", type="integer", example=1, description="ID упражнения"),
+ *                     @OA\Property(property="sets", type="integer", example=3, description="Количество подходов"),
+ *                     @OA\Property(property="reps", type="integer", example=12, description="Количество повторений"),
+ *                     @OA\Property(property="order_number", type="integer", example=1, description="Порядковый номер")
+ *                 )
+ *             ),
+ *             @OA\Property(
+ *                 property="warmups",
+ *                 type="array",
+ *                 description="Список разминок",
+ *                 @OA\Items(
+ *                     type="object",
+ *                     @OA\Property(property="warmup_id", type="integer", example=1, description="ID разминки"),
+ *                     @OA\Property(property="order_number", type="integer", example=1, description="Порядковый номер")
  *                 )
  *             )
  *         )
@@ -304,7 +317,7 @@ class WorkoutDestroyPaths {}
 /**
  * @OA\Post(
  *     path="/api/admin/workouts/{id}/image",
- *     summary="Загрузить изображение для тренировки",
+ *     summary="Загрузить/обновить изображение тренировки",
  *     description="Загружает новое изображение для существующей тренировки (старое изображение удаляется)",
  *     operationId="uploadWorkoutImage",
  *     tags={"Admin Workouts"},

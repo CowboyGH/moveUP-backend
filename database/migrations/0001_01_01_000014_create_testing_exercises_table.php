@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('exercise_id')->constrained()->onDelete('cascade');
             $table->text('description');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

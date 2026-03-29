@@ -153,11 +153,13 @@ class WarmupController extends Controller
         }
 
         try {
-            $data = $request->except('image');
+            if ($request->has('_method') && strtoupper($request->_method) === 'PUT') {
+                $request->setMethod('PUT');
+            }
 
-            // Обрабатываем новое изображение
+            $data = $request->except('image', '_method');
+
             if ($request->hasFile('image')) {
-                // Удаляем старое изображение
                 if ($warmup->image) {
                     Storage::disk('public')->delete($warmup->image);
                 }
@@ -166,17 +168,27 @@ class WarmupController extends Controller
                 $data['image'] = $path;
             }
 
-            $warmup->update($data);
+            $updated = $warmup->update($data);
 
-            return ApiResponse::success('Разминка успешно обновлена', [
+            $warmup->refresh();
+
+            $warmup->loadCount('workouts');
+
+            $responseData = [
                 'id' => $warmup->id,
                 'name' => $warmup->name,
                 'description' => $warmup->description,
                 'image' => $warmup->image,
                 'image_url' => $warmup->image_url,
-            ]);
+                'workouts_count' => $warmup->workouts_count,
+                'created_at' => $warmup->created_at?->toISOString(),
+                'updated_at' => $warmup->updated_at?->toISOString(),
+            ];
+
+            return ApiResponse::success('Разминка успешно обновлена', $responseData);
 
         } catch (\Exception $e) {
+
             return ApiResponse::error(
                 ErrorResponse::SERVER_ERROR,
                 'Ошибка при обновлении разминки: ' . $e->getMessage(),
@@ -251,6 +263,9 @@ class WarmupController extends Controller
             // Сохраняем новое изображение
             $path = $request->file('image')->store('warmups', 'public');
             $warmup->update(['image' => $path]);
+
+            // Обновляем модель
+            $warmup->refresh();
 
             return ApiResponse::success('Изображение успешно загружено', [
                 'image' => $warmup->image,

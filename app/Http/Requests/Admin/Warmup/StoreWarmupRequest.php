@@ -16,7 +16,7 @@ class StoreWarmupRequest extends ApiFormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ];
     }
 
@@ -26,7 +26,6 @@ class StoreWarmupRequest extends ApiFormRequest
             'name.required' => 'Название разминки обязательно',
             'name.max' => 'Название не может быть длиннее 255 символов',
             'description.required' => 'Описание разминки обязательно',
-            'image.required' => 'Изображение разминки обязательно',
             'image.image' => 'Файл должен быть изображением',
             'image.mimes' => 'Допустимые форматы: jpeg, png, jpg, gif, webp',
             'image.max' => 'Размер файла не должен превышать 5 МБ',

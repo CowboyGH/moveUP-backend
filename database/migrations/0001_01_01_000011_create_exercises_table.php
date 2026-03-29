@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('equipment_id')->constrained('equipments')->onDelete('cascade');
             $table->string('title');
             $table->text('description');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->string('muscle_group');
             $table->timestamps();
         });

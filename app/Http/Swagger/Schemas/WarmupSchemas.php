@@ -51,10 +51,10 @@ class WarmupWithWorkoutsSchema {}
  * @OA\Schema(
  *     schema="StoreWarmupRequest",
  *     type="object",
- *     required={"name", "description", "image"},
+ *     required={"name", "description"},
  *     @OA\Property(property="name", type="string", example="Суставная гимнастика", description="Название разминки"),
  *     @OA\Property(property="description", type="string", example="Разминка для подготовки суставов к нагрузке", description="Описание разминки"),
- *     @OA\Property(property="image", type="string", example="/uploads/warmups/joint-gymnastics.jpg", description="Путь к изображению")
+ *     @OA\Property(property="image", type="string", format="binary", description="Файл изображения (опционально)")
  * )
  */
 class StoreWarmupRequestSchema {}
@@ -64,8 +64,7 @@ class StoreWarmupRequestSchema {}
  *     schema="UpdateWarmupRequest",
  *     type="object",
  *     @OA\Property(property="name", type="string", example="Суставная гимнастика", description="Название разминки"),
- *     @OA\Property(property="description", type="string", example="Разминка для подготовки суставов к нагрузке", description="Описание разминки"),
- *     @OA\Property(property="image", type="string", example="/uploads/warmups/joint-gymnastics.jpg", description="Путь к изображению")
+ *     @OA\Property(property="description", type="string", example="Разминка для подготовки суставов к нагрузке", description="Описание разминки")
  * )
  */
 class UpdateWarmupRequestSchema {}

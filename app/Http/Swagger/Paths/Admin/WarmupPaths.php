@@ -88,7 +88,7 @@ class WarmupPaths {}
  *         @OA\MediaType(
  *             mediaType="multipart/form-data",
  *             @OA\Schema(
- *                 required={"name", "description", "image"},
+ *                 required={"name", "description"},
  *                 @OA\Property(property="name", type="string", example="Суставная гимнастика", description="Название разминки"),
  *                 @OA\Property(property="description", type="string", example="Разминка для подготовки суставов к нагрузке", description="Описание разминки"),
  *                 @OA\Property(
@@ -181,7 +181,7 @@ class WarmupShowPaths {}
  * @OA\Put(
  *     path="/api/admin/warmups/{id}",
  *     summary="Обновить разминку",
- *     description="Обновляет существующую разминку. Для обновления изображения используйте multipart/form-data",
+ *     description="Обновляет данные разминки (без изображения). Для обновления изображения используйте POST /api/admin/warmups/{id}/image",
  *     operationId="updateWarmup",
  *     tags={"Admin Warmups"},
  *     security={{"bearerAuth":{}}},
@@ -194,18 +194,9 @@ class WarmupShowPaths {}
  *     ),
  *     @OA\RequestBody(
  *         required=true,
- *         @OA\MediaType(
- *             mediaType="multipart/form-data",
- *             @OA\Schema(
- *                 @OA\Property(property="name", type="string", example="Суставная гимнастика", description="Название разминки"),
- *                 @OA\Property(property="description", type="string", example="Разминка для подготовки суставов к нагрузке", description="Описание разминки"),
- *                 @OA\Property(
- *                     property="image",
- *                     type="string",
- *                     format="binary",
- *                     description="Новый файл изображения (опционально)"
- *                 )
- *             )
+ *         @OA\JsonContent(
+ *             @OA\Property(property="name", type="string", example="Суставная гимнастика", description="Название разминки"),
+ *             @OA\Property(property="description", type="string", example="Разминка для подготовки суставов к нагрузке", description="Описание разминки")
  *         )
  *     ),
  *     @OA\Response(
@@ -294,7 +285,7 @@ class WarmupDestroyPaths {}
 /**
  * @OA\Post(
  *     path="/api/admin/warmups/{id}/image",
- *     summary="Загрузить изображение для разминки",
+ *     summary="Загрузить/обновить изображение разминки",
  *     description="Загружает новое изображение для существующей разминки (старое изображение удаляется)",
  *     operationId="uploadWarmupImage",
  *     tags={"Admin Warmups"},

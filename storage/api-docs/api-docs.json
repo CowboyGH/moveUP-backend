@@ -1070,7 +1070,7 @@
                     "Admin Exercises"
                 ],
                 "summary": "Обновить упражнение",
-                "description": "Обновляет существующее упражнение. Для обновления изображения используйте multipart/form-data",
+                "description": "Обновляет данные упражнения (без изображения). Для обновления изображения используйте POST /api/admin/exercises/{id}/image",
                 "operationId": "updateExercise",
                 "parameters": [
                     {
@@ -1087,11 +1087,11 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "properties": {
                                     "equipment_id": {
-                                        "description": "ID оборудования (получить из GET /api/admin/equipments)",
+                                        "description": "ID оборудования",
                                         "type": "integer",
                                         "example": 1
                                     },
@@ -1109,11 +1109,6 @@
                                         "description": "Группа мышц",
                                         "type": "string",
                                         "example": "Грудные"
-                                    },
-                                    "image": {
-                                        "description": "Новый файл изображения (опционально)",
-                                        "type": "string",
-                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -1353,7 +1348,7 @@
                 "tags": [
                     "Admin Exercises"
                 ],
-                "summary": "Загрузить изображение для упражнения",
+                "summary": "Загрузить/обновить изображение упражнения",
                 "description": "Загружает новое изображение для существующего упражнения (старое изображение удаляется)",
                 "operationId": "uploadExerciseImage",
                 "parameters": [
@@ -4990,8 +4985,7 @@
                             "schema": {
                                 "required": [
                                     "name",
-                                    "description",
-                                    "image"
+                                    "description"
                                 ],
                                 "properties": {
                                     "name": {
@@ -5163,7 +5157,7 @@
                     "Admin Warmups"
                 ],
                 "summary": "Обновить разминку",
-                "description": "Обновляет существующую разминку. Для обновления изображения используйте multipart/form-data",
+                "description": "Обновляет данные разминки (без изображения). Для обновления изображения используйте POST /api/admin/warmups/{id}/image",
                 "operationId": "updateWarmup",
                 "parameters": [
                     {
@@ -5180,7 +5174,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "properties": {
                                     "name": {
@@ -5192,11 +5186,6 @@
                                         "description": "Описание разминки",
                                         "type": "string",
                                         "example": "Разминка для подготовки суставов к нагрузке"
-                                    },
-                                    "image": {
-                                        "description": "Новый файл изображения (опционально)",
-                                        "type": "string",
-                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -5436,7 +5425,7 @@
                 "tags": [
                     "Admin Warmups"
                 ],
-                "summary": "Загрузить изображение для разминки",
+                "summary": "Загрузить/обновить изображение разминки",
                 "description": "Загружает новое изображение для существующей разминки (старое изображение удаляется)",
                 "operationId": "uploadWarmupImage",
                 "parameters": [
@@ -5629,8 +5618,8 @@
                                                         "example": "Комплекс упражнений для пробуждения"
                                                     },
                                                     "duration_minutes": {
-                                                        "type": "integer",
-                                                        "example": 30
+                                                        "type": "string",
+                                                        "example": "30"
                                                     },
                                                     "image": {
                                                         "type": "string",
@@ -5923,7 +5912,7 @@
                     "Admin Workouts"
                 ],
                 "summary": "Обновить тренировку",
-                "description": "Обновляет существующую тренировку. Для обновления изображения используйте multipart/form-data",
+                "description": "Обновляет данные тренировки (без изображения). Для обновления изображения используйте POST /api/admin/workouts/{id}/image",
                 "operationId": "updateWorkout",
                 "parameters": [
                     {
@@ -5940,7 +5929,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "properties": {
                                     "phase_id": {
@@ -5962,17 +5951,60 @@
                                     "duration_minutes": {
                                         "description": "Длительность в минутах",
                                         "type": "string",
-                                        "example": 30
+                                        "example": "30"
                                     },
                                     "is_active": {
                                         "description": "Активность тренировки",
                                         "type": "boolean",
                                         "example": true
                                     },
-                                    "image": {
-                                        "description": "Новый файл изображения (опционально)",
-                                        "type": "string",
-                                        "format": "binary"
+                                    "exercises": {
+                                        "description": "Список упражнений",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "exercise_id": {
+                                                    "description": "ID упражнения",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "sets": {
+                                                    "description": "Количество подходов",
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "reps": {
+                                                    "description": "Количество повторений",
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "order_number": {
+                                                    "description": "Порядковый номер",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "warmups": {
+                                        "description": "Список разминок",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "warmup_id": {
+                                                    "description": "ID разминки",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "order_number": {
+                                                    "description": "Порядковый номер",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -6212,7 +6244,7 @@
                 "tags": [
                     "Admin Workouts"
                 ],
-                "summary": "Загрузить изображение для тренировки",
+                "summary": "Загрузить/обновить изображение тренировки",
                 "description": "Загружает новое изображение для существующей тренировки (старое изображение удаляется)",
                 "operationId": "uploadWorkoutImage",
                 "parameters": [
@@ -17362,8 +17394,7 @@
             "StoreWarmupRequest": {
                 "required": [
                     "name",
-                    "description",
-                    "image"
+                    "description"
                 ],
                 "properties": {
                     "name": {
@@ -17377,9 +17408,9 @@
                         "example": "Разминка для подготовки суставов к нагрузке"
                     },
                     "image": {
-                        "description": "Путь к изображению",
+                        "description": "Файл изображения (опционально)",
                         "type": "string",
-                        "example": "/uploads/warmups/joint-gymnastics.jpg"
+                        "format": "binary"
                     }
                 },
                 "type": "object"
@@ -17395,11 +17426,6 @@
                         "description": "Описание разминки",
                         "type": "string",
                         "example": "Разминка для подготовки суставов к нагрузке"
-                    },
-                    "image": {
-                        "description": "Путь к изображению",
-                        "type": "string",
-                        "example": "/uploads/warmups/joint-gymnastics.jpg"
                     }
                 },
                 "type": "object"
@@ -18244,8 +18270,8 @@
                                 "example": 3
                             },
                             "reps": {
-                                "type": "string",
-                                "example": "12"
+                                "type": "integer",
+                                "example": 12
                             },
                             "order_number": {
                                 "type": "integer",
@@ -18307,7 +18333,7 @@
                     },
                     "duration_minutes": {
                         "type": "string",
-                        "example": 30
+                        "example": "30"
                     },
                     "image": {
                         "type": "string",
@@ -18386,7 +18412,7 @@
                     "duration_minutes": {
                         "description": "Длительность в минутах",
                         "type": "string",
-                        "example": 30
+                        "example": "30"
                     },
                     "is_active": {
                         "description": "Активность тренировки",
@@ -18416,8 +18442,8 @@
                                 },
                                 "reps": {
                                     "description": "Количество повторений",
-                                    "type": "string",
-                                    "example": "12"
+                                    "type": "integer",
+                                    "example": 12
                                 },
                                 "order_number": {
                                     "description": "Порядковый номер",
@@ -18474,8 +18500,8 @@
                     },
                     "duration_minutes": {
                         "description": "Длительность в минутах",
-                        "type": "integer",
-                        "example": 30
+                        "type": "string",
+                        "example": "30"
                     },
                     "is_active": {
                         "description": "Активность тренировки",
@@ -18634,8 +18660,8 @@
                         "example": "2026-03-16T05:13:25.000000Z"
                     },
                     "duration_minutes": {
-                        "type": "integer",
-                        "example": 45
+                        "type": "string",
+                        "example": "45"
                     }
                 },
                 "type": "object"

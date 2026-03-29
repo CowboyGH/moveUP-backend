@@ -33,7 +33,7 @@ class WorkoutSchemas {}
  *         property="pivot",
  *         type="object",
  *         @OA\Property(property="sets", type="integer", example=3),
- *         @OA\Property(property="reps", type="string", example="12"),
+ *         @OA\Property(property="reps", type="integer", example=12),
  *         @OA\Property(property="order_number", type="integer", example=1)
  *     )
  * )
@@ -65,7 +65,7 @@ class WorkoutWarmupSchema {}
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="title", type="string", example="Утренняя зарядка"),
  *     @OA\Property(property="description", type="string", example="Комплекс упражнений для пробуждения"),
- *     @OA\Property(property="duration_minutes", type="string", example=30),
+ *     @OA\Property(property="duration_minutes", type="string", example="30"),
  *     @OA\Property(property="image", type="string", nullable=true, example="workouts/morning-workout.jpg"),
  *     @OA\Property(property="image_url", type="string", nullable=true, example="http://localhost/storage/workouts/morning-workout.jpg"),
  *     @OA\Property(property="is_active", type="boolean", example=true),
@@ -99,7 +99,7 @@ class WorkoutSchema {}
  *     @OA\Property(property="phase_id", type="integer", nullable=true, example=1, description="ID фазы"),
  *     @OA\Property(property="title", type="string", example="Утренняя зарядка", description="Название тренировки"),
  *     @OA\Property(property="description", type="string", example="Комплекс упражнений для пробуждения", description="Описание тренировки"),
- *     @OA\Property(property="duration_minutes", type="string", example=30, description="Длительность в минутах"),
+ *     @OA\Property(property="duration_minutes", type="string", example="30", description="Длительность в минутах"),
  *     @OA\Property(property="is_active", type="boolean", example=true, description="Активность тренировки"),
  *     @OA\Property(
  *         property="exercises",
@@ -110,7 +110,7 @@ class WorkoutSchema {}
  *             required={"exercise_id", "sets", "reps", "order_number"},
  *             @OA\Property(property="exercise_id", type="integer", example=1, description="ID упражнения"),
  *             @OA\Property(property="sets", type="integer", example=3, description="Количество подходов"),
- *             @OA\Property(property="reps", type="string", example="12", description="Количество повторений"),
+ *             @OA\Property(property="reps", type="integer", example=12, description="Количество повторений"),
  *             @OA\Property(property="order_number", type="integer", example=1, description="Порядковый номер")
  *         )
  *     ),
@@ -136,7 +136,7 @@ class StoreWorkoutRequestSchema {}
  *     @OA\Property(property="phase_id", type="integer", nullable=true, example=1, description="ID фазы"),
  *     @OA\Property(property="title", type="string", example="Утренняя зарядка", description="Название тренировки"),
  *     @OA\Property(property="description", type="string", example="Комплекс упражнений для пробуждения", description="Описание тренировки"),
- *     @OA\Property(property="duration_minutes", type="integer", example=30, description="Длительность в минутах"),
+ *     @OA\Property(property="duration_minutes", type="string", example="30", description="Длительность в минутах"),
  *     @OA\Property(property="is_active", type="boolean", example=true, description="Активность тренировки"),
  *     @OA\Property(
  *         property="exercises",
@@ -218,7 +218,7 @@ class WorkoutStartResponseSchema{}
  *     @OA\Property(property="workout_id", type="integer", example=76),
  *     @OA\Property(property="title", type="string", example="Базовая силовая тренировка"),
  *     @OA\Property(property="started_at", type="string", format="date-time", example="2026-03-16T05:13:25.000000Z"),
- *     @OA\Property(property="duration_minutes", type="integer", example=45)
+ *     @OA\Property(property="duration_minutes", type="string", example="45")
  * )
  */
 class ActiveWorkoutInfoSchema {}
