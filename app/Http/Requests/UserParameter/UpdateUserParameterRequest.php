@@ -14,9 +14,9 @@ class UpdateUserParameterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'goal_id' => 'sometimes|exists:goals,id',
-            'level_id' => 'sometimes|exists:levels,id',
-            'equipment_id' => 'sometimes|exists:equipments,id',
+            'goal_id' => 'sometimes|integer|min:1',
+            'level_id' => 'sometimes|integer|min:1',
+            'equipment_id' => 'sometimes|integer|min:1',
             'height' => 'sometimes|integer|min:140|max:210',
             'weight' => 'sometimes|numeric|min:40|max:130',
             'age' => 'sometimes|integer|min:14|max:90',
@@ -27,9 +27,12 @@ class UpdateUserParameterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'goal_id.exists' => 'Выбранная цель не существует',
-            'level_id.exists' => 'Выбранный уровень не существует',
-            'equipment_id.exists' => 'Выбранное оборудование не существует',
+            'goal_id.integer' => 'ID цели должен быть целым числом',
+            'goal_id.min' => 'ID цели должен быть больше 0',
+            'level_id.integer' => 'ID уровня должен быть целым числом',
+            'level_id.min' => 'ID уровня должен быть больше 0',
+            'equipment_id.integer' => 'ID оборудования должен быть целым числом',
+            'equipment_id.min' => 'ID оборудования должен быть больше 0',
             'height.integer' => 'Рост должен быть целым числом',
             'height.min' => 'Рост должен быть не менее 140 см',
             'height.max' => 'Рост должен быть не более 210 см',

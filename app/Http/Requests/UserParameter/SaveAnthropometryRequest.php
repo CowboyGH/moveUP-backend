@@ -18,7 +18,7 @@ class SaveAnthropometryRequest extends FormRequest
             'age' => 'required|integer|min:14|max:90',
             'weight' => 'required|numeric|min:40|max:130',
             'height' => 'required|integer|min:140|max:210',
-            'equipment_id' => 'required|exists:equipments,id',
+            'equipment_id' => 'required|integer|min:1',
         ];
     }
 
@@ -40,7 +40,8 @@ class SaveAnthropometryRequest extends FormRequest
             'height.min' => 'Рост должен быть не менее 140 см',
             'height.max' => 'Рост должен быть не более 210 см',
             'equipment_id.required' => 'ID оборудования обязательно',
-            'equipment_id.exists' => 'Выбранное оборудование не существует',
+            'equipment_id.integer' => 'ID оборудования должен быть целым числом',
+            'equipment_id.min' => 'ID оборудования должен быть больше 0',
         ];
     }
 

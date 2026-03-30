@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Responses\ApiResponse;
+use App\Http\Responses\ErrorResponse;
 use App\Models\Equipment;
 use App\Models\Goal;
 use App\Models\Level;
@@ -65,6 +66,15 @@ class UserParameterController extends Controller
 
     public function saveGoal(SaveGoalRequest $request)
     {
+        $goal = Goal::find($request->goal_id);
+        if (!$goal) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Цель не найдена',
+                404
+            );
+        }
+
         if ($request->user()) {
             $user = $request->user();
             $parameters = UserParameter::firstOrNew(['user_id' => $user->id]);
@@ -88,6 +98,15 @@ class UserParameterController extends Controller
     public function saveAnthropometry(SaveAnthropometryRequest $request)
     {
         $data = $request->getData();
+
+        $equipment = Equipment::find($data['equipment_id']);
+        if (!$equipment) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Оборудование не найдено',
+                404
+            );
+        }
 
         if ($request->user()) {
             $user = $request->user();
@@ -115,6 +134,15 @@ class UserParameterController extends Controller
 
     public function saveLevel(SaveLevelRequest $request)
     {
+        $level = Level::find($request->level_id);
+        if (!$level) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Уровень не найден',
+                404
+            );
+        }
+
         if ($request->user()) {
             $user = $request->user();
             $parameters = UserParameter::firstOrNew(['user_id' => $user->id]);
@@ -226,7 +254,39 @@ class UserParameterController extends Controller
         $user = $request->user();
         $parameters = UserParameter::firstOrNew(['user_id' => $user->id]);
 
-        // Проверяем, изменились ли ключевые параметры
+        if ($request->has('goal_id')) {
+            $goal = Goal::find($request->goal_id);
+            if (!$goal) {
+                return ApiResponse::error(
+                    ErrorResponse::NOT_FOUND,
+                    'Цель не найдена',
+                    404
+                );
+            }
+        }
+
+        if ($request->has('level_id')) {
+            $level = Level::find($request->level_id);
+            if (!$level) {
+                return ApiResponse::error(
+                    ErrorResponse::NOT_FOUND,
+                    'Уровень не найден',
+                    404
+                );
+            }
+        }
+
+        if ($request->has('equipment_id')) {
+            $equipment = Equipment::find($request->equipment_id);
+            if (!$equipment) {
+                return ApiResponse::error(
+                    ErrorResponse::NOT_FOUND,
+                    'Оборудование не найдено',
+                    404
+                );
+            }
+        }
+
         $goalChanged = $parameters->exists && $parameters->goal_id != $request->goal_id;
         $levelChanged = $parameters->exists && $parameters->level_id != $request->level_id;
         $equipmentChanged = $parameters->exists && $parameters->equipment_id != $request->equipment_id;
@@ -234,7 +294,6 @@ class UserParameterController extends Controller
         $parameters->fill($request->getFillableData());
         $parameters->save();
 
-        // Перегенерируем при изменении ключевых параметров
         $force = $goalChanged || $levelChanged || $equipmentChanged;
         $this->regenerateWorkouts($user, $force);
 

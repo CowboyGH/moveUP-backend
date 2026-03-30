@@ -14,7 +14,7 @@ class SaveLevelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'level_id' => 'required|exists:levels,id',
+            'level_id' => 'required|integer|min:1',
         ];
     }
 
@@ -22,7 +22,8 @@ class SaveLevelRequest extends FormRequest
     {
         return [
             'level_id.required' => 'ID уровня обязателен',
-            'level_id.exists' => 'Выбранный уровень не существует',
+            'level_id.integer' => 'ID уровня должен быть целым числом',
+            'level_id.min' => 'ID уровня должен быть больше 0',
         ];
     }
 }

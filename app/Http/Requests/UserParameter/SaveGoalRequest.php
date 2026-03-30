@@ -14,7 +14,7 @@ class SaveGoalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'goal_id' => 'required|exists:goals,id',
+            'goal_id' => 'required|integer|min:1',
         ];
     }
 
@@ -22,7 +22,8 @@ class SaveGoalRequest extends FormRequest
     {
         return [
             'goal_id.required' => 'ID цели обязательно',
-            'goal_id.exists' => 'Выбранная цель не существует',
+            'goal_id.integer' => 'ID цели должен быть целым числом',
+            'goal_id.min' => 'ID цели должен быть больше 0',
         ];
     }
 }
