@@ -113,7 +113,7 @@ class ProfileStatisticsController extends Controller
     public function trend(Request $request): JsonResponse
     {
         $request->validate([
-            'workout_id' => 'nullable|integer|min:1', // только проверка формата
+            'workout_id' => 'nullable|integer|min:1',
         ]);
 
         $user = $request->user();

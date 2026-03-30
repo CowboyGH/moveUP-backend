@@ -38,16 +38,46 @@ class ExerciseReactionController extends Controller
         $user = $request->user();
         $validated = $request->validated();
 
-        // Проверяем, что тренировка принадлежит пользователю
-        $userWorkout = UserWorkout::where('id', $validated['user_workout_id'])
-            ->where('user_id', $user->id)
-            ->first();
+        // Проверяем существование упражнения
+        $exercise = \App\Models\Exercise::find($validated['exercise_id']);
+        if (!$exercise) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Упражнение не найдено',
+                404
+            );
+        }
 
+        // Проверяем существование тренировки
+        $userWorkout = UserWorkout::find($validated['user_workout_id']);
         if (!$userWorkout) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Тренировка не найдена',
+                404
+            );
+        }
+
+        // Проверяем, что тренировка принадлежит пользователю
+        if ($userWorkout->user_id !== $user->id) {
             return ApiResponse::error(
                 ErrorResponse::FORBIDDEN,
                 'Тренировка не принадлежит текущему пользователю',
                 403
+            );
+        }
+
+        // Проверяем, не отправлялась ли уже реакция для этого упражнения в рамках этой тренировки
+        $existingReaction = \App\Models\ExerciseReaction::where('user_id', $user->id)
+            ->where('exercise_id', $validated['exercise_id'])
+            ->where('user_workout_id', $validated['user_workout_id'])
+            ->first();
+
+        if ($existingReaction) {
+            return ApiResponse::error(
+                ErrorResponse::CONFLICT,
+                'Реакция на это упражнение уже была отправлена',
+                409
             );
         }
 
@@ -72,8 +102,10 @@ class ExerciseReactionController extends Controller
         if ($result['rest_phase'] && $result['rest_phase']['required']) {
             $this->checkAndRegenerateWorkouts($user, $validated['exercise_id'], $result['rest_phase']['duration_days']);
         }
+
         return ApiResponse::success('Оценка упражнения сохранена', $result);
     }
+
     private function checkAndRegenerateWorkouts(User $user, int $exerciseId, int $restDays): void
     {
         $currentProgress = $user->currentProgress();
@@ -126,6 +158,16 @@ class ExerciseReactionController extends Controller
     {
         $user = request()->user();
 
+        // Проверяем существование упражнения
+        $exercise = \App\Models\Exercise::find($exerciseId);
+        if (!$exercise) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Упражнение не найдено',
+                404
+            );
+        }
+
         $history = $this->exerciseLoadService->getReactionHistory(
             $user->id,
             $exerciseId,
@@ -147,6 +189,16 @@ class ExerciseReactionController extends Controller
     {
         $user = $request->user();
         $validated = $request->validated();
+
+        // Проверяем существование упражнения
+        $exercise = \App\Models\Exercise::find($validated['exercise_id']);
+        if (!$exercise) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Упражнение не найдено',
+                404
+            );
+        }
 
         $recommendation = $this->exerciseLoadService->getLoadRecommendation(
             $user,
