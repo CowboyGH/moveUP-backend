@@ -17878,148 +17878,30 @@
             },
             "SaveExerciseResultRequest": {
                 "properties": {
+                    "exercise_id": {
+                        "type": "integer",
+                        "example": 16
+                    },
                     "reaction": {
-                        "properties": {
-                            "user_id": {
-                                "type": "integer",
-                                "example": 2
-                            },
-                            "exercise_id": {
-                                "type": "integer",
-                                "example": 16
-                            },
-                            "reaction_date": {
-                                "type": "string",
-                                "format": "date",
-                                "example": "2026-03-21T17:00:00.000000Z"
-                            },
-                            "user_workout_id": {
-                                "type": "integer",
-                                "example": 815
-                            },
-                            "reaction": {
-                                "type": "string",
-                                "enum": [
-                                    "good",
-                                    "normal",
-                                    "bad"
-                                ],
-                                "example": "bad"
-                            },
-                            "id": {
-                                "type": "integer",
-                                "example": 32
-                            }
-                        },
-                        "type": "object"
+                        "type": "string",
+                        "enum": [
+                            "good",
+                            "normal",
+                            "bad"
+                        ],
+                        "example": "bad"
                     },
-                    "analysis": {
-                        "properties": {
-                            "pattern": {
-                                "type": "string",
-                                "enum": [
-                                    "consistently_good",
-                                    "consistently_bad",
-                                    "mixed"
-                                ],
-                                "example": "consistently_bad"
-                            },
-                            "consecutive_good": {
-                                "type": "integer",
-                                "example": 0
-                            },
-                            "consecutive_bad": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "last_reaction": {
-                                "type": "string",
-                                "example": "bad"
-                            },
-                            "trend": {
-                                "type": "string",
-                                "enum": [
-                                    "neutral",
-                                    "positive_streak",
-                                    "negative"
-                                ],
-                                "example": "negative"
-                            },
-                            "stats": {
-                                "properties": {
-                                    "good": {
-                                        "type": "integer",
-                                        "example": 0
-                                    },
-                                    "normal": {
-                                        "type": "integer",
-                                        "example": 0
-                                    },
-                                    "bad": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "total": {
-                                        "type": "integer",
-                                        "example": 1
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        },
-                        "type": "object"
+                    "weight_used": {
+                        "type": "integer",
+                        "example": 16
                     },
-                    "adjustments": {
-                        "properties": {
-                            "applied": {
-                                "type": "boolean",
-                                "example": true
-                            },
-                            "type": {
-                                "type": "string",
-                                "example": "decrease",
-                                "nullable": true
-                            },
-                            "percent": {
-                                "type": "integer",
-                                "example": 20
-                            },
-                            "old_weight": {
-                                "type": "number",
-                                "format": "float",
-                                "example": 10
-                            },
-                            "new_weight": {
-                                "type": "number",
-                                "format": "float",
-                                "example": 8
-                            },
-                            "message": {
-                                "type": "string",
-                                "example": "Снизьте вес с 10кг до 8кг",
-                                "nullable": true
-                            }
-                        },
-                        "type": "object"
+                    "reps_completed": {
+                        "type": "integer",
+                        "example": 16
                     },
-                    "rest_phase": {
-                        "type": "object",
-                        "example": null,
-                        "nullable": true
-                    },
-                    "current_weight": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 10
-                    },
-                    "recommendations": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "example": [
-                            "Снизьте вес с 10кг до 8кг"
-                        ]
+                    "sets_completed": {
+                        "type": "integer",
+                        "example": 16
                     }
                 },
                 "type": "object"

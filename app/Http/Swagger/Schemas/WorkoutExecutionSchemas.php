@@ -159,46 +159,11 @@ class CompletedResponseSchema {}
  * @OA\Schema(
  *     schema="SaveExerciseResultRequest",
  *     type="object",
- *     @OA\Property(
- *         property="reaction",
- *         type="object",
- *         @OA\Property(property="user_id", type="integer", example=2),
- *         @OA\Property(property="exercise_id", type="integer", example=16),
- *         @OA\Property(property="reaction_date", type="string", format="date", example="2026-03-21T17:00:00.000000Z"),
- *         @OA\Property(property="user_workout_id", type="integer", example=815),
- *         @OA\Property(property="reaction", type="string", enum={"good", "normal", "bad"}, example="bad"),
- *         @OA\Property(property="id", type="integer", example=32)
- *     ),
- *     @OA\Property(
- *         property="analysis",
- *         type="object",
- *         @OA\Property(property="pattern", type="string", enum={"consistently_good", "consistently_bad", "mixed"}, example="consistently_bad"),
- *         @OA\Property(property="consecutive_good", type="integer", example=0),
- *         @OA\Property(property="consecutive_bad", type="integer", example=1),
- *         @OA\Property(property="last_reaction", type="string", example="bad"),
- *         @OA\Property(property="trend", type="string", enum={"neutral", "positive_streak", "negative"}, example="negative"),
- *         @OA\Property(
- *             property="stats",
- *             type="object",
- *             @OA\Property(property="good", type="integer", example=0),
- *             @OA\Property(property="normal", type="integer", example=0),
- *             @OA\Property(property="bad", type="integer", example=1),
- *             @OA\Property(property="total", type="integer", example=1)
- *         )
- *     ),
- *     @OA\Property(
- *         property="adjustments",
- *         type="object",
- *         @OA\Property(property="applied", type="boolean", example=true),
- *         @OA\Property(property="type", type="string", nullable=true, example="decrease"),
- *         @OA\Property(property="percent", type="integer", example=20),
- *         @OA\Property(property="old_weight", type="number", format="float", example=10),
- *         @OA\Property(property="new_weight", type="number", format="float", example=8),
- *         @OA\Property(property="message", type="string", nullable=true, example="Снизьте вес с 10кг до 8кг")
- *     ),
- *     @OA\Property(property="rest_phase", type="object", nullable=true, example=null),
- *     @OA\Property(property="current_weight", type="number", format="float", example=10),
- *     @OA\Property(property="recommendations", type="array", @OA\Items(type="string"), example={"Снизьте вес с 10кг до 8кг"})
+ *     @OA\Property(property="exercise_id", type="integer", example=16),
+ *     @OA\Property(property="reaction", type="string", enum={"good", "normal", "bad"}, example="bad"),
+ *     @OA\Property(property="weight_used", type="integer", example=16),
+ *     @OA\Property(property="reps_completed", type="integer", example=16),
+ *     @OA\Property(property="sets_completed", type="integer", example=16)
  * )
  */
 class SaveExerciseResultRequestSchema {}
