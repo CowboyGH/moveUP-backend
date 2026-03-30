@@ -273,7 +273,7 @@ class CreateTesting {}
  *                     @OA\Items(
  *                         type="object",
  *                         @OA\Property(property="id", type="integer", example=1),
- *                         @OA\Property(property="exercise_id", type="integer", example=12),
+ *                         @OA\Property(property="title", type="string", example="12-минутный бег"),
  *                         @OA\Property(property="description", type="string", example="За 12 минут необходимо пробежать максимально возможную дистанцию."),
  *                         @OA\Property(property="image", type="string", example="testing-exercises/cooper-run.jpg"),
  *                         @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),

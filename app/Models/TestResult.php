@@ -39,11 +39,4 @@ class TestResult extends Model
     {
         return $this->belongsTo(TestAttempt::class);
     }
-
-    public function getExerciseAttribute()
-    {
-        return $this->testingExercise->exercise ?? null;
-    }
-
-
 }

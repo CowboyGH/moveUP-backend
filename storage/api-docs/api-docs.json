@@ -3165,9 +3165,9 @@
                                                                 "type": "integer",
                                                                 "example": 1
                                                             },
-                                                            "exercise_id": {
-                                                                "type": "integer",
-                                                                "example": 12
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "12-минутный бег"
                                                             },
                                                             "description": {
                                                                 "type": "string",
@@ -3953,12 +3953,12 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "Поиск по описанию упражнения",
+                        "description": "Поиск по названию и описанию упражнения",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "maxLength": 100,
-                            "example": "отжимания"
+                            "example": "бег"
                         }
                     },
                     {
@@ -4003,39 +4003,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "exercise_id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "description": {
-                                                        "type": "string",
-                                                        "example": "Отжимания от пола - максимальное количество за 1 минуту"
-                                                    },
-                                                    "image": {
-                                                        "type": "string",
-                                                        "example": "/uploads/exercises/pushups.jpg"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "datetime",
-                                                        "example": "2026-02-20T08:20:35.000000Z"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "datetime",
-                                                        "example": "2026-02-20T08:20:35.000000Z"
-                                                    },
-                                                    "testings_count": {
-                                                        "type": "integer",
-                                                        "example": 2
-                                                    }
-                                                },
-                                                "type": "object"
+                                                "$ref": "#/components/schemas/TestingExercise"
                                             }
                                         },
                                         "meta": {
@@ -4123,22 +4091,22 @@
                         "multipart/form-data": {
                             "schema": {
                                 "required": [
-                                    "exercise_id",
+                                    "title",
                                     "description"
                                 ],
                                 "properties": {
-                                    "exercise_id": {
-                                        "description": "ID упражнения из таблицы exercises (основной каталог упражнений)",
-                                        "type": "integer",
-                                        "example": 5
+                                    "title": {
+                                        "description": "Название тестового упражнения",
+                                        "type": "string",
+                                        "example": "12-минутный бег"
                                     },
                                     "description": {
                                         "description": "Описание упражнения",
                                         "type": "string",
-                                        "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                                        "example": "За 12 минут необходимо пробежать максимально возможную дистанцию."
                                     },
                                     "image": {
-                                        "description": "Изображение упражнения (jpg, png, gif, до 5MB)",
+                                        "description": "Изображение упражнения (jpg, png, gif, webp, до 5MB)",
                                         "type": "string",
                                         "format": "binary"
                                     }
@@ -4164,39 +4132,7 @@
                                             "example": "Тестовое упражнение успешно создано"
                                         },
                                         "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "exercise_id": {
-                                                    "type": "integer",
-                                                    "example": 5
-                                                },
-                                                "description": {
-                                                    "type": "string",
-                                                    "example": "Отжимания от пола - максимальное количество за 1 минуту"
-                                                },
-                                                "image": {
-                                                    "type": "string",
-                                                    "example": "/uploads/exercises/pushups.jpg"
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "datetime",
-                                                    "example": "2026-02-22T10:00:00.000000Z"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "datetime",
-                                                    "example": "2026-02-22T10:00:00.000000Z"
-                                                },
-                                                "testings_count": {
-                                                    "type": "integer",
-                                                    "example": 0
-                                                }
-                                            },
-                                            "type": "object"
+                                            "$ref": "#/components/schemas/TestingExercise"
                                         }
                                     },
                                     "type": "object"
@@ -4258,7 +4194,7 @@
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "example": 4
+                            "example": 1
                         }
                     }
                 ],
@@ -4278,105 +4214,7 @@
                                             "example": "success"
                                         },
                                         "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 4
-                                                },
-                                                "exercise_id": {
-                                                    "type": "integer",
-                                                    "example": 9
-                                                },
-                                                "description": {
-                                                    "type": "string",
-                                                    "example": "Определение максимального веса в жиме лежа. Выполняются подходы с постепенным увеличением веса до достижения одноповторного максимума."
-                                                },
-                                                "image": {
-                                                    "type": "string",
-                                                    "example": "testing-exercises/bench-press-1rm.jpg"
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "datetime",
-                                                    "example": "2026-03-20T08:57:06.000000Z"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "datetime",
-                                                    "example": "2026-03-20T08:57:06.000000Z"
-                                                },
-                                                "testings": {
-                                                    "description": "Список тестов, в которых используется это упражнение",
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 2
-                                                            },
-                                                            "title": {
-                                                                "type": "string",
-                                                                "example": "Гарвардский степ-тест"
-                                                            },
-                                                            "description": {
-                                                                "type": "string",
-                                                                "example": "Оценка восстановления сердечно-сосудистой системы после нагрузки."
-                                                            },
-                                                            "duration_minutes": {
-                                                                "type": "string",
-                                                                "example": "15"
-                                                            },
-                                                            "image": {
-                                                                "type": "string",
-                                                                "example": "tests/harvard-step.jpg"
-                                                            },
-                                                            "is_active": {
-                                                                "type": "boolean",
-                                                                "example": true
-                                                            },
-                                                            "created_at": {
-                                                                "type": "string",
-                                                                "format": "datetime",
-                                                                "example": "2026-03-20T08:57:06.000000Z"
-                                                            },
-                                                            "updated_at": {
-                                                                "type": "string",
-                                                                "format": "datetime",
-                                                                "example": "2026-03-20T08:57:06.000000Z"
-                                                            },
-                                                            "pivot": {
-                                                                "properties": {
-                                                                    "testing_exercise_id": {
-                                                                        "type": "integer",
-                                                                        "example": 4
-                                                                    },
-                                                                    "testing_id": {
-                                                                        "type": "integer",
-                                                                        "example": 2
-                                                                    },
-                                                                    "order_number": {
-                                                                        "type": "integer",
-                                                                        "example": 1
-                                                                    },
-                                                                    "created_at": {
-                                                                        "type": "string",
-                                                                        "format": "datetime",
-                                                                        "example": "2026-03-20T08:57:06.000000Z"
-                                                                    },
-                                                                    "updated_at": {
-                                                                        "type": "string",
-                                                                        "format": "datetime",
-                                                                        "example": "2026-03-20T08:57:06.000000Z"
-                                                                    }
-                                                                },
-                                                                "type": "object"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                }
-                                            },
-                                            "type": "object"
+                                            "$ref": "#/components/schemas/TestingExerciseWithTestings"
                                         }
                                     },
                                     "type": "object"
@@ -4446,20 +4284,15 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "exercise_id": {
-                                        "description": "ID упражнения из таблицы exercises (основной каталог упражнений)",
-                                        "type": "integer",
-                                        "example": 5
+                                    "title": {
+                                        "description": "Название тестового упражнения",
+                                        "type": "string",
+                                        "example": "12-минутный бег"
                                     },
                                     "description": {
                                         "description": "Описание упражнения",
                                         "type": "string",
-                                        "example": "Отжимания от пола - обновленное описание"
-                                    },
-                                    "image": {
-                                        "description": "Путь к изображению",
-                                        "type": "string",
-                                        "example": "/uploads/exercises/pushups-updated.jpg"
+                                        "example": "Обновленное описание упражнения"
                                     }
                                 },
                                 "type": "object"
@@ -4483,39 +4316,7 @@
                                             "example": "Тестовое упражнение успешно обновлено"
                                         },
                                         "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "exercise_id": {
-                                                    "type": "integer",
-                                                    "example": 5
-                                                },
-                                                "description": {
-                                                    "type": "string",
-                                                    "example": "Отжимания от пола - обновленное описание"
-                                                },
-                                                "image": {
-                                                    "type": "string",
-                                                    "example": "/uploads/exercises/pushups-updated.jpg"
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "datetime",
-                                                    "example": "2026-02-20T08:20:35.000000Z"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "datetime",
-                                                    "example": "2026-02-22T10:00:00.000000Z"
-                                                },
-                                                "testings_count": {
-                                                    "type": "integer",
-                                                    "example": 2
-                                                }
-                                            },
-                                            "type": "object"
+                                            "$ref": "#/components/schemas/TestingExercise"
                                         }
                                     },
                                     "type": "object"
@@ -4664,14 +4465,17 @@
                     "Admin Testing Exercises"
                 ],
                 "summary": "Загрузить/обновить изображение тестового упражнения",
+                "description": "Загружает новое изображение для существующего тестового упражнения (старое изображение удаляется)",
                 "operationId": "2033e1accd9dd82c5f9f14c9751e7607",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID тестового упражнения",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 1
                         }
                     }
                 ],
@@ -4685,7 +4489,7 @@
                                 ],
                                 "properties": {
                                     "image": {
-                                        "description": "Изображение (jpg, png, gif, до 5MB)",
+                                        "description": "Файл изображения (jpeg, png, jpg, gif, webp, макс. 5MB)",
                                         "type": "string",
                                         "format": "binary"
                                     }
@@ -4697,7 +4501,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Изображение обновлено",
+                        "description": "Изображение успешно загружено",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4708,74 +4512,17 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Изображение тестового упражнения обновлено"
+                                            "example": "Изображение успешно загружено"
                                         },
                                         "data": {
                                             "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "exercise_id": {
-                                                    "type": "integer",
-                                                    "example": 5
-                                                },
-                                                "description": {
-                                                    "type": "string",
-                                                    "example": "Отжимания от пола - максимальное количество за 1 минуту"
-                                                },
                                                 "image": {
                                                     "type": "string",
-                                                    "example": "http://localhost/storage/testing-exercises/abc.jpg"
+                                                    "example": "testing-exercises/exercise_1_1234567890.jpg"
                                                 },
-                                                "created_at": {
+                                                "image_url": {
                                                     "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-01-01T12:00:00Z"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-01-01T12:00:00Z"
-                                                },
-                                                "exercise": {
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "integer",
-                                                            "example": 5
-                                                        },
-                                                        "title": {
-                                                            "type": "string",
-                                                            "example": "Отжимания"
-                                                        },
-                                                        "description": {
-                                                            "type": "string",
-                                                            "example": "Отжимания от пола - максимальное количество за 1 минуту"
-                                                        },
-                                                        "image": {
-                                                            "type": "string",
-                                                            "example": "http://localhost/storage/testing-exercises/abc.jpg"
-                                                        },
-                                                        "muscle_group": {
-                                                            "type": "string",
-                                                            "example": "Грудные мышцы"
-                                                        },
-                                                        "created_at": {
-                                                            "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2024-01-01T12:00:00Z"
-                                                        },
-                                                        "updated_at": {
-                                                            "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2024-01-01T12:00:00Z"
-                                                        },
-                                                        "image_url": {
-                                                            "type": "string",
-                                                            "example": "http://localhost/storage/exercises/pushups.jpg"
-                                                        }
-                                                    },
-                                                    "type": "object"
+                                                    "example": "http://localhost/storage/testing-exercises/exercise_1_1234567890.jpg"
                                                 }
                                             },
                                             "type": "object"
@@ -4787,7 +4534,7 @@
                         }
                     },
                     "401": {
-                        "description": "Не авторизован",
+                        "description": "Неавторизован",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4817,7 +4564,7 @@
                         }
                     },
                     "422": {
-                        "description": "Ошибка валидации (файл не загружен или не соответствует требованиям)",
+                        "description": "Ошибка валидации",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -17137,13 +16884,21 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "title": {
+                        "type": "string",
+                        "example": "12-минутный бег"
+                    },
                     "description": {
                         "type": "string",
-                        "example": "Отжимания от пола - максимальное количество за 1 минуту"
+                        "example": "За 12 минут необходимо пробежать максимально возможную дистанцию."
                     },
                     "image": {
                         "type": "string",
-                        "example": "/uploads/exercises/pushups.jpg"
+                        "example": "testing-exercises/cooper-run.jpg"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "http://localhost/storage/testing-exercises/cooper-run.jpg"
                     },
                     "created_at": {
                         "type": "string",
@@ -17154,6 +16909,76 @@
                         "type": "string",
                         "format": "datetime",
                         "example": "2026-02-20T08:20:35.000000Z"
+                    },
+                    "testings_count": {
+                        "type": "integer",
+                        "example": 2
+                    }
+                },
+                "type": "object"
+            },
+            "TestingExerciseWithTestings": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/TestingExercise"
+                    },
+                    {
+                        "properties": {
+                            "testings": {
+                                "description": "Список тестов, в которых используется это упражнение",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/TestingSimple"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "TestingSimple": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 72
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Базовая диагностика"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Тест для определения базового уровня физической подготовки"
+                    },
+                    "duration_minutes": {
+                        "type": "string",
+                        "example": "15-20 минут"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "tests/basic-diagnostic.jpg"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "pivot": {
+                        "properties": {
+                            "testing_id": {
+                                "type": "integer",
+                                "example": 72
+                            },
+                            "testing_exercise_id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "order_number": {
+                                "type": "integer",
+                                "example": 0
+                            }
+                        },
+                        "type": "object"
                     }
                 },
                 "type": "object"
@@ -17218,7 +17043,11 @@
                     },
                     "image": {
                         "type": "string",
-                        "example": "/uploads/tests/basic-diagnostic.jpg"
+                        "example": "tests/basic-diagnostic.jpg"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "http://localhost/storage/tests/basic-diagnostic.jpg"
                     },
                     "is_active": {
                         "type": "boolean",
@@ -17286,18 +17115,13 @@
                         "type": "integer",
                         "example": 72
                     },
-                    "exercise_id": {
+                    "testing_exercise_id": {
                         "type": "integer",
                         "example": 1
                     },
                     "result_value": {
                         "type": "integer",
                         "example": 25
-                    },
-                    "pulse": {
-                        "type": "integer",
-                        "example": 120,
-                        "nullable": true
                     },
                     "test_date": {
                         "type": "string",

@@ -17,12 +17,15 @@ class TestingExerciseController extends Controller
 {
     public function index(FilterTestingExerciseRequest $request): JsonResponse
     {
-        $query = TestingExercise::with('exercise')
+        $query = TestingExercise::query()
             ->withCount('testings');
 
-        // Только поиск по описанию
+        // Поиск по названию и описанию
         if ($request->filled('search')) {
-            $query->search($request->search, ['description']);
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
         }
 
         // Пагинация
@@ -31,13 +34,10 @@ class TestingExerciseController extends Controller
         $formattedExercises = collect($exercises->items())->map(function ($exercise) {
             return [
                 'id' => $exercise->id,
-                'exercise_id' => $exercise->exercise_id,
-                'exercise' => $exercise->exercise ? [
-                    'id' => $exercise->exercise->id,
-                    'title' => $exercise->exercise->title,
-                ] : null,
+                'title' => $exercise->title,
                 'description' => $exercise->description,
                 'image' => $exercise->image,
+                'image_url' => $exercise->image_url,
                 'testings_count' => $exercise->testings_count,
                 'created_at' => $exercise->created_at?->toISOString(),
                 'updated_at' => $exercise->updated_at?->toISOString(),
@@ -62,7 +62,7 @@ class TestingExerciseController extends Controller
     public function store(StoreTestingExerciseRequest $request): JsonResponse
     {
         $data = [
-            'exercise_id' => $request->exercise_id,
+            'title' => $request->title,
             'description' => $request->description,
         ];
 
@@ -73,21 +73,25 @@ class TestingExerciseController extends Controller
 
         $exercise = TestingExercise::create($data);
         $exercise->refresh();
-        $data = [
+
+        $responseData = [
             'id' => $exercise->id,
-            'exercise_id' => $exercise->exercise_id,
+            'title' => $exercise->title,
             'description' => $exercise->description,
             'image' => $exercise->image,
+            'image_url' => $exercise->image_url,
             'created_at' => $exercise->created_at,
             'updated_at' => $exercise->updated_at,
             'testings_count' => 0,
         ];
-        return ApiResponse::success('Тестовое упражнение успешно создано', $data, 201);
+
+        return ApiResponse::success('Тестовое упражнение успешно создано', $responseData, 201);
     }
 
     public function show(int $id): JsonResponse
     {
         $exercise = TestingExercise::with('testings')->find($id);
+
         if (!$exercise) {
             return ApiResponse::error(
                 ErrorResponse::NOT_FOUND,
@@ -95,7 +99,7 @@ class TestingExerciseController extends Controller
                 404
             );
         }
-        // Используем success с сообщением вместо data
+
         return ApiResponse::success('success', $exercise);
     }
 
@@ -110,14 +114,18 @@ class TestingExerciseController extends Controller
                 404
             );
         }
-        $exercise->update($request->only(['exercise_id', 'description', 'image']));
+
+        $data = $request->only(['title', 'description']);
+        $exercise->update($data);
         $exercise->refresh();
+
         return ApiResponse::success('Тестовое упражнение успешно обновлено', $exercise);
     }
 
     public function destroy(int $id): JsonResponse
     {
         $exercise = TestingExercise::find($id);
+
         if (!$exercise) {
             return ApiResponse::error(
                 ErrorResponse::NOT_FOUND,
@@ -125,6 +133,7 @@ class TestingExerciseController extends Controller
                 404
             );
         }
+
         if ($exercise->testings()->exists()) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
@@ -132,7 +141,14 @@ class TestingExerciseController extends Controller
                 409
             );
         }
+
+        // Удаляем изображение
+        if ($exercise->image) {
+            Storage::disk('public')->delete($exercise->image);
+        }
+
         $exercise->delete();
+
         return ApiResponse::success('Тестовое упражнение успешно удалено');
     }
 
@@ -148,14 +164,13 @@ class TestingExerciseController extends Controller
             );
         }
 
-        if ($exercise->getRawOriginal('image')) {
-            Storage::disk('public')->delete($exercise->getRawOriginal('image'));
+        if ($exercise->image) {
+            Storage::disk('public')->delete($exercise->image);
         }
 
         $path = $request->file('image')->store('testing-exercises', 'public');
         $exercise->update(['image' => $path]);
         $exercise->refresh();
-        $exercise->load('exercise');
 
         return ApiResponse::success('Изображение тестового упражнения обновлено', $exercise);
     }

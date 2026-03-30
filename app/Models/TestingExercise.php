@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class TestingExercise extends Model
 {
@@ -15,10 +16,20 @@ class TestingExercise extends Model
     use Filterable;
 
     protected $fillable = [
-        'exercise_id',
+        'title',
         'description',
         'image',
     ];
+
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute(): ?string
+    {
+        if (!$this->image) {
+            return null;
+        }
+        return Storage::disk('public')->url($this->image);
+    }
 
     public function testings(): BelongsToMany
     {
@@ -30,11 +41,6 @@ class TestingExercise extends Model
     public function testingTestExercises(): HasMany
     {
         return $this->hasMany(TestingTestExercise::class);
-    }
-
-    public function exercise(): BelongsTo
-    {
-        return $this->belongsTo(Exercise::class);
     }
 
     public function testResults(): HasMany

@@ -14,9 +14,9 @@ namespace App\Http\Swagger\Paths\Admin;
  *     @OA\Parameter(
  *         name="search",
  *         in="query",
- *         description="Поиск по описанию упражнения",
+ *         description="Поиск по названию и описанию упражнения",
  *         required=false,
- *         @OA\Schema(type="string", maxLength=100, example="отжимания")
+ *         @OA\Schema(type="string", maxLength=100, example="бег")
  *     ),
  *     @OA\Parameter(
  *         name="per_page",
@@ -42,16 +42,7 @@ namespace App\Http\Swagger\Paths\Admin;
  *             @OA\Property(
  *                 property="data",
  *                 type="array",
- *                 @OA\Items(
- *                     type="object",
- *                     @OA\Property(property="id", type="integer", example=1),
- *                     @OA\Property(property="exercise_id", type="integer", example=1),
- *                     @OA\Property(property="description", type="string", example="Отжимания от пола - максимальное количество за 1 минуту"),
- *                     @OA\Property(property="image", type="string", example="/uploads/exercises/pushups.jpg"),
- *                     @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:20:35.000000Z"),
- *                     @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-20T08:20:35.000000Z"),
- *                     @OA\Property(property="testings_count", type="integer", example=2)
- *                 )
+ *                 @OA\Items(ref="#/components/schemas/TestingExercise")
  *             ),
  *             @OA\Property(
  *                 property="meta",
@@ -97,10 +88,10 @@ class TestingExerciseControllerPaths {}
  *         @OA\MediaType(
  *             mediaType="multipart/form-data",
  *             @OA\Schema(
- *                 required={"exercise_id", "description"},
- *                 @OA\Property(property="exercise_id", type="integer", example=5, description="ID упражнения из таблицы exercises (основной каталог упражнений)"),
- *                 @OA\Property(property="description", type="string", example="Отжимания от пола - максимальное количество за 1 минуту", description="Описание упражнения"),
- *                 @OA\Property(property="image", type="string", format="binary", description="Изображение упражнения (jpg, png, gif, до 5MB)")
+ *                 required={"title", "description"},
+ *                 @OA\Property(property="title", type="string", example="12-минутный бег", description="Название тестового упражнения"),
+ *                 @OA\Property(property="description", type="string", example="За 12 минут необходимо пробежать максимально возможную дистанцию.", description="Описание упражнения"),
+ *                 @OA\Property(property="image", type="string", format="binary", description="Изображение упражнения (jpg, png, gif, webp, до 5MB)")
  *             )
  *         )
  *     ),
@@ -112,14 +103,7 @@ class TestingExerciseControllerPaths {}
  *             @OA\Property(property="message", type="string", example="Тестовое упражнение успешно создано"),
  *             @OA\Property(
  *                 property="data",
- *                 type="object",
- *                 @OA\Property(property="id", type="integer", example=1),
- *                 @OA\Property(property="exercise_id", type="integer", example=5),
- *                 @OA\Property(property="description", type="string", example="Отжимания от пола - максимальное количество за 1 минуту"),
- *                 @OA\Property(property="image", type="string", example="/uploads/exercises/pushups.jpg"),
- *                 @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-22T10:00:00.000000Z"),
- *                 @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-22T10:00:00.000000Z"),
- *                 @OA\Property(property="testings_count", type="integer", example=0)
+ *                 ref="#/components/schemas/TestingExercise"
  *             )
  *         )
  *     ),
@@ -155,7 +139,7 @@ class CreateTestingExercise {}
  *         in="path",
  *         required=true,
  *         description="ID тестового упражнения",
- *         @OA\Schema(type="integer", example=4)
+ *         @OA\Schema(type="integer", example=1)
  *     ),
  *     @OA\Response(
  *         response=200,
@@ -165,38 +149,7 @@ class CreateTestingExercise {}
  *             @OA\Property(property="message", type="string", example="success"),
  *             @OA\Property(
  *                 property="data",
- *                 type="object",
- *                 @OA\Property(property="id", type="integer", example=4),
- *                 @OA\Property(property="exercise_id", type="integer", example=9),
- *                 @OA\Property(property="description", type="string", example="Определение максимального веса в жиме лежа. Выполняются подходы с постепенным увеличением веса до достижения одноповторного максимума."),
- *                 @OA\Property(property="image", type="string", example="testing-exercises/bench-press-1rm.jpg"),
- *                 @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
- *                 @OA\Property(property="updated_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
- *                 @OA\Property(
- *                     property="testings",
- *                     type="array",
- *                     description="Список тестов, в которых используется это упражнение",
- *                     @OA\Items(
- *                         type="object",
- *                         @OA\Property(property="id", type="integer", example=2),
- *                         @OA\Property(property="title", type="string", example="Гарвардский степ-тест"),
- *                         @OA\Property(property="description", type="string", example="Оценка восстановления сердечно-сосудистой системы после нагрузки."),
- *                         @OA\Property(property="duration_minutes", type="string", example="15"),
- *                         @OA\Property(property="image", type="string", example="tests/harvard-step.jpg"),
- *                         @OA\Property(property="is_active", type="boolean", example=true),
- *                         @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
- *                         @OA\Property(property="updated_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
- *                         @OA\Property(
- *                             property="pivot",
- *                             type="object",
- *                             @OA\Property(property="testing_exercise_id", type="integer", example=4),
- *                             @OA\Property(property="testing_id", type="integer", example=2),
- *                             @OA\Property(property="order_number", type="integer", example=1),
- *                             @OA\Property(property="created_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z"),
- *                             @OA\Property(property="updated_at", type="string", format="datetime", example="2026-03-20T08:57:06.000000Z")
- *                         )
- *                     )
- *                 )
+ *                 ref="#/components/schemas/TestingExerciseWithTestings"
  *             )
  *         )
  *     ),
@@ -237,9 +190,8 @@ class GetTestingExerciseById {}
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
- *             @OA\Property(property="exercise_id", type="integer", example=5, description="ID упражнения из таблицы exercises (основной каталог упражнений)"),
- *             @OA\Property(property="description", type="string", example="Отжимания от пола - обновленное описание", description="Описание упражнения"),
- *             @OA\Property(property="image", type="string", example="/uploads/exercises/pushups-updated.jpg", description="Путь к изображению")
+ *             @OA\Property(property="title", type="string", example="12-минутный бег", description="Название тестового упражнения"),
+ *             @OA\Property(property="description", type="string", example="Обновленное описание упражнения", description="Описание упражнения")
  *         )
  *     ),
  *     @OA\Response(
@@ -250,14 +202,7 @@ class GetTestingExerciseById {}
  *             @OA\Property(property="message", type="string", example="Тестовое упражнение успешно обновлено"),
  *             @OA\Property(
  *                 property="data",
- *                 type="object",
- *                 @OA\Property(property="id", type="integer", example=1),
- *                 @OA\Property(property="exercise_id", type="integer", example=5),
- *                 @OA\Property(property="description", type="string", example="Отжимания от пола - обновленное описание"),
- *                 @OA\Property(property="image", type="string", example="/uploads/exercises/pushups-updated.jpg"),
- *                 @OA\Property(property="created_at", type="string", format="datetime", example="2026-02-20T08:20:35.000000Z"),
- *                 @OA\Property(property="updated_at", type="string", format="datetime", example="2026-02-22T10:00:00.000000Z"),
- *                 @OA\Property(property="testings_count", type="integer", example=2)
+ *                 ref="#/components/schemas/TestingExercise"
  *             )
  *         )
  *     ),
@@ -336,13 +281,15 @@ class DeleteTestingExercise {}
  * @OA\Post(
  *     path="/api/admin/testing-exercises/{id}/image",
  *     summary="Загрузить/обновить изображение тестового упражнения",
+ *     description="Загружает новое изображение для существующего тестового упражнения (старое изображение удаляется)",
  *     tags={"Admin Testing Exercises"},
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
  *         name="id",
  *         in="path",
  *         required=true,
- *         @OA\Schema(type="integer")
+ *         description="ID тестового упражнения",
+ *         @OA\Schema(type="integer", example=1)
  *     ),
  *     @OA\RequestBody(
  *         required=true,
@@ -354,44 +301,28 @@ class DeleteTestingExercise {}
  *                     property="image",
  *                     type="string",
  *                     format="binary",
- *                     description="Изображение (jpg, png, gif, до 5MB)"
+ *                     description="Файл изображения (jpeg, png, jpg, gif, webp, макс. 5MB)"
  *                 )
  *             )
  *         )
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Изображение обновлено",
+ *         description="Изображение успешно загружено",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="message", type="string", example="Изображение тестового упражнения обновлено"),
+ *             @OA\Property(property="message", type="string", example="Изображение успешно загружено"),
  *             @OA\Property(
  *                 property="data",
  *                 type="object",
- *                 @OA\Property(property="id", type="integer", example=1),
- *                 @OA\Property(property="exercise_id", type="integer", example=5),
- *                 @OA\Property(property="description", type="string", example="Отжимания от пола - максимальное количество за 1 минуту"),
- *                 @OA\Property(property="image", type="string", example="http://localhost/storage/testing-exercises/abc.jpg"),
- *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
- *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
- *                 @OA\Property(
- *                     property="exercise",
- *                     type="object",
- *                     @OA\Property(property="id", type="integer", example=5),
- *                     @OA\Property(property="title", type="string", example="Отжимания"),
- *                     @OA\Property(property="description", type="string", example="Отжимания от пола - максимальное количество за 1 минуту"),
- *                     @OA\Property(property="image", type="string", example="http://localhost/storage/testing-exercises/abc.jpg"),
- *                     @OA\Property(property="muscle_group", type="string", example="Грудные мышцы"),
- *                     @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
- *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-01-01T12:00:00Z"),
- *                     @OA\Property(property="image_url", type="string", example="http://localhost/storage/exercises/pushups.jpg")
- *                 )
+ *                 @OA\Property(property="image", type="string", example="testing-exercises/exercise_1_1234567890.jpg"),
+ *                 @OA\Property(property="image_url", type="string", example="http://localhost/storage/testing-exercises/exercise_1_1234567890.jpg")
  *             )
  *         )
  *     ),
  *     @OA\Response(
  *         response=401,
- *         description="Не авторизован",
+ *         description="Неавторизован",
  *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
  *     ),
  *     @OA\Response(
@@ -406,7 +337,7 @@ class DeleteTestingExercise {}
  *     ),
  *     @OA\Response(
  *         response=422,
- *         description="Ошибка валидации (файл не загружен или не соответствует требованиям)",
+ *         description="Ошибка валидации",
  *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
  *     )
  * )
