@@ -94,4 +94,34 @@ class SubscriptionController extends Controller
         }
         return 'inactive';
     }
+
+    public function cancel(): JsonResponse
+    {
+        $user = auth()->user();
+
+        $activeSubscription = UserSubscription::where('user_id', $user->id)
+            ->where('is_active', 1)
+            ->where('end_date', '>', now())
+            ->with('subscription')
+            ->first();
+
+        if (!$activeSubscription) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Активная подписка не найдена',
+                404
+            );
+        }
+
+        $activeSubscription->update([
+            'is_active' => 0,
+            'end_date' => now(),
+        ]);
+
+        return ApiResponse::success('Подписка успешно отменена', [
+            'id' => $activeSubscription->id,
+            'subscription_name' => $activeSubscription->subscription->name,
+            'end_date' => now()->format('d.m.Y'),
+        ]);
+    }
 }

@@ -148,3 +148,46 @@ class SubscriptionShow {}
  * )
  */
 class MySubscriptions {}
+
+
+namespace App\Http\Swagger\Paths;
+
+/**
+ * @OA\Post(
+ *     path="/api/cancel-subscription",
+ *     summary="Отмена активной подписки пользователя (без возврата денежных средств, моментальная отмена)",
+ *     tags={"Subscriptions"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Подписка успешно отменена",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Подписка успешно отменена"),
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="object",
+ *                 @OA\Property(property="id", type="integer", example=123),
+ *                 @OA\Property(property="subscription_name", type="string", example="Premium"),
+ *                 @OA\Property(property="end_date", type="string", format="date", example="2026-03-30")
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Активная подписка не найдена",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Не авторизован",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Внутренняя ошибка сервера",
+ *         @OA\JsonContent(ref="#/components/schemas/ServerErrorResponse")
+ *     )
+ * )
+ */
+class SubscriptionCancel{}

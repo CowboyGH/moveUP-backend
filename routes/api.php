@@ -83,6 +83,8 @@ Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
     Route::get('/my-test-history', [App\Http\Controllers\TestingController::class, 'myTestHistory']);
     Route::get('/my-workout-history', [App\Http\Controllers\WorkoutController::class, 'myWorkoutHistory']);
 
+    Route::post('/cancel-subscription', [App\Http\Controllers\SubscriptionController::class, 'cancel']);
+
     Route::post('/tests/{testing}/start', [TestAttemptController::class, 'start']);
     Route::post('/test-attempts/{attempt}/result', [TestAttemptController::class, 'storeResult']);
     Route::post('/test-attempts/{attempt}/complete', [TestAttemptController::class, 'complete']);
