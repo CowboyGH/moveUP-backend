@@ -1726,6 +1726,102 @@
                 ]
             }
         },
+        "/api/admin/subscriptions/by-type": {
+            "get": {
+                "tags": [
+                    "Admin Statistics"
+                ],
+                "summary": "Получить статистику подписок по типу за год",
+                "description": "Возвращает количество подписок конкретного типа по месяцам за указанный год. Позволяет анализировать популярность различных тарифов (1 месяц, 3 месяца, 6 месяцев, 12 месяцев) в динамике по месяцам.",
+                "operationId": "getSubscriptionsByType",
+                "parameters": [
+                    {
+                        "name": "subscription_type",
+                        "in": "query",
+                        "description": "Тип подписки для анализа",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "1 месяц",
+                                "3 месяца",
+                                "6 месяцев",
+                                "12 месяцев"
+                            ],
+                            "example": "1 месяц"
+                        }
+                    },
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Год для статистики (по умолчанию текущий)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 2000,
+                            "example": 2026
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubscriptionsByTypeResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен (только для администраторов)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Тип подписки не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации параметров (неверный тип подписки или год)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/subscriptions": {
             "get": {
                 "tags": [
@@ -16971,6 +17067,84 @@
                         "properties": {
                             "data": {
                                 "$ref": "#/components/schemas/SubscriptionsByPeriodData"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "SubscriptionsByTypeData": {
+                "title": "Данные по подпискам определенного типа",
+                "description": "Статистика количества подписок конкретного тарифа по месяцам",
+                "properties": {
+                    "subscription_type": {
+                        "description": "Тип подписки",
+                        "type": "string",
+                        "enum": [
+                            "1 месяц",
+                            "3 месяца",
+                            "6 месяцев",
+                            "12 месяцев"
+                        ],
+                        "example": "1 месяц"
+                    },
+                    "subscription_id": {
+                        "description": "ID типа подписки в базе данных",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "year": {
+                        "description": "Год, за который собрана статистика",
+                        "type": "integer",
+                        "example": 2026
+                    },
+                    "data": {
+                        "description": "Массив с данными по месяцам",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SubscriptionsByTypeMonthlyItem"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SubscriptionsByTypeMonthlyItem": {
+                "title": "Месячная статистика по типу подписки",
+                "description": "Количество подписок конкретного типа за месяц",
+                "properties": {
+                    "month": {
+                        "description": "Номер месяца (1-12)",
+                        "type": "integer",
+                        "maximum": 12,
+                        "minimum": 1,
+                        "example": 3
+                    },
+                    "month_name": {
+                        "description": "Краткое название месяца на русском",
+                        "type": "string",
+                        "example": "мар"
+                    },
+                    "value": {
+                        "description": "Количество купленных подписок данного типа в этом месяце",
+                        "type": "integer",
+                        "minimum": 0,
+                        "example": 25
+                    }
+                },
+                "type": "object"
+            },
+            "SubscriptionsByTypeResponse": {
+                "title": "Ответ со статистикой подписок по типу",
+                "description": "Успешный ответ с данными о количестве подписок выбранного типа по месяцам",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                        "properties": {
+                            "data": {
+                                "$ref": "#/components/schemas/SubscriptionsByTypeData"
                             }
                         },
                         "type": "object"

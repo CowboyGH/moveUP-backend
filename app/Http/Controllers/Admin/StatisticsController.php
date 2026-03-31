@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\Admin\Statistics\YearRequest;
 use App\Http\Requests\Admin\Statistics\PeriodRequest;
+use App\Http\Requests\Admin\Statistics\SubscriptionTypeRequest;
 
 class StatisticsController extends Controller
 {
@@ -181,6 +182,62 @@ class StatisticsController extends Controller
             'period' => $period,
             'start_date' => $startDate->format('Y-m-d'),
             'end_date' => $endDate->format('Y-m-d'),
+            'data' => $data
+        ]);
+    }
+
+    /**
+     * Получить статистику подписок по типам за год
+     */
+    public function subscriptionsByType(SubscriptionTypeRequest $request): JsonResponse
+    {
+        $subscriptionTypeName = $request->get('subscription_type');
+        $year = $request->get('year', Carbon::now()->year);
+
+        // Находим ID подписки по названию
+        $subscription = \App\Models\Subscription::where('name', $subscriptionTypeName)->first();
+
+        if (!$subscription) {
+            return ErrorResponse::make(
+                'subscription_not_found',
+                'Тип подписки не найден',
+                404
+            );
+        }
+
+        // Получаем количество подписок данного типа по месяцам за указанный год
+        $subscriptions = UserSubscription::where('subscription_id', $subscription->id)
+            ->whereYear('created_at', $year)
+            ->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month')
+            ->map(function ($item) {
+                return [
+                    'month' => (int) $item->month,
+                    'total' => $item->total
+                ];
+            });
+
+        $months = ['янв', 'фев', 'мар', 'апр', 'май', 'июнь', 'июль', 'авг', 'сент', 'окт', 'нояб', 'дек'];
+        $data = [];
+
+        foreach (range(1, 12) as $month) {
+            $data[] = [
+                'month' => $month,
+                'month_name' => $months[$month - 1],
+                'value' => $subscriptions->has($month) ? $subscriptions[$month]['total'] : 0
+            ];
+        }
+
+        return ApiResponse::success('success', [
+            'subscription_type' => $subscriptionTypeName,
+            'subscription_id' => $subscription->id,
+            'year' => (int) $year,
             'data' => $data
         ]);
     }

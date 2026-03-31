@@ -152,3 +152,57 @@ class SubscriptionsCountStatisticsPaths {}
  * )
  */
 class SubscriptionsByPeriodStatisticsPaths {}
+
+/**
+ * @OA\Get(
+ *     path="/api/admin/subscriptions/by-type",
+ *     summary="Получить статистику подписок по типу за год",
+ *     description="Возвращает количество подписок конкретного типа по месяцам за указанный год. Позволяет анализировать популярность различных тарифов (1 месяц, 3 месяца, 6 месяцев, 12 месяцев) в динамике по месяцам.",
+ *     operationId="getSubscriptionsByType",
+ *     tags={"Admin Statistics"},
+ *     security={{"bearerAuth":{}}},
+ *
+ *     @OA\Parameter(
+ *         name="subscription_type",
+ *         in="query",
+ *         description="Тип подписки для анализа",
+ *         required=true,
+ *         @OA\Schema(type="string", enum={"1 месяц", "3 месяца", "6 месяцев", "12 месяцев"}, example="1 месяц")
+ *     ),
+ *
+ *     @OA\Parameter(
+ *         name="year",
+ *         in="query",
+ *         description="Год для статистики (по умолчанию текущий)",
+ *         required=false,
+ *         @OA\Schema(type="integer", minimum=2000, example=2026)
+ *     ),
+ *
+ *     @OA\Response(
+ *         response=200,
+ *         description="Успешный ответ",
+ *         @OA\JsonContent(ref="#/components/schemas/SubscriptionsByTypeResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Неавторизован",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Доступ запрещен (только для администраторов)",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Тип подписки не найден",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибка валидации параметров (неверный тип подписки или год)",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+ *     )
+ * )
+ */
+class SubscriptionsByTypeStatisticsPaths {}

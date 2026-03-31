@@ -156,3 +156,88 @@ class SubscriptionsByPeriodDataSchema {}
  * )
  */
 class SubscriptionsByPeriodResponseSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="SubscriptionsByTypeData",
+ *     type="object",
+ *     title="Данные по подпискам определенного типа",
+ *     description="Статистика количества подписок конкретного тарифа по месяцам",
+ *     @OA\Property(
+ *         property="subscription_type",
+ *         type="string",
+ *         enum={"1 месяц", "3 месяца", "6 месяцев", "12 месяцев"},
+ *         example="1 месяц",
+ *         description="Тип подписки"
+ *     ),
+ *     @OA\Property(
+ *         property="subscription_id",
+ *         type="integer",
+ *         example=1,
+ *         description="ID типа подписки в базе данных"
+ *     ),
+ *     @OA\Property(
+ *         property="year",
+ *         type="integer",
+ *         example=2026,
+ *         description="Год, за который собрана статистика"
+ *     ),
+ *     @OA\Property(
+ *         property="data",
+ *         type="array",
+ *         description="Массив с данными по месяцам",
+ *         @OA\Items(ref="#/components/schemas/SubscriptionsByTypeMonthlyItem")
+ *     )
+ * )
+ */
+class SubscriptionsByTypeDataSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="SubscriptionsByTypeMonthlyItem",
+ *     type="object",
+ *     title="Месячная статистика по типу подписки",
+ *     description="Количество подписок конкретного типа за месяц",
+ *     @OA\Property(
+ *         property="month",
+ *         type="integer",
+ *         minimum=1,
+ *         maximum=12,
+ *         example=3,
+ *         description="Номер месяца (1-12)"
+ *     ),
+ *     @OA\Property(
+ *         property="month_name",
+ *         type="string",
+ *         example="мар",
+ *         description="Краткое название месяца на русском"
+ *     ),
+ *     @OA\Property(
+ *         property="value",
+ *         type="integer",
+ *         minimum=0,
+ *         example=25,
+ *         description="Количество купленных подписок данного типа в этом месяце"
+ *     )
+ * )
+ */
+class SubscriptionsByTypeMonthlyItemSchema {}
+
+/**
+ * @OA\Schema(
+ *     schema="SubscriptionsByTypeResponse",
+ *     type="object",
+ *     title="Ответ со статистикой подписок по типу",
+ *     description="Успешный ответ с данными о количестве подписок выбранного типа по месяцам",
+ *     allOf={
+ *         @OA\Schema(ref="#/components/schemas/SuccessResponse"),
+ *         @OA\Schema(
+ *             @OA\Property(
+ *                 property="data",
+ *                 ref="#/components/schemas/SubscriptionsByTypeData"
+ *             )
+ *         )
+ *     }
+ * )
+ */
+class SubscriptionsByTypeResponseSchema {}

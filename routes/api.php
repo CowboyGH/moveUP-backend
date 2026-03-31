@@ -134,6 +134,7 @@ Route::middleware(['jwt.custom', 'admin', 'track.activity'])->prefix('admin')->g
     Route::get('/revenue', [App\Http\Controllers\Admin\StatisticsController::class, 'revenue']);
     Route::get('/subscriptions/count', [App\Http\Controllers\Admin\StatisticsController::class, 'subscriptionsCount']);
     Route::get('/subscriptions/period', [App\Http\Controllers\Admin\StatisticsController::class, 'subscriptionsByPeriod']);
+    Route::get('/subscriptions/by-type', [App\Http\Controllers\Admin\StatisticsController::class, 'subscriptionsByType']);
 
     Route::get('/subscriptions', [SubscriptionController::class, 'index']);
     Route::post('/subscriptions', [SubscriptionController::class, 'store']);
