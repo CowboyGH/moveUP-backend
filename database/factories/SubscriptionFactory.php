@@ -12,28 +12,28 @@ class SubscriptionFactory extends Factory
             'price' => 500,
             'duration_days' => 30,
             'description' => 'Базовый тариф для знакомства с платформой. Включает доступ ко всем тренировкам и тестам, персональные рекомендации, отслеживание прогресса. Отлично подходит для тех, кто хочет попробовать и оценить возможности сервиса.',
-            'image' => 'subscriptions/basic-1month.jpg'
+            'image' => 'subscriptions/subscription.png'
         ],
         [
             'name' => '3 месяца',
             'price' => 1400,
             'duration_days' => 90,
             'description' => 'Оптимальный выбор для регулярных тренировок. Включает все возможности базового тарифа + расширенную статистику, анализ прогресса, доступ к эксклюзивным программам тренировок. Экономия 1500₽ по сравнению с помесячной оплатой.',
-            'image' => 'subscriptions/pro-3months.jpg'
+            'image' => 'subscriptions/subscription.png'
         ],
         [
             'name' => '6 месяцев',
             'price' => 2700,
             'duration_days' => 180,
             'description' => 'Идеальный вариант для достижения серьезных результатов. Все возможности предыдущих тарифов + персональные консультации с тренером, индивидуальная корректировка программ, приоритетная поддержка. Экономия 3300₽ по сравнению с помесячной оплатой.',
-            'image' => 'subscriptions/premium-6months.jpg'
+            'image' => 'subscriptions/subscription.png'
         ],
         [
             'name' => '12 месяцев',
             'price' => 5000,
             'duration_days' => 365,
             'description' => 'Максимальная выгода для преданных пользователей. Полный доступ ко всем функциям платформы: неограниченные тренировки, персональный план питания, вебинары с экспертами, доступ к закрытому сообществу. Экономия 7000₽ по сравнению с помесячной оплатой.',
-            'image' => 'subscriptions/ultimate-12months.jpg'
+            'image' => 'subscriptions/subscription.png'
         ],
     ];
 
@@ -76,11 +76,11 @@ class SubscriptionFactory extends Factory
     protected function getImageByName(string $name): string
     {
         return match($name) {
-            '1 месяц' => 'subscriptions/basic-1month.jpg',
-            '3 месяца' => 'subscriptions/pro-3months.jpg',
-            '6 месяцев' => 'subscriptions/premium-6months.jpg',
-            '12 месяцев' => 'subscriptions/ultimate-12months.jpg',
-            default => 'subscriptions/default.jpg',
+            '1 месяц' => 'subscriptions/subscription.png',
+            '3 месяца' => 'subscriptions/subscription.png',
+            '6 месяцев' => 'subscriptions/subscription.png',
+            '12 месяцев' => 'subscriptions/subscription.png',
+            default => 'subscriptions/subscription.png'
         };
     }
 
