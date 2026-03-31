@@ -106,6 +106,7 @@ Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
     Route::post('/exercise/load-recommendation', [App\Http\Controllers\ExerciseReactionController::class, 'recommendation']);
     Route::post('/workouts/complete-with-adjustments', [App\Http\Controllers\WorkoutCompletionController::class, 'completeWithAdjustments']);
     Route::post('/workouts/start', [App\Http\Controllers\WorkoutStartController::class, 'start']);
+    Route::post('workouts/{userWorkout}/abandon', [App\Http\Controllers\WorkoutStartController::class, 'abandon']);
 
     Route::prefix('workout-execution')->group(function () {
         Route::get('/{userWorkout}', [WorkoutExecutionController::class, 'show'])->name('workout-execution.show');

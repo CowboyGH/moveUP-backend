@@ -135,4 +135,20 @@ class WorkoutStartController extends Controller
             ],
         ]);
     }
+
+    public function abandon(UserWorkout $userWorkout)
+    {
+        $user = request()->user();
+
+        if ($userWorkout->user_id !== $user->id) {
+            return ApiResponse::error(ErrorResponse::FORBIDDEN, 'Тренировка не принадлежит текущему пользователю', 403);
+        }
+
+        if ($userWorkout->status === UserWorkout::STATUS_STARTED) {
+            $userWorkout->update(['status' => UserWorkout::STATUS_ASSIGNED]);
+            return ApiResponse::success('Тренировка сброшена в статус назначена');
+        }
+
+        return ApiResponse::error(ErrorResponse::CONFLICT, 'Тренировка не активна', 409);
+    }
 }

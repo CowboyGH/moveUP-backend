@@ -12771,6 +12771,105 @@
                 ]
             }
         },
+        "/api/workouts/{userWorkout}/abandon": {
+            "post": {
+                "tags": [
+                    "Workout Execution"
+                ],
+                "summary": "Сбросить активную тренировку",
+                "description": "Позволяет пользователю сбросить статус начатой тренировки обратно в 'назначена'. Используется при закрытии страницы тренировки, чтобы не блокировать начало других тренировок.",
+                "operationId": "e97de6c7379e5757ae83110400571e5e",
+                "parameters": [
+                    {
+                        "name": "userWorkout",
+                        "in": "path",
+                        "description": "ID записи тренировки пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 926
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Тренировка успешно сброшена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тренировка сброшена в статус назначена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Тренировка не принадлежит текущему пользователю",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Запись тренировки не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Тренировка не активна (не в статусе started)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "example": "conflict"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тренировка не активна"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/workouts": {
             "get": {
                 "tags": [

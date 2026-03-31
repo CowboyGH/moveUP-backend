@@ -524,3 +524,52 @@ class StartWarmupPath {}
  * )
  */
 class CompleteWarmupPath {}
+
+/**
+ * @OA\Post(
+ *     path="/api/workouts/{userWorkout}/abandon",
+ *     summary="Сбросить активную тренировку",
+ *     description="Позволяет пользователю сбросить статус начатой тренировки обратно в 'назначена'. Используется при закрытии страницы тренировки, чтобы не блокировать начало других тренировок.",
+ *     tags={"Workout Execution"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="userWorkout",
+ *         in="path",
+ *         required=true,
+ *         description="ID записи тренировки пользователя",
+ *         @OA\Schema(type="integer", example=926)
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Тренировка успешно сброшена",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Тренировка сброшена в статус назначена")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Не авторизован",
+ *         @OA\JsonContent(ref="#/components/schemas/UnauthorizedResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Тренировка не принадлежит текущему пользователю",
+ *         @OA\JsonContent(ref="#/components/schemas/ForbiddenResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Запись тренировки не найдена",
+ *         @OA\JsonContent(ref="#/components/schemas/NotFoundResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=409,
+ *         description="Тренировка не активна (не в статусе started)",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="code", type="string", example="conflict"),
+ *             @OA\Property(property="message", type="string", example="Тренировка не активна")
+ *         )
+ *     )
+ * )
+ */
+class WorkoutAssignedPath {}
