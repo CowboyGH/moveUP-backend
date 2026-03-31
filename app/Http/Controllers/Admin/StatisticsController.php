@@ -194,18 +194,16 @@ class StatisticsController extends Controller
         $subscriptionTypeName = $request->get('subscription_type');
         $year = $request->get('year', Carbon::now()->year);
 
-        // Находим ID подписки по названию
         $subscription = \App\Models\Subscription::where('name', $subscriptionTypeName)->first();
 
         if (!$subscription) {
-            return ErrorResponse::make(
-                'subscription_not_found',
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
                 'Тип подписки не найден',
                 404
             );
         }
 
-        // Получаем количество подписок данного типа по месяцам за указанный год
         $subscriptions = UserSubscription::where('subscription_id', $subscription->id)
             ->whereYear('created_at', $year)
             ->select(

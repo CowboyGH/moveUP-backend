@@ -23,7 +23,7 @@ class SubscriptionTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subscription_type' => 'required|string|in:1 месяц,3 месяца,6 месяцев,12 месяцев',
+            'subscription_type' => 'required|string|max:255',
             'year' => 'nullable|integer|min:2000|max:' . (date('Y') + 10),
         ];
     }
@@ -35,7 +35,8 @@ class SubscriptionTypeRequest extends FormRequest
     {
         return [
             'subscription_type.required' => 'Тип подписки обязателен',
-            'subscription_type.in' => 'Тип подписки должен быть: 1 месяц, 3 месяца, 6 месяцев или 12 месяцев',
+            'subscription_type.string' => 'Тип подписки должен быть строкой',
+            'subscription_type.max' => 'Тип подписки не может быть длиннее 255 символов',
             'year.integer' => 'Год должен быть целым числом',
             'year.min' => 'Год должен быть не ранее 2000',
             'year.max' => 'Год не может быть позже ' . (date('Y') + 10),

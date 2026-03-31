@@ -14,7 +14,7 @@ class SaveExerciseResultRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'exercise_id' => 'required|exists:exercises,id',
+            'exercise_id' => 'required|integer|min:1',
             'reaction' => 'required|in:good,normal,bad',
             'weight_used' => 'nullable|numeric|min:1|max:500',
             'sets_completed' => 'nullable|integer|min:0|max:10',
@@ -26,7 +26,8 @@ class SaveExerciseResultRequest extends ApiFormRequest
     {
         return [
             'exercise_id.required' => 'ID упражнения обязателен',
-            'exercise_id.exists' => 'Упражнение не найдено',
+            'exercise_id.integer' => 'ID упражнения должен быть целым числом',
+            'exercise_id.min' => 'ID упражнения должен быть больше 0',
             'reaction.required' => 'Оценка упражнения обязательна',
             'reaction.in' => 'Оценка должна быть: good, normal или bad',
             'weight_used.numeric' => 'Вес должен быть числом',
