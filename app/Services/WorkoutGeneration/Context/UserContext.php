@@ -17,7 +17,7 @@ class UserContext
     public ?UserParameter $parameters;
     public ?UserProgress $currentProgress;
     public ?int $lastTestPulse;
-    /** @var array<int, int> exerciseId => result_value */
+    /** @var array<int, int> testing_exercise_id => result_value */
     public array $testResults = [];
     protected ExerciseLoadService $exerciseLoadService;
 
@@ -32,7 +32,7 @@ class UserContext
 
     protected function loadTestData(): void
     {
-        // Последние результаты тестов (по одному на упражнение)
+        // Последние результаты тестов (по одному на тестовое упражнение)
         $this->testResults = TestResult::where('user_id', $this->user->id)
             ->whereIn('id', function ($query) {
                 $query->select(DB::raw('MAX(id)'))
@@ -40,11 +40,11 @@ class UserContext
                     ->where('user_id', $this->user->id)
                     ->groupBy('testing_exercise_id');
             })
-            ->with('testingExercise.exercise')
+            ->with('testingExercise') // Убираем 'exercise' из eager loading
             ->get()
             ->mapWithKeys(function ($result) {
-                $exerciseId = $result->testingExercise->exercise_id ?? null;
-                return $exerciseId ? [$exerciseId => $result->result_value] : [];
+                // Теперь ключом является ID тестового упражнения
+                return [$result->testing_exercise_id => $result->result_value];
             })
             ->toArray();
 
@@ -53,6 +53,22 @@ class UserContext
             ->latest('completed_at')
             ->first();
         $this->lastTestPulse = $lastAttempt?->pulse;
+    }
+
+    /**
+     * Получить результат теста по ID тестового упражнения
+     */
+    public function getTestResult(int $testingExerciseId): ?int
+    {
+        return $this->testResults[$testingExerciseId] ?? null;
+    }
+
+    /**
+     * Получить все результаты тестов
+     */
+    public function getAllTestResults(): array
+    {
+        return $this->testResults;
     }
 
     public function getReactionHistory(int $exerciseId, int $days = 30): \Illuminate\Support\Collection
