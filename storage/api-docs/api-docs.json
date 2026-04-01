@@ -8444,6 +8444,326 @@
                 ]
             }
         },
+        "/api/profile/user": {
+            "get": {
+                "tags": [
+                    "Profile Details"
+                ],
+                "summary": "Получить информацию о пользователе",
+                "description": "Возвращает основную информацию о текущем пользователе",
+                "operationId": "1dc2e3fc9ce04c107cbf2c309b8978c1",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProfileUserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/active-subscription": {
+            "get": {
+                "tags": [
+                    "Profile Details"
+                ],
+                "summary": "Получить активную подписку пользователя",
+                "description": "Возвращает информацию об активной подписке или сообщение об ее отсутствии",
+                "operationId": "0c50639ae71d052ab4df6c0278cbf472",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ProfileActiveSubscriptionResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ProfileEmptyResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/my-cards": {
+            "get": {
+                "tags": [
+                    "Profile Details"
+                ],
+                "summary": "Получить сохраненные карты пользователя",
+                "description": "Возвращает список сохраненных карт или сообщение об их отсутствии",
+                "operationId": "304051fe67e0b4d1444d51732e6a5af2",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ProfileCardsResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ProfileEmptyResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/user-parameters": {
+            "get": {
+                "tags": [
+                    "Profile Details"
+                ],
+                "summary": "Получить параметры пользователя",
+                "description": "Возвращает параметры пользователя (цель, уровень, оборудование, антропометрию) или сообщение о статусе заполнения",
+                "operationId": "c42057b2d4e0697d42cd9409d412406f",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ProfileUserParametersResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ProfileEmptyResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ProfileIncompleteParametersResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/history": {
+            "get": {
+                "tags": [
+                    "Profile Details"
+                ],
+                "summary": "Получить историю пользователя",
+                "description": "Возвращает историю подписок, тренировок и тестов или сообщение об отсутствии истории",
+                "operationId": "860bc6d5bd6f7db63c041877b3264162",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ProfileHistoryResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ProfileEmptyHistoryResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/phase": {
+            "get": {
+                "tags": [
+                    "Profile Details"
+                ],
+                "summary": "Получить текущую фазу и прогресс",
+                "description": "Возвращает информацию о текущей фазе пользователя, прогрессе и рекомендациях",
+                "operationId": "d4ccbad9c6bfabc88ce97744a16d8552",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ProfilePhaseResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ProfileEmptyResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/profile": {
             "get": {
                 "tags": [
@@ -15715,6 +16035,590 @@
                 },
                 "type": "object"
             },
+            "ProfileUser": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 292
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Иван Иванов"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "avatar_url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/storage/avatars/avatar.jpg",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-12 16:15:47"
+                    },
+                    "email_verified": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileActiveSubscription": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 21
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "3 месяца"
+                    },
+                    "price": {
+                        "type": "string",
+                        "example": "1400.00"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-15"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-06-13"
+                    },
+                    "days_left": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 89.38
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileCard": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "card_holder": {
+                        "type": "string",
+                        "example": "IVAN IVANOV"
+                    },
+                    "card_last_four": {
+                        "type": "string",
+                        "example": "4242"
+                    },
+                    "expiry_month": {
+                        "type": "string",
+                        "example": "12"
+                    },
+                    "expiry_year": {
+                        "type": "string",
+                        "example": "2025"
+                    },
+                    "expiry_formatted": {
+                        "type": "string",
+                        "example": "12/2025"
+                    },
+                    "is_default": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileUserParameters": {
+                "properties": {
+                    "goal": {
+                        "type": "string",
+                        "example": "Общее укрепление организма"
+                    },
+                    "level": {
+                        "type": "string",
+                        "example": "Начинающий"
+                    },
+                    "equipment": {
+                        "type": "string",
+                        "example": "Смешанное"
+                    },
+                    "height": {
+                        "type": "integer",
+                        "example": 199
+                    },
+                    "weight": {
+                        "type": "integer",
+                        "example": 78
+                    },
+                    "age": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "gender": {
+                        "type": "string",
+                        "enum": [
+                            "male",
+                            "female"
+                        ],
+                        "example": "male"
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileHistorySubscription": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 21
+                    },
+                    "subscription": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "3 месяца"
+                            },
+                            "price": {
+                                "type": "string",
+                                "example": "1400.00"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-15"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-06-13"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "expired",
+                            "cancelled",
+                            "inactive"
+                        ],
+                        "example": "active"
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileHistoryWorkout": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "workout": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 5
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Утренняя зарядка"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "completed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-15 10:30:00"
+                    },
+                    "duration_minutes": {
+                        "type": "integer",
+                        "example": 45,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileHistoryTest": {
+                "properties": {
+                    "attempt_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "testing": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "title": {
+                                "type": "string",
+                                "example": "Базовый тест"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "completed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-03-14 15:20:00"
+                    },
+                    "pulse": {
+                        "type": "integer",
+                        "example": 120
+                    },
+                    "exercises_count": {
+                        "type": "integer",
+                        "example": 5
+                    }
+                },
+                "type": "object"
+            },
+            "ProfilePhaseData": {
+                "description": "Данные о текущей фазе и прогрессе пользователя",
+                "properties": {
+                    "has_progress": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "current_phase": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Базовая фаза"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "Формирование базовых навыков и силы."
+                            },
+                            "duration_days": {
+                                "type": "integer",
+                                "example": 14
+                            },
+                            "order_number": {
+                                "type": "integer",
+                                "example": 2
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "progress": {
+                        "properties": {
+                            "streak_days": {
+                                "type": "integer",
+                                "example": 19
+                            },
+                            "completed_workouts": {
+                                "type": "integer",
+                                "example": 8
+                            },
+                            "days_passed": {
+                                "type": "integer",
+                                "example": 26
+                            },
+                            "days_left": {
+                                "type": "integer",
+                                "example": 0
+                            },
+                            "expected_workouts": {
+                                "type": "integer",
+                                "example": 15
+                            },
+                            "total_expected_workouts": {
+                                "type": "integer",
+                                "example": 8
+                            },
+                            "weekly_goal": {
+                                "type": "integer",
+                                "example": 4
+                            },
+                            "phase_started_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2026-02-17T16:10:12.000000Z"
+                            },
+                            "last_workout_date": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2026-03-10T16:52:31.000000Z"
+                            },
+                            "has_workout_today": {
+                                "type": "boolean",
+                                "example": false
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "next_phase": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 3
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Интенсивная фаза"
+                            },
+                            "order_number": {
+                                "type": "integer",
+                                "example": 3
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "recent_workouts": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "workout_name": {
+                                    "type": "string",
+                                    "example": "Функциональный тренинг"
+                                },
+                                "completed_at": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "example": "2026-03-10T16:52:31.000000Z"
+                                },
+                                "duration": {
+                                    "type": "number",
+                                    "format": "float",
+                                    "example": 1610.87
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "can_advance": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileUserResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/ProfileUser"
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileActiveSubscriptionResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/ProfileActiveSubscription"
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileCardsResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProfileCard"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileUserParametersResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/ProfileUserParameters"
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileHistoryResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "properties": {
+                            "subscriptions": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProfileHistorySubscription"
+                                }
+                            },
+                            "workouts": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProfileHistoryWorkout"
+                                }
+                            },
+                            "tests": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProfileHistoryTest"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileEmptyHistoryResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "example": "У пользователя пока нет истории"
+                            },
+                            "subscriptions": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                }
+                            },
+                            "workouts": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                }
+                            },
+                            "tests": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ProfilePhaseResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/ProfilePhaseData"
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileIncompleteParametersResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "example": "Параметры пользователя заполнены не полностью"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ProfileEmptyResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "data": {
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "example": "У пользователя нет активной подписки"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "UpdateProfileRequest": {
                 "properties": {
                     "name": {
@@ -18938,6 +19842,10 @@
         {
             "name": "Phases",
             "description": "Phases"
+        },
+        {
+            "name": "Profile Details",
+            "description": "Profile Details"
         },
         {
             "name": "Profile",

@@ -59,6 +59,13 @@ Route::prefix('guest')->group(function () {
 });
 
 Route::middleware(['jwt.custom', 'track.activity'])->prefix('profile')->group(function () {
+    Route::get('/user', [App\Http\Controllers\ProfileDetailController::class, 'user']);
+    Route::get('/active-subscription', [App\Http\Controllers\ProfileDetailController::class, 'activeSubscription']);
+    Route::get('/my-cards', [App\Http\Controllers\ProfileDetailController::class, 'myCards']);
+    Route::get('/user-parameters', [App\Http\Controllers\ProfileDetailController::class, 'userParameters']);
+    Route::get('/history', [App\Http\Controllers\ProfileDetailController::class, 'history']);
+    Route::get('/phase', [App\Http\Controllers\ProfileDetailController::class, 'phase']);
+
     Route::get('/', [App\Http\Controllers\ProfileController::class, 'show']);
     Route::put('/', [App\Http\Controllers\ProfileController::class, 'update']);
     Route::post('/avatar', [App\Http\Controllers\ProfileController::class, 'updateAvatar']);
