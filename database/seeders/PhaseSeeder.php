@@ -8,9 +8,6 @@ use Illuminate\Database\Seeder;
 
 class PhaseSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         Phase::factory()->preparation()->create();

@@ -116,9 +116,6 @@ class TestingExerciseFactory extends Factory
         ];
     }
 
-    /**
-     * Создать тестовое упражнение с произвольными данными (для factory)
-     */
     public function randomData(): static
     {
         return $this->state(fn (array $attributes) => [

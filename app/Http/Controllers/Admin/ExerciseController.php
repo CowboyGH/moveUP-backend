@@ -19,12 +19,10 @@ class ExerciseController extends Controller
     {
         $query = Exercise::with(['equipment'])->withCount('workouts');
 
-        // Только поиск по текстовым полям
         if ($request->filled('search')) {
             $query->search($request->search, ['title', 'description', 'muscle_group']);
         }
 
-        // Пагинация
         $exercises = $query->paginate($request->getPerPage());
 
         $formattedExercises = collect($exercises->items())->map(function ($exercise) {
@@ -60,15 +58,11 @@ class ExerciseController extends Controller
         ]);
     }
 
-    /**
-     * Создать новое упражнение
-     */
     public function store(StoreExerciseRequest $request): JsonResponse
     {
         try {
             $data = $request->except('image');
 
-            // Сохраняем изображение
             if ($request->hasFile('image')) {
                 $path = $request->file('image')->store('exercises', 'public');
                 $data['image'] = $path;
@@ -104,9 +98,6 @@ class ExerciseController extends Controller
         }
     }
 
-    /**
-     * Получить упражнение по ID
-     */
     public function show(int $id): JsonResponse
     {
         $exercise = Exercise::with(['equipment', 'workouts'])->withCount('workouts')->find($id);
@@ -155,9 +146,6 @@ class ExerciseController extends Controller
         return ApiResponse::success('success', $data);
     }
 
-    /**
-     * Обновить упражнение
-     */
     public function update(UpdateExerciseRequest $request, int $id): JsonResponse
     {
         $exercise = Exercise::find($id);
@@ -173,9 +161,7 @@ class ExerciseController extends Controller
         try {
             $data = $request->except('image');
 
-            // Обрабатываем новое изображение
             if ($request->hasFile('image')) {
-                // Удаляем старое изображение
                 if ($exercise->image) {
                     Storage::disk('public')->delete($exercise->image);
                 }
@@ -209,9 +195,6 @@ class ExerciseController extends Controller
         }
     }
 
-    /**
-     * Удалить упражнение
-     */
     public function destroy(int $id): JsonResponse
     {
         $exercise = Exercise::find($id);
@@ -224,7 +207,6 @@ class ExerciseController extends Controller
             );
         }
 
-        // Проверяем, используется ли упражнение в тренировках
         if ($exercise->workouts()->exists()) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
@@ -234,7 +216,6 @@ class ExerciseController extends Controller
         }
 
         try {
-            // Удаляем изображение
             if ($exercise->image) {
                 Storage::disk('public')->delete($exercise->image);
             }
@@ -252,9 +233,6 @@ class ExerciseController extends Controller
         }
     }
 
-    /**
-     * Загрузить изображение для упражнения
-     */
     public function uploadImage(UploadExerciseImageRequest $request, int $id): JsonResponse
     {
         $exercise = Exercise::find($id);
@@ -268,12 +246,10 @@ class ExerciseController extends Controller
         }
 
         try {
-            // Удаляем старое изображение
             if ($exercise->image) {
                 Storage::disk('public')->delete($exercise->image);
             }
 
-            // Сохраняем новое изображение
             $path = $request->file('image')->store('exercises', 'public');
             $exercise->update(['image' => $path]);
 
@@ -291,22 +267,16 @@ class ExerciseController extends Controller
         }
     }
 
-    /**
-     * Получить изображение упражнения (публичный доступ)
-     */
     public function getImage(int $id)
     {
         $exercise = Exercise::find($id);
 
-        // Если упражнение не найдено или изображение отсутствует
         if (!$exercise || !$exercise->image) {
             return $this->getDefaultImage();
         }
 
-        // Проверяем, что путь к файлу не пустой
         $path = Storage::disk('public')->path($exercise->image);
 
-        // Проверяем существование файла
         if (empty($exercise->image) || !file_exists($path)) {
             return $this->getDefaultImage();
         }
@@ -317,9 +287,6 @@ class ExerciseController extends Controller
         ]);
     }
 
-    /**
-     * Получить дефолтное изображение
-     */
     private function getDefaultImage()
     {
         $defaultPath = public_path('images/default-exercise.png');
@@ -331,7 +298,6 @@ class ExerciseController extends Controller
             ]);
         }
 
-        // Убран 'success' => false
         return response()->json([
             'code' => ErrorResponse::NOT_FOUND,
             'message' => 'Изображение не найдено'

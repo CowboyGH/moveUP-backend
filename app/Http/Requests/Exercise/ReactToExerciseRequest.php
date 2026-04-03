@@ -15,8 +15,8 @@ class ReactToExerciseRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'user_workout_id' => 'required|integer|min:1',  // Убираем exists
-            'exercise_id' => 'required|integer|min:1',       // Убираем exists
+            'user_workout_id' => 'required|integer|min:1',
+            'exercise_id' => 'required|integer|min:1',
             'reaction' => 'required|in:' . implode(',', ExerciseReaction::getReactions()),
             'sets_completed' => 'nullable|integer|min:0',
             'reps_completed' => 'nullable|integer|min:0',

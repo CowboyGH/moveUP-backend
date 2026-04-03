@@ -16,9 +16,6 @@ use App\Http\Requests\Admin\Statistics\SubscriptionTypeRequest;
 
 class StatisticsController extends Controller
 {
-    /**
-     * Получить общую статистику
-     */
     public function overview(): JsonResponse
     {
         $totalRevenue = Payment::where('status', 'completed')->sum('amount');
@@ -50,9 +47,6 @@ class StatisticsController extends Controller
         ]);
     }
 
-    /**
-     * Получить статистику выручки по месяцам
-     */
     public function revenue(YearRequest $request): JsonResponse
     {
         $year = $request->get('year', Carbon::now()->year);
@@ -74,7 +68,6 @@ class StatisticsController extends Controller
                 ];
             });
 
-        // Формируем данные для всех 12 месяцев
         $months = ['янв', 'фев', 'мар', 'апр', 'май', 'июнь', 'июль', 'авг', 'сент', 'окт', 'нояб', 'дек'];
         $data = [];
 
@@ -92,9 +85,6 @@ class StatisticsController extends Controller
         ]);
     }
 
-    /**
-     * Получить статистику количества подписок по месяцам
-     */
     public function subscriptionsCount(YearRequest $request): JsonResponse
     {
         $year = $request->get('year', Carbon::now()->year);
@@ -132,9 +122,6 @@ class StatisticsController extends Controller
         ]);
     }
 
-    /**
-     * Получить статистику подписок с фильтром по периоду
-     */
     public function subscriptionsByPeriod(PeriodRequest $request): JsonResponse
     {
         $period = (int) $request->get('period', 12);
@@ -186,9 +173,6 @@ class StatisticsController extends Controller
         ]);
     }
 
-    /**
-     * Получить статистику подписок по типам за год
-     */
     public function subscriptionsByType(SubscriptionTypeRequest $request): JsonResponse
     {
         $subscriptionTypeName = $request->get('subscription_type');

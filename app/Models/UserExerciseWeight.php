@@ -32,9 +32,6 @@ class UserExerciseWeight extends Model
         return $this->belongsTo(Exercise::class);
     }
 
-    /**
-     * Округление веса до 0.5 кг
-     */
     public static function roundWeight(float $weight): float
     {
         return round($weight * 2) / 2;

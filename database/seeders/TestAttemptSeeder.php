@@ -19,9 +19,7 @@ class TestAttemptSeeder extends Seeder
 
         $totalCreated = 0;
 
-        // Создаем попытки для каждого теста
         foreach ($testings as $testing) {
-            // Для каждого теста создаем от 3 до 10 попыток
             $attemptsCount = rand(3, 10);
 
             for ($i = 0; $i < $attemptsCount; $i++) {

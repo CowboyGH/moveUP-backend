@@ -31,7 +31,6 @@ class PaymentFactory extends Factory
         $statuses = ['completed', 'completed', 'completed', 'completed', 'pending', 'pending', 'failed'];
         $status = $this->faker->randomElement($statuses);
 
-        // Генерируем transaction_id для всех записей, даже для неуспешных
         $timestamp = $createdAt instanceof \DateTime
             ? $createdAt->getTimestamp()
             : $createdAt->timestamp;
@@ -47,7 +46,7 @@ class PaymentFactory extends Factory
             'user_id' => $user->id,
             'subscription_id' => $subscription->id,
             'saved_card_id' => $user->savedCards()->inRandomOrder()->first()?->id,
-            'transaction_id' => $transactionId, // Всегда не NULL
+            'transaction_id' => $transactionId,
             'amount' => $subscription->price,
             'status' => $status,
             'payment_data' => json_encode([

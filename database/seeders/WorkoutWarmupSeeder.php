@@ -30,20 +30,16 @@ class WorkoutWarmupSeeder extends Seeder
         $this->command->info("Начинаем привязку разминок к {$workoutCount} тренировкам...");
 
         foreach ($workouts as $workout) {
-            // Определяем количество разминок для этой тренировки
             $warmupCount = $this->getWarmupCountForWorkout($workout->type);
 
-            // Получаем ВСЕ существующие связи для этой тренировки и удаляем их
             WorkoutWarmup::where('workout_id', $workout->id)->delete();
 
             $orderNumber = 1;
             $workoutCreated = 0;
 
             for ($i = 0; $i < $warmupCount; $i++) {
-                // Берем случайную разминку (можно повторять)
                 $warmup = $warmups->random();
 
-                // ВАЖНО: используем create(), а не firstOrCreate()
                 WorkoutWarmup::create([
                     'workout_id' => $workout->id,
                     'warmup_id' => $warmup->id,

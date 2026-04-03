@@ -20,12 +20,6 @@ class WorkoutCompletionController extends Controller
         $this->loadManager = $loadManager;
     }
 
-    /**
-     * Завершить тренировку с оценками и автоматически скорректировать нагрузку
-     *
-     * @param CompleteWorkoutWithReactionsRequest $request
-     * @return JsonResponse
-     */
     public function completeWithAdjustments(CompleteWorkoutWithReactionsRequest $request): JsonResponse
     {
         $user = $request->user();

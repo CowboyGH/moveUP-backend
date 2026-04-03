@@ -28,9 +28,6 @@ class ExercisePerformance extends Model
         'adjustment_factor' => 'decimal:2',
     ];
 
-    /**
-     * Get the user through user_workout
-     */
     public function user()
     {
         return $this->hasOneThrough(

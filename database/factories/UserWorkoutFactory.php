@@ -13,10 +13,8 @@ class UserWorkoutFactory extends Factory
 
     public function definition(): array
     {
-        // ВАЖНО: берем существующие тренировки, а не создаем новые
         $workout = Workout::inRandomOrder()->first();
 
-        // Если нет тренировок, создаем одну (но это крайний случай)
         if (!$workout) {
             $workout = Workout::factory()->create();
         }
@@ -40,7 +38,7 @@ class UserWorkoutFactory extends Factory
 
         return [
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
-            'workout_id' => $workout->id, // Используем существующую тренировку
+            'workout_id' => $workout->id,
             'started_at' => $startedAt,
             'completed_at' => $completedAt,
             'status' => $status,

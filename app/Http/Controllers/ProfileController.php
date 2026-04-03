@@ -150,9 +150,6 @@ class ProfileController extends Controller
         return ApiResponse::success('success', $data);
     }
 
-    /**
-     * Получить статус подписки
-     */
     private function getSubscriptionStatus($subscription): string
     {
         if ($subscription->is_active && $subscription->end_date->isFuture()) {
@@ -165,9 +162,6 @@ class ProfileController extends Controller
         return 'inactive';
     }
 
-    /**
-     * Обновить профиль (только имя и email)
-     */
     public function update(UpdateProfileRequest $request): JsonResponse
     {
         $user = auth()->user();
@@ -182,15 +176,11 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Сменить пароль
-     */
     public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
         $user = auth()->user();
         $data = $request->validated();
 
-        // Проверяем старый пароль
         if (!Hash::check($data['old_password'], $user->password)) {
             return ApiResponse::error(
                 ErrorResponse::VALIDATION_FAILED,
@@ -199,7 +189,6 @@ class ProfileController extends Controller
             );
         }
 
-        // Обновляем пароль
         $user->update([
             'password' => Hash::make($data['new_password'])
         ]);
@@ -207,14 +196,10 @@ class ProfileController extends Controller
         return ApiResponse::success('Пароль успешно изменен');
     }
 
-    /**
-     * Удалить профиль
-     */
     public function destroy(): JsonResponse
     {
         $user = auth()->user();
 
-        // Удаляем аватар
         if ($user->avatar) {
             Storage::delete($user->avatar);
         }
@@ -224,23 +209,17 @@ class ProfileController extends Controller
         return ApiResponse::success('Профиль успешно удален');
     }
 
-    /**
-     * Загрузить/обновить аватар
-     */
     public function updateAvatar(UpdateAvatarRequest $request): JsonResponse
     {
         $user = auth()->user();
 
         try {
-            // Удаляем старый аватар если есть
             if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }
 
-            // Сохраняем новый аватар
             $path = $request->file('avatar')->store('avatars', 'public');
 
-            // Обновляем пользователя
             $user->update(['avatar' => $path]);
 
             return ApiResponse::success('Аватар успешно загружен', [
@@ -257,9 +236,6 @@ class ProfileController extends Controller
         }
     }
 
-    /**
-     * Удаление аватара
-     */
     public function deleteAvatar(): JsonResponse
     {
         $user = auth()->user();
@@ -273,10 +249,8 @@ class ProfileController extends Controller
         }
 
         try {
-            // Удаляем файл
             Storage::disk('public')->delete($user->avatar);
 
-            // Обновляем пользователя
             $user->update(['avatar' => null]);
 
             return ApiResponse::success('Аватар удален', [
@@ -292,9 +266,6 @@ class ProfileController extends Controller
         }
     }
 
-    /**
-     * Получение аватара по ID пользователя (публичный доступ)
-     */
     public function getAvatar(int $userId)
     {
         $user = User::find($userId);
@@ -315,9 +286,6 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Получение дефолтного аватара
-     */
     private function getDefaultAvatar()
     {
         $defaultPath = public_path('images/default-avatar.png');
@@ -337,7 +305,6 @@ class ProfileController extends Controller
             ]);
         }
 
-        // Если нет дефолтного аватара, возвращаем JSON ошибку
         return response()->json([
             'code' => ErrorResponse::NOT_FOUND,
             'message' => 'Аватар не найден'

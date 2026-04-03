@@ -18,7 +18,7 @@ class UpdateAvatarRequest extends ApiFormRequest
                 'required',
                 'image',
                 'mimes:jpeg,png,jpg,gif,webp',
-                'max:5120', // 5MB
+                'max:5120',
                 'dimensions:min_width=100,min_height=100,max_width=2048,max_height=2048'
             ],
         ];

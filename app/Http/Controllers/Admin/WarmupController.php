@@ -19,12 +19,10 @@ class WarmupController extends Controller
     {
         $query = Warmup::withCount('workouts');
 
-        // Только поиск по названию и описанию
         if ($request->filled('search')) {
             $query->search($request->search, ['name', 'description']);
         }
 
-        // Пагинация
         $warmups = $query->paginate($request->getPerPage());
 
         $formattedWarmups = collect($warmups->items())->map(function ($warmup) {
@@ -55,15 +53,11 @@ class WarmupController extends Controller
         ]);
     }
 
-    /**
-     * Создать новую разминку
-     */
     public function store(StoreWarmupRequest $request): JsonResponse
     {
         try {
             $data = $request->except('image');
 
-            // Сохраняем изображение
             if ($request->hasFile('image')) {
                 $path = $request->file('image')->store('warmups', 'public');
                 $data['image'] = $path;
@@ -93,9 +87,6 @@ class WarmupController extends Controller
         }
     }
 
-    /**
-     * Получить разминку по ID
-     */
     public function show(int $id): JsonResponse
     {
         $warmup = Warmup::with(['workouts'])->withCount('workouts')->find($id);
@@ -137,9 +128,6 @@ class WarmupController extends Controller
         return ApiResponse::success('success', $data);
     }
 
-    /**
-     * Обновить разминку
-     */
     public function update(UpdateWarmupRequest $request, int $id): JsonResponse
     {
         $warmup = Warmup::find($id);
@@ -197,9 +185,6 @@ class WarmupController extends Controller
         }
     }
 
-    /**
-     * Удалить разминку
-     */
     public function destroy(int $id): JsonResponse
     {
         $warmup = Warmup::find($id);
@@ -221,7 +206,6 @@ class WarmupController extends Controller
         }
 
         try {
-            // Удаляем изображение
             if ($warmup->image) {
                 Storage::disk('public')->delete($warmup->image);
             }
@@ -239,9 +223,6 @@ class WarmupController extends Controller
         }
     }
 
-    /**
-     * Загрузить изображение для разминки
-     */
     public function uploadImage(UploadWarmupImageRequest $request, int $id): JsonResponse
     {
         $warmup = Warmup::find($id);
@@ -255,16 +236,13 @@ class WarmupController extends Controller
         }
 
         try {
-            // Удаляем старое изображение
             if ($warmup->image) {
                 Storage::disk('public')->delete($warmup->image);
             }
 
-            // Сохраняем новое изображение
             $path = $request->file('image')->store('warmups', 'public');
             $warmup->update(['image' => $path]);
 
-            // Обновляем модель
             $warmup->refresh();
 
             return ApiResponse::success('Изображение успешно загружено', [
@@ -281,22 +259,16 @@ class WarmupController extends Controller
         }
     }
 
-    /**
-     * Получить изображение разминки (публичный доступ)
-     */
     public function getImage(int $id)
     {
         $warmup = Warmup::find($id);
 
-        // Если разминка не найдена или изображение отсутствует
         if (!$warmup || !$warmup->image) {
             return $this->getDefaultImage();
         }
 
-        // Проверяем, что путь к файлу не пустой
         $path = Storage::disk('public')->path($warmup->image);
 
-        // Проверяем существование файла
         if (empty($warmup->image) || !file_exists($path)) {
             return $this->getDefaultImage();
         }
@@ -307,9 +279,6 @@ class WarmupController extends Controller
         ]);
     }
 
-    /**
-     * Получить дефолтное изображение
-     */
     private function getDefaultImage()
     {
         $defaultPath = public_path('images/default-warmup.png');
@@ -321,7 +290,6 @@ class WarmupController extends Controller
             ]);
         }
 
-        // Убран 'success' => false
         return response()->json([
             'code' => ErrorResponse::NOT_FOUND,
             'message' => 'Изображение не найдено'

@@ -36,9 +36,6 @@ class TestAttempt extends Model
         return $this->hasMany(TestResult::class);
     }
 
-    /**
-     * Получить пользователя через первый результат (все результаты одной попытки принадлежат одному пользователю).
-     */
     public function user(): HasOneThrough
     {
         return $this->hasOneThrough(

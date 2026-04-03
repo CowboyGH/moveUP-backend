@@ -11,12 +11,8 @@ use Illuminate\Database\Seeder;
 
 class RealisticWorkoutSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Определяем разминки
         $warmupsData = [
             'Суставная мобилизация' => [
                 'description' => 'Плавные вращения для шеи, плечевого пояса, позвоночника, коленей и голеностопа. Подготовка связок к нагрузке.',
@@ -47,7 +43,6 @@ class RealisticWorkoutSeeder extends Seeder
             );
         }
 
-        // Определяем упражнения (если их нет в базе – создаём)
         $exercisesData = [
             'Приседания' => [
                 'muscle_group' => 'Ноги',
@@ -152,7 +147,6 @@ class RealisticWorkoutSeeder extends Seeder
             );
         }
 
-        // Определяем тренировки
         $workoutsData = [
             [
                 'title' => 'Утренняя перезагрузка',
@@ -223,7 +217,6 @@ class RealisticWorkoutSeeder extends Seeder
                 ]
             );
 
-            // Привязываем разминки
             if (isset($workoutData['warmups'])) {
                 $order = 1;
                 foreach ($workoutData['warmups'] as $warmupName) {
@@ -239,15 +232,12 @@ class RealisticWorkoutSeeder extends Seeder
                 }
             }
 
-            // Привязываем упражнения
             if (isset($workoutData['exercises'])) {
                 foreach ($workoutData['exercises'] as $exerciseItem) {
                     $exercise = $exercises[$exerciseItem['title']] ?? null;
                     if ($exercise) {
                         $reps = $exerciseItem['reps'];
                         if (isset($exerciseItem['is_seconds']) && $exerciseItem['is_seconds']) {
-                            // Для статических упражнений reps интерпретируем как секунды (но модель ожидает число)
-                            // Можно хранить как есть, это не критично.
                         }
                         WorkoutExercise::firstOrCreate(
                             [

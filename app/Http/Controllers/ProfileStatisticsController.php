@@ -25,30 +25,23 @@ class ProfileStatisticsController extends Controller
         $this->phaseService = $phaseService;
     }
 
-    /**
-     * Получить всю статистику профиля
-     */
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
 
-        // Получаем текущую фазу пользователя
         $phaseProgress = $this->phaseService->getUserPhaseProgress($user);
 
-        // Получаем статистику объема
         $volumeStats = $this->getVolumeStatistics(
             $user,
             $request->get('exercise_id'),
             $request->get('week_offset', 0)
         );
 
-        // Получаем статистику тренда
         $trendStats = $this->getTrendStatistics(
             $user,
             $request->get('workout_id')
         );
 
-        // Получаем статистику частоты
         $frequencyStats = $this->getFrequencyStatistics($user);
 
         return ApiResponse::success('Статистика пользователя', [
@@ -59,9 +52,6 @@ class ProfileStatisticsController extends Controller
         ]);
     }
 
-    /**
-     * Получить статистику объема для конкретного упражнения
-     */
     public function volume(Request $request): JsonResponse
     {
         $request->validate([
@@ -73,9 +63,7 @@ class ProfileStatisticsController extends Controller
         $exerciseId = $request->get('exercise_id');
         $weekOffset = $request->get('week_offset', 0);
 
-        // Если exercise_id передан, проверяем его существование и наличие данных
         if ($exerciseId) {
-            // Проверяем существование упражнения в таблице exercises
             $exerciseExists = \App\Models\Exercise::where('id', $exerciseId)->exists();
 
             if (!$exerciseExists) {
@@ -86,7 +74,6 @@ class ProfileStatisticsController extends Controller
                 );
             }
 
-            // Проверяем, выполнял ли пользователь это упражнение
             $hasData = ExercisePerformance::where('exercise_id', $exerciseId)
                 ->whereHas('userWorkout', function ($query) use ($user) {
                     $query->where('user_id', $user->id);
@@ -107,9 +94,6 @@ class ProfileStatisticsController extends Controller
         return ApiResponse::data($volumeStats);
     }
 
-    /**
-     * Получить статистику тренда для выбранной тренировки
-     */
     public function trend(Request $request): JsonResponse
     {
         $request->validate([
@@ -140,9 +124,6 @@ class ProfileStatisticsController extends Controller
         return ApiResponse::data($trendStats);
     }
 
-    /**
-     * Получить статистику частоты с возможностью выбора периода
-     */
     public function frequency(Request $request): JsonResponse
     {
         $request->validate([
@@ -160,9 +141,6 @@ class ProfileStatisticsController extends Controller
         return ApiResponse::data($frequencyStats);
     }
 
-    /**
-     * Получить список тренировок для выбора в статистике тренда
-     */
     public function workouts(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -191,9 +169,6 @@ class ProfileStatisticsController extends Controller
         return ApiResponse::data($workouts);
     }
 
-    /**
-     * Получить список упражнений для выбора в статистике объема
-     */
     public function exercises(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -220,12 +195,8 @@ class ProfileStatisticsController extends Controller
         return ApiResponse::data($exercises);
     }
 
-    /**
-     * Получить статистику объема за неделю с учетом смещения
-     */
     private function getVolumeStatistics(User $user, ?int $exerciseId = null, int $weekOffset = 0): array
     {
-        // Если упражнение не выбрано, берем первое из истории
         if (!$exerciseId) {
             $lastExercise = ExercisePerformance::whereHas('userWorkout', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
@@ -238,16 +209,13 @@ class ProfileStatisticsController extends Controller
             $exerciseId = $lastExercise?->exercise_id;
         }
 
-        // Если нет данных по упражнениям, возвращаем пустую статистику
         if (!$exerciseId) {
             return $this->emptyVolumeStats($weekOffset);
         }
 
-        // Вычисляем начало и конец недели с учетом смещения
         $startOfWeek = Carbon::now()->startOfWeek()->subWeeks($weekOffset);
         $endOfWeek = Carbon::now()->endOfWeek()->subWeeks($weekOffset);
 
-        // Получаем все выполнения упражнения за указанную неделю
         $performances = ExercisePerformance::where('exercise_id', $exerciseId)
             ->whereHas('userWorkout', function ($query) use ($user, $startOfWeek, $endOfWeek) {
                 $query->where('user_id', $user->id)
@@ -256,10 +224,8 @@ class ProfileStatisticsController extends Controller
             ->with('userWorkout')
             ->get();
 
-        // Получаем информацию об упражнении
         $exercise = Exercise::find($exerciseId);
 
-        // Группируем по дням недели
         $daysOfWeek = $this->getDaysOfWeekArray();
 
         $dayMap = [
@@ -281,7 +247,6 @@ class ProfileStatisticsController extends Controller
             $dayKey = $dayMap[$dayOfWeek] ?? null;
 
             if ($dayKey) {
-                // Объем = вес * повторения * подходы
                 $volume = ($performance->weight_used ?? 0) *
                     ($performance->reps_completed ?? 0) *
                     ($performance->sets_completed ?? 1);
@@ -294,13 +259,10 @@ class ProfileStatisticsController extends Controller
             }
         }
 
-        // Преобразуем в массив для графика
         $chartData = array_values($daysOfWeek);
 
-        // Средняя оценка упражнения
         $averageScore = $this->calculateAverageScore($user, $exerciseId);
 
-        // Вычисляем номер недели (обратный порядок: 0 = самая новая, 3 = самая старая)
         $weekNumber = 4 - $weekOffset;
 
         return [
@@ -331,12 +293,8 @@ class ProfileStatisticsController extends Controller
         ];
     }
 
-    /**
-     * Получить статистику тренда по выбранной тренировке
-     */
     private function getTrendStatistics(User $user, ?int $workoutId = null): array
     {
-        // Находим тренировку (либо по ID, либо последнюю)
         $query = $user->userWorkouts()
             ->with(['workout', 'exercisePerformances' => function ($query) {
                 $query->with('exercise')->orderBy('id');
@@ -360,10 +318,8 @@ class ProfileStatisticsController extends Controller
             ];
         }
 
-        // Получаем все выполнения упражнений из этой тренировки
         $performances = $userWorkout->exercisePerformances;
 
-        // Сортируем по порядку в тренировке
         $sortedPerformances = $performances->sortBy(function ($performance) use ($userWorkout) {
             $exercise = $userWorkout->workout->exercises
                 ->where('id', $performance->exercise_id)
@@ -371,7 +327,6 @@ class ProfileStatisticsController extends Controller
             return $exercise?->pivot->order_number ?? 0;
         })->values();
 
-        // Формируем данные для графика
         $chartData = [];
         $averageScoreSum = 0;
         $scoreCount = 0;
@@ -419,37 +374,27 @@ class ProfileStatisticsController extends Controller
         ];
     }
 
-    /**
-     * Получить статистику частоты тренировок за указанный период
-     */
     private function getFrequencyStatistics(User $user, string $period = 'month', int $offset = 0): array
     {
-        // Получаем все завершенные тренировки
         $completedWorkouts = $user->userWorkouts()
             ->where('status', 'completed')
             ->whereNotNull('completed_at')
             ->orderBy('completed_at')
             ->get();
 
-        // Получаем данные за указанный период
         $periodData = $this->getPeriodData($user, $period, $offset);
 
-        // Вычисляем общую статистику
         $totalWorkouts = $completedWorkouts->count();
         $weeksWithData = $periodData->filter(fn($item) => ($item['count'] ?? 0) > 0)->count();
 
-        // Среднее количество тренировок в неделю
         $averagePerWeek = $weeksWithData > 0
             ? round($periodData->sum('count') / $weeksWithData, 1)
             : 0;
 
-        // Текущая серия
         $currentStreak = $this->calculateCurrentStreak($completedWorkouts);
 
-        // Максимальная серия
         $longestStreak = $this->calculateLongestStreak($completedWorkouts);
 
-        // Недельная цель из прогресса пользователя
         $currentProgress = $user->currentProgress();
         $weeklyGoal = $currentProgress?->weekly_workout_goal ?? 4;
 
@@ -474,9 +419,6 @@ class ProfileStatisticsController extends Controller
         ];
     }
 
-    /**
-     * Получить данные за указанный период
-     */
     private function getPeriodData(User $user, string $period, int $offset): \Illuminate\Support\Collection
     {
         $now = Carbon::now();
@@ -508,18 +450,13 @@ class ProfileStatisticsController extends Controller
         return $this->getWeeklyData($user, $weeksCount, $offset);
     }
 
-    /**
-     * Получить данные по неделям
-     */
     private function getWeeklyData(User $user, int $weeksCount, int $offset): \Illuminate\Support\Collection
     {
         $weeks = collect();
         $now = Carbon::now();
 
-        // Смещение: умножаем количество недель на offset
         $weekOffset = $weeksCount * $offset;
 
-        // Проходим по неделям (от самой старой к самой новой)
         for ($i = $weeksCount - 1; $i >= 0; $i--) {
             $startOfWeek = $now->copy()
                 ->subWeeks($i + $weekOffset)
@@ -528,13 +465,11 @@ class ProfileStatisticsController extends Controller
                 ->subWeeks($i + $weekOffset)
                 ->endOfWeek();
 
-            // Считаем тренировки за эту неделю
             $count = $user->userWorkouts()
                 ->where('status', 'completed')
                 ->whereBetween('completed_at', [$startOfWeek, $endOfWeek])
                 ->count();
 
-            // Формируем подпись для недели - только числа
             $weekNumber = $weeksCount - $i;
 
             $weeks->push([
@@ -552,9 +487,6 @@ class ProfileStatisticsController extends Controller
         return $weeks;
     }
 
-    /**
-     * Получить данные по дням (для недельного периода)
-     */
     private function getDailyData(User $user, int $offset): \Illuminate\Support\Collection
     {
         $days = collect();
@@ -587,9 +519,6 @@ class ProfileStatisticsController extends Controller
         return $days;
     }
 
-    /**
-     * Получить доступные тренировки для переключения
-     */
     private function getAvailableWorkouts(User $user, int $currentWorkoutId): array
     {
         $workouts = $user->userWorkouts()
@@ -611,9 +540,6 @@ class ProfileStatisticsController extends Controller
         return $workouts->toArray();
     }
 
-    /**
-     * Проверить, есть ли данные за предыдущую неделю
-     */
     private function hasPreviousWeekData(User $user, int $exerciseId, int $weekOffset): bool
     {
         $startOfWeek = Carbon::now()->startOfWeek()->subWeeks($weekOffset);
@@ -627,9 +553,6 @@ class ProfileStatisticsController extends Controller
             ->exists();
     }
 
-    /**
-     * Проверить, есть ли данные за следующую неделю
-     */
     private function hasNextWeekData(User $user, int $exerciseId, int $weekOffset): bool
     {
         $startOfWeek = Carbon::now()->startOfWeek()->subWeeks($weekOffset);
@@ -643,9 +566,6 @@ class ProfileStatisticsController extends Controller
             ->exists();
     }
 
-    /**
-     * Получить массив дней недели
-     */
     private function getDaysOfWeekArray(): array
     {
         return [
@@ -659,9 +579,6 @@ class ProfileStatisticsController extends Controller
         ];
     }
 
-    /**
-     * Получить подпись для периода
-     */
     private function getPeriodLabel(string $period, int $offset): string
     {
         $periodNames = [
@@ -683,9 +600,6 @@ class ProfileStatisticsController extends Controller
         }
     }
 
-    /**
-     * Форматирование даты
-     */
     private function formatDate($date, string $format = 'Y-m-d'): ?string
     {
         if (!$date) {
@@ -699,9 +613,6 @@ class ProfileStatisticsController extends Controller
         }
     }
 
-    /**
-     * Вспомогательный метод для получения Carbon instance
-     */
     private function getCarbonInstance($date): Carbon
     {
         if ($date instanceof Carbon) {
@@ -716,9 +627,6 @@ class ProfileStatisticsController extends Controller
         return Carbon::now();
     }
 
-    /**
-     * Рассчитать среднюю оценку для упражнения
-     */
     private function calculateAverageScore(User $user, int $exerciseId): float
     {
         $reactions = ExerciseReaction::where('user_id', $user->id)
@@ -739,9 +647,6 @@ class ProfileStatisticsController extends Controller
         return round($sum / $reactions->count(), 1);
     }
 
-    /**
-     * Конвертировать реакцию в числовую оценку
-     */
     private function reactionToScore(?string $reaction): float
     {
         return match($reaction) {
@@ -752,17 +657,11 @@ class ProfileStatisticsController extends Controller
         };
     }
 
-    /**
-     * Конвертировать оценку в проценты
-     */
     private function scoreToPercent(float $score): int
     {
         return min(100, max(0, (int) $score));
     }
 
-    /**
-     * Конвертировать оценку в текстовую метку
-     */
     private function scoreToLabel(float $score): string
     {
         if ($score >= 80) return 'Отлично';
@@ -771,9 +670,6 @@ class ProfileStatisticsController extends Controller
         return 'Плохо';
     }
 
-    /**
-     * Рассчитать текущую серию тренировок (дни подряд)
-     */
     private function calculateCurrentStreak(\Illuminate\Support\Collection $workouts): int
     {
         if ($workouts->isEmpty()) {
@@ -783,12 +679,10 @@ class ProfileStatisticsController extends Controller
         $streak = 0;
         $today = Carbon::today();
 
-        // Группируем по дням
         $workoutDays = $workouts->map(function ($workout) {
             return $workout->completed_at->toDateString();
         })->unique()->values();
 
-        // Идем от сегодня назад
         for ($i = 0; $i < 30; $i++) {
             $date = $today->copy()->subDays($i)->toDateString();
 
@@ -802,9 +696,6 @@ class ProfileStatisticsController extends Controller
         return $streak;
     }
 
-    /**
-     * Рассчитать максимальную серию
-     */
     private function calculateLongestStreak(\Illuminate\Support\Collection $workouts): int
     {
         if ($workouts->isEmpty()) {
@@ -839,15 +730,11 @@ class ProfileStatisticsController extends Controller
         return $longestStreak;
     }
 
-    /**
-     * Пустая статистика объема
-     */
     private function emptyVolumeStats(int $weekOffset = 0): array
     {
         $startOfWeek = Carbon::now()->startOfWeek()->subWeeks($weekOffset);
         $endOfWeek = Carbon::now()->endOfWeek()->subWeeks($weekOffset);
 
-        // Вычисляем номер недели
         $weekNumber = 4 - $weekOffset;
 
         return [

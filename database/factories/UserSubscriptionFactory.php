@@ -10,17 +10,13 @@ class UserSubscriptionFactory extends Factory
 {
     public function definition(): array
     {
-        // Получаем случайного пользователя с ролью user
         $user = User::whereHas('role', function($q) {
             $q->where('name', 'user');
         })->inRandomOrder()->first() ?? User::factory()->user()->create();
 
-        // Получаем случайную подписку
         $subscription = Subscription::inRandomOrder()->first()
             ?? Subscription::factory()->create();
 
-        // Генерируем дату в пределах последних 12 месяцев
-        // Чем ближе к текущему месяцу, тем больше вероятность
         $monthOffset = $this->faker->numberBetween(0, 11);
         $probability = [40, 30, 15, 10, 5, 5, 5, 5, 5, 5, 5, 5];
 
@@ -28,7 +24,6 @@ class UserSubscriptionFactory extends Factory
 
         $startDate = now()->subMonths($weightedOffset)->subDays($this->faker->numberBetween(0, 25));
 
-        // Корректируем день месяца
         $startDate = $startDate->day($this->faker->numberBetween(1, 25));
         $endDate = (clone $startDate)->addDays($subscription->duration_days);
 
@@ -43,9 +38,6 @@ class UserSubscriptionFactory extends Factory
         ];
     }
 
-    /**
-     * Получить смещение месяца с весовой вероятностью
-     */
     private function getWeightedMonthOffset(array $probabilities): int
     {
         $rand = $this->faker->numberBetween(1, 100);
@@ -58,12 +50,9 @@ class UserSubscriptionFactory extends Factory
             }
         }
 
-        return 0; // текущий месяц
+        return 0;
     }
 
-    /**
-     * Создать подписку с определенным типом
-     */
     public function withSubscriptionType(string $type): static
     {
         return $this->state(function (array $attributes) use ($type) {
@@ -76,9 +65,6 @@ class UserSubscriptionFactory extends Factory
         });
     }
 
-    /**
-     * Создать подписку за определенный месяц
-     */
     public function forMonth(int $monthsAgo): static
     {
         return $this->state(function (array $attributes) use ($monthsAgo) {

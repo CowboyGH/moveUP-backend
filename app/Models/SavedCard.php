@@ -33,25 +33,16 @@ class SavedCard extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Хеширование номера карты
-     */
     public static function hashCardNumber(string $cardNumber): string
     {
         return bcrypt($cardNumber);
     }
 
-    /**
-     * Проверка номера карты
-     */
     public function verifyCardNumber(string $cardNumber): bool
     {
         return password_verify($cardNumber, $this->card_number_hash);
     }
 
-    /**
-     * Форматирование срока действия для отображения
-     */
     public function getExpiryFormattedAttribute(): string
     {
         return $this->expiry_month . '/' . $this->expiry_year;

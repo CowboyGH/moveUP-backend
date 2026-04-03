@@ -21,7 +21,6 @@ class TestResultSeeder extends Seeder
         $totalCreated = 0;
 
         foreach ($attempts as $attempt) {
-            // Получаем все упражнения для этого теста
             $testExercises = TestingTestExercise::where('testing_id', $attempt->testing_id)
                 ->with('testingExercise')
                 ->get();
@@ -31,7 +30,6 @@ class TestResultSeeder extends Seeder
                 continue;
             }
 
-            // Создаем результат для каждого упражнения
             foreach ($testExercises as $testExercise) {
                 TestResult::factory()->create([
                     'test_attempt_id' => $attempt->id,

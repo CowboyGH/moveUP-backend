@@ -30,21 +30,16 @@ class WorkoutExerciseSeeder extends Seeder
         $this->command->info("Начинаем привязку упражнений к {$workoutCount} тренировкам...");
 
         foreach ($workouts as $workout) {
-            // Определяем количество упражнений для этой тренировки
             $exerciseCount = $this->getExerciseCountForWorkout($workout->type);
 
-            // Получаем ВСЕ существующие связи для этой тренировки и удаляем их
-            // Это гарантирует, что мы создадим новые связи
             WorkoutExercise::where('workout_id', $workout->id)->delete();
 
             $orderNumber = 1;
             $workoutCreated = 0;
 
             for ($i = 0; $i < $exerciseCount; $i++) {
-                // Берем случайное упражнение (можно повторять)
                 $exercise = $exercises->random();
 
-                // ВАЖНО: используем create(), а не firstOrCreate()
                 WorkoutExercise::create([
                     'workout_id' => $workout->id,
                     'exercise_id' => $exercise->id,

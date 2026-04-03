@@ -12,7 +12,7 @@ class UserWorkoutSeeder extends Seeder
     public function run(): void
     {
         $users = User::whereHas('role', fn($q) => $q->where('name', 'user'))->get();
-        $workouts = Workout::all(); // Берем ВСЕ существующие тренировки
+        $workouts = Workout::all();
 
         if ($users->isEmpty()) {
             $this->command->error('Нет пользователей! Сначала запустите UserSeeder.');
@@ -28,9 +28,7 @@ class UserWorkoutSeeder extends Seeder
         $workoutIds = $workouts->pluck('id')->toArray();
 
         foreach ($users as $user) {
-            // Каждому пользователю назначаем случайные тренировки
 
-            // Назначаем 3 тренировки
             for ($i = 0; $i < 3; $i++) {
                 UserWorkout::factory()
                     ->assigned()
@@ -40,7 +38,6 @@ class UserWorkoutSeeder extends Seeder
                 $totalCreated++;
             }
 
-            // Начинаем 2 тренировки
             for ($i = 0; $i < 2; $i++) {
                 UserWorkout::factory()
                     ->started()
@@ -50,7 +47,6 @@ class UserWorkoutSeeder extends Seeder
                 $totalCreated++;
             }
 
-            // Завершаем 5 тренировок
             for ($i = 0; $i < 5; $i++) {
                 UserWorkout::factory()
                     ->completed()

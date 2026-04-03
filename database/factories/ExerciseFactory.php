@@ -9,30 +9,25 @@ use Illuminate\Support\Str;
 class ExerciseFactory extends Factory
 {
     private array $realExercises = [
-        // Грудь
         ['title' => 'Жим штанги лежа', 'muscle_group' => 'Грудь', 'type' => 'strength'],
         ['title' => 'Жим гантелей на наклонной скамье', 'muscle_group' => 'Грудь', 'type' => 'strength'],
         ['title' => 'Сведение рук в кроссовере', 'muscle_group' => 'Грудь', 'type' => 'isolation'],
         ['title' => 'Отжимания на брусьях', 'muscle_group' => 'Грудь', 'type' => 'strength'],
 
-        // Спина
         ['title' => 'Тяга верхнего блока к груди', 'muscle_group' => 'Спина', 'type' => 'strength'],
         ['title' => 'Тяга гантели в наклоне', 'muscle_group' => 'Спина', 'type' => 'strength'],
         ['title' => 'Подтягивания широким хватом', 'muscle_group' => 'Спина', 'type' => 'strength'],
         ['title' => 'Становая тяга', 'muscle_group' => 'Спина', 'type' => 'strength'],
 
-        // Ноги
         ['title' => 'Приседания со штангой', 'muscle_group' => 'Ноги', 'type' => 'strength'],
         ['title' => 'Румынская тяга', 'muscle_group' => 'Ноги', 'type' => 'strength'],
         ['title' => 'Выпады с гантелями', 'muscle_group' => 'Ноги', 'type' => 'strength'],
         ['title' => 'Жим ногами в тренажере', 'muscle_group' => 'Ноги', 'type' => 'strength'],
 
-        // Плечи
         ['title' => 'Жим гантелей сидя', 'muscle_group' => 'Плечи', 'type' => 'strength'],
         ['title' => 'Махи гантелями в стороны', 'muscle_group' => 'Плечи', 'type' => 'isolation'],
         ['title' => 'Тяга штанги к подбородку', 'muscle_group' => 'Плечи', 'type' => 'strength'],
 
-        // Добавим еще упражнений до 20
         ['title' => 'Отжимания от пола', 'muscle_group' => 'Грудь', 'type' => 'strength'],
         ['title' => 'Тяга нижнего блока', 'muscle_group' => 'Спина', 'type' => 'strength'],
         ['title' => 'Приседания с гантелями', 'muscle_group' => 'Ноги', 'type' => 'strength'],
@@ -65,7 +60,6 @@ class ExerciseFactory extends Factory
 
     private function getEquipmentForExercise(string $title): int
     {
-        // Логика определения оборудования для упражнения
         $gymExercises = ['Жим штанги', 'Тяга верхнего блока', 'Приседания со штангой', 'Становая тяга', 'Жим ногами'];
         $isGym = collect($gymExercises)->contains(fn($item) => str_contains($title, $item));
 

@@ -6,9 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait Filterable
 {
-    /**
-     * Применяет поиск по текстовым полям
-     */
     public function scopeSearch(Builder $query, ?string $searchTerm, array $fields): Builder
     {
         if (!$searchTerm) {
@@ -22,9 +19,6 @@ trait Filterable
         });
     }
 
-    /**
-     * Применяет фильтрацию по датам
-     */
     public function scopeDateFilter(Builder $query, ?string $from, ?string $to, string $field = 'created_at'): Builder
     {
         if ($from) {
@@ -36,9 +30,6 @@ trait Filterable
         return $query;
     }
 
-    /**
-     * Применяет фильтрацию по статусу
-     */
     public function scopeStatus(Builder $query, ?bool $isActive, string $field = 'is_active'): Builder
     {
         if ($isActive !== null) {

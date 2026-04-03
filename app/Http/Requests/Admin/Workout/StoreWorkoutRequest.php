@@ -43,12 +43,8 @@ class StoreWorkoutRequest extends ApiFormRequest
         ];
     }
 
-    /**
-     * Подготовка данных перед валидацией
-     */
     protected function prepareForValidation()
     {
-        // Преобразуем JSON строки в массивы для обработки в контроллере
         if ($this->has('exercises') && is_string($this->exercises)) {
             $this->merge([
                 'exercises' => json_decode($this->exercises, true)

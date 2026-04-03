@@ -22,9 +22,6 @@ class ProfileDetailController extends Controller
         $this->cardService = $cardService;
     }
 
-    /**
-     * Получить информацию о пользователе
-     */
     public function user(): JsonResponse
     {
         $user = auth()->user();
@@ -41,9 +38,6 @@ class ProfileDetailController extends Controller
         return ApiResponse::success('success', $data);
     }
 
-    /**
-     * Получить активную подписку
-     */
     public function activeSubscription(): JsonResponse
     {
         $user = auth()->user();
@@ -72,9 +66,6 @@ class ProfileDetailController extends Controller
         return ApiResponse::success('success', $data);
     }
 
-    /**
-     * Получить сохраненные карты
-     */
     public function myCards(): JsonResponse
     {
         $user = auth()->user();
@@ -89,9 +80,6 @@ class ProfileDetailController extends Controller
         return ApiResponse::success('success', $cards);
     }
 
-    /**
-     * Получить параметры пользователя
-     */
     public function userParameters(): JsonResponse
     {
         $user = auth()->user();
@@ -103,7 +91,6 @@ class ProfileDetailController extends Controller
             ]);
         }
 
-        // Проверяем, что все необходимые поля заполнены
         $requiredFields = ['goal', 'level', 'equipment', 'height', 'weight', 'age', 'gender'];
         $isEmpty = false;
         foreach ($requiredFields as $field) {
@@ -132,14 +119,10 @@ class ProfileDetailController extends Controller
         return ApiResponse::success('success', $data);
     }
 
-    /**
-     * Получить историю (подписки, тренировки, тесты)
-     */
     public function history(): JsonResponse
     {
         $user = auth()->user();
 
-        // История подписок (только неактивные или истекшие)
         $subscriptionsHistory = $user->userSubscriptions()
             ->with('subscription')
             ->where(function ($query) {
@@ -163,7 +146,6 @@ class ProfileDetailController extends Controller
                 ];
             });
 
-        // История тренировок (только завершенные)
         $workoutsHistory = $user->userWorkouts()
             ->with('workout')
             ->where('status', UserWorkout::STATUS_COMPLETED)
@@ -183,7 +165,6 @@ class ProfileDetailController extends Controller
                 ];
             });
 
-        // История тестов (только завершенные попытки)
         $testAttempts = TestAttempt::whereHas('testResults', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
@@ -205,7 +186,6 @@ class ProfileDetailController extends Controller
             ];
         });
 
-        // Проверяем, есть ли хоть какие-то данные
         $hasData = $subscriptionsHistory->isNotEmpty() ||
             $workoutsHistory->isNotEmpty() ||
             $testsHistory->isNotEmpty();
@@ -228,9 +208,6 @@ class ProfileDetailController extends Controller
         return ApiResponse::success('success', $data);
     }
 
-    /**
-     * Получить текущую фазу и прогресс
-     */
     public function phase(): JsonResponse
     {
         $user = auth()->user();
@@ -245,9 +222,6 @@ class ProfileDetailController extends Controller
         return ApiResponse::success('success', $phaseProgress);
     }
 
-    /**
-     * Получить статус подписки
-     */
     private function getSubscriptionStatus($subscription): string
     {
         if ($subscription->is_active && $subscription->end_date->isFuture()) {

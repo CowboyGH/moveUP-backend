@@ -17,8 +17,6 @@ class Phase extends Model
         'order_number'
     ];
 
-
-
     public function nextPhase(): ?Phase
     {
         return Phase::where('order_number', '>', $this->order_number)
@@ -39,5 +37,4 @@ class Phase extends Model
     {
         return $this->hasMany(Workout::class);
     }
-
 }

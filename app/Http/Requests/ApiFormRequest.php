@@ -10,9 +10,6 @@ use Illuminate\Validation\ValidationException;
 
 class ApiFormRequest extends FormRequest
 {
-    /**
-     * Автоматическое удаление пробелов.
-     */
     protected function prepareForValidation()
     {
         $this->merge(array_map(function ($value) {

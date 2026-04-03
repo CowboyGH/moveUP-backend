@@ -10,9 +10,6 @@ use Illuminate\Database\Seeder;
 
 class UserSubscriptionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(int $count = 50): void
     {
         UserSubscription::factory()

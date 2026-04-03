@@ -21,12 +21,10 @@ class WorkoutController extends Controller
         $query = Workout::with(['phase'])
             ->withCount(['exercises', 'warmups', 'userWorkouts']);
 
-        // Только поиск по текстовым полям
         if ($request->filled('search')) {
             $query->search($request->search, ['title', 'description']);
         }
 
-        // Пагинация
         $workouts = $query->paginate($request->getPerPage());
 
         $formattedWorkouts = collect($workouts->items())->map(function ($workout) {
@@ -65,9 +63,6 @@ class WorkoutController extends Controller
         ]);
     }
 
-    /**
-     * Создать новую тренировку
-     */
     public function store(StoreWorkoutRequest $request): JsonResponse
     {
         DB::beginTransaction();
@@ -112,9 +107,6 @@ class WorkoutController extends Controller
         }
     }
 
-    /**
-     * Получить тренировку по ID
-     */
     public function show(int $id): JsonResponse
     {
         $workout = Workout::with(['phase', 'exercises.equipment', 'warmups'])->find($id);
@@ -130,9 +122,6 @@ class WorkoutController extends Controller
         return ApiResponse::success('success', $this->formatWorkout($workout));
     }
 
-    /**
-     * Обновить тренировку
-     */
     public function update(UpdateWorkoutRequest $request, int $id): JsonResponse
     {
         $workout = Workout::find($id);
@@ -150,9 +139,7 @@ class WorkoutController extends Controller
         try {
             $data = $request->except(['image', 'exercises', 'warmups']);
 
-            // Обрабатываем новое изображение
             if ($request->hasFile('image')) {
-                // Удаляем старое изображение
                 if ($workout->image) {
                     Storage::disk('public')->delete($workout->image);
                 }
@@ -192,7 +179,6 @@ class WorkoutController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            // Удаляем новое изображение, если что-то пошло не так
             if (isset($path) && Storage::disk('public')->exists($path)) {
                 Storage::disk('public')->delete($path);
             }
@@ -205,9 +191,6 @@ class WorkoutController extends Controller
         }
     }
 
-    /**
-     * Удалить тренировку
-     */
     public function destroy(int $id): JsonResponse
     {
         $workout = Workout::find($id);
@@ -231,7 +214,6 @@ class WorkoutController extends Controller
         DB::beginTransaction();
 
         try {
-            // Удаляем изображение
             if ($workout->image) {
                 Storage::disk('public')->delete($workout->image);
             }
@@ -254,9 +236,6 @@ class WorkoutController extends Controller
         }
     }
 
-    /**
-     * Форматирование данных тренировки для ответа
-     */
     private function formatWorkout(Workout $workout): array
     {
         $formattedExercises = $workout->exercises->map(function ($exercise) {
@@ -312,9 +291,6 @@ class WorkoutController extends Controller
         ];
     }
 
-    /**
-     * Загрузить изображение для тренировки
-     */
     public function uploadImage(UploadWorkoutImageRequest $request, int $id): JsonResponse
     {
         $workout = Workout::find($id);
@@ -328,12 +304,10 @@ class WorkoutController extends Controller
         }
 
         try {
-            // Удаляем старое изображение
             if ($workout->image) {
                 Storage::disk('public')->delete($workout->image);
             }
 
-            // Сохраняем новое изображение
             $path = $request->file('image')->store('workouts', 'public');
             $workout->update(['image' => $path]);
 
@@ -351,22 +325,16 @@ class WorkoutController extends Controller
         }
     }
 
-    /**
-     * Получить изображение тренировки (публичный доступ)
-     */
     public function getImage(int $id)
     {
         $workout = Workout::find($id);
 
-        // Если тренировка не найдена или изображение отсутствует
         if (!$workout || !$workout->image) {
             return $this->getDefaultImage();
         }
 
-        // Проверяем, что путь к файлу не пустой
         $path = Storage::disk('public')->path($workout->image);
 
-        // Проверяем существование файла
         if (empty($workout->image) || !file_exists($path)) {
             return $this->getDefaultImage();
         }
@@ -377,9 +345,6 @@ class WorkoutController extends Controller
         ]);
     }
 
-    /**
-     * Получить дефолтное изображение
-     */
     private function getDefaultImage()
     {
         $defaultPath = public_path('images/default-workout.png');
@@ -391,7 +356,6 @@ class WorkoutController extends Controller
             ]);
         }
 
-        // Убран 'success' => false
         return response()->json([
             'code' => ErrorResponse::NOT_FOUND,
             'message' => 'Изображение не найдено'

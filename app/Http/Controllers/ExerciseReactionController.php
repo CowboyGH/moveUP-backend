@@ -30,15 +30,11 @@ class ExerciseReactionController extends Controller
         $this->phaseService = $phaseService;
     }
 
-    /**
-     * Оценка выполненного упражнения
-     */
     public function react(ReactToExerciseRequest $request): JsonResponse
     {
         $user = $request->user();
         $validated = $request->validated();
 
-        // Проверяем существование упражнения
         $exercise = \App\Models\Exercise::find($validated['exercise_id']);
         if (!$exercise) {
             return ApiResponse::error(
@@ -48,7 +44,6 @@ class ExerciseReactionController extends Controller
             );
         }
 
-        // Проверяем существование тренировки
         $userWorkout = UserWorkout::find($validated['user_workout_id']);
         if (!$userWorkout) {
             return ApiResponse::error(
@@ -58,7 +53,6 @@ class ExerciseReactionController extends Controller
             );
         }
 
-        // Проверяем, что тренировка принадлежит пользователю
         if ($userWorkout->user_id !== $user->id) {
             return ApiResponse::error(
                 ErrorResponse::FORBIDDEN,
@@ -67,7 +61,6 @@ class ExerciseReactionController extends Controller
             );
         }
 
-        // Проверяем, не отправлялась ли уже реакция для этого упражнения в рамках этой тренировки
         $existingReaction = \App\Models\ExerciseReaction::where('user_id', $user->id)
             ->where('exercise_id', $validated['exercise_id'])
             ->where('user_workout_id', $validated['user_workout_id'])
@@ -81,7 +74,6 @@ class ExerciseReactionController extends Controller
             );
         }
 
-        // Подготавливаем данные о производительности
         $performanceData = [
             'sets_completed' => $validated['sets_completed'] ?? null,
             'reps_completed' => $validated['reps_completed'] ?? null,
@@ -89,7 +81,6 @@ class ExerciseReactionController extends Controller
             'notes' => $validated['notes'] ?? null,
         ];
 
-        // Обрабатываем оценку
         $result = $this->exerciseLoadService->processReaction(
             $user,
             $validated['exercise_id'],
@@ -98,7 +89,6 @@ class ExerciseReactionController extends Controller
             $performanceData
         );
 
-        // Проверяем, не наступила ли фаза отдыха для упражнения
         if ($result['rest_phase'] && $result['rest_phase']['required']) {
             $this->checkAndRegenerateWorkouts($user, $validated['exercise_id'], $result['rest_phase']['duration_days']);
         }
@@ -113,20 +103,17 @@ class ExerciseReactionController extends Controller
             return;
         }
 
-        // Получаем все активные тренировки пользователя
         $activeWorkouts = $user->userWorkouts()
             ->with('workout.exercises')
             ->where('status', 'started')
             ->get();
 
-        // Проверяем, есть ли среди будущих тренировок (не начатых) это упражнение
         $hasFutureExercises = false;
         foreach ($activeWorkouts as $userWorkout) {
             if ($userWorkout->started_at !== null) {
                 continue;
             }
 
-            // Проверяем, есть ли проблемное упражнение в тренировке
             foreach ($userWorkout->workout->exercises as $exercise) {
                 if ($exercise->id == $exerciseId) {
                     $hasFutureExercises = true;
@@ -151,14 +138,10 @@ class ExerciseReactionController extends Controller
         }
     }
 
-    /**
-     * Получить историю оценок для упражнения
-     */
     public function history(int $exerciseId): JsonResponse
     {
         $user = request()->user();
 
-        // Проверяем существование упражнения
         $exercise = \App\Models\Exercise::find($exerciseId);
         if (!$exercise) {
             return ApiResponse::error(
@@ -171,7 +154,7 @@ class ExerciseReactionController extends Controller
         $history = $this->exerciseLoadService->getReactionHistory(
             $user->id,
             $exerciseId,
-            30 // последние 30 дней
+            30
         );
 
         $analysis = $this->exerciseLoadService->analyzeReactionPattern($history);
@@ -182,15 +165,11 @@ class ExerciseReactionController extends Controller
         ]);
     }
 
-    /**
-     * Получить рекомендацию по нагрузке для упражнения
-     */
     public function recommendation(GetLoadRecommendationRequest $request): JsonResponse
     {
         $user = $request->user();
         $validated = $request->validated();
 
-        // Проверяем существование упражнения
         $exercise = \App\Models\Exercise::find($validated['exercise_id']);
         if (!$exercise) {
             return ApiResponse::error(
@@ -208,14 +187,10 @@ class ExerciseReactionController extends Controller
         return ApiResponse::data($recommendation);
     }
 
-    /**
-     * Получить статистику по всем упражнениям пользователя
-     */
     public function statistics(): JsonResponse
     {
         $user = request()->user();
 
-        // Получаем все оценки пользователя
         $reactions = \App\Models\ExerciseReaction::where('user_id', $user->id)
             ->with('exercise')
             ->orderBy('reaction_date', 'desc')
@@ -237,7 +212,6 @@ class ExerciseReactionController extends Controller
             ];
         }
 
-        // Общая статистика
         $totalReactions = \App\Models\ExerciseReaction::where('user_id', $user->id)->count();
         $goodCount = \App\Models\ExerciseReaction::where('user_id', $user->id)
             ->where('reaction', 'good')

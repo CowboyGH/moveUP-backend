@@ -18,9 +18,6 @@ class UserProgress extends Model
         'weekly_workout_goal',
     ];
 
-    /**
-     * Получить дату последней тренировки пользователя
-     */
     public function getLastWorkoutDateAttribute()
     {
         return $this->user->userWorkouts()
@@ -29,9 +26,6 @@ class UserProgress extends Model
             ->value('completed_at');
     }
 
-    /**
-     * Проверка, была ли тренировка сегодня
-     */
     public function hasWorkoutToday(): bool
     {
         return $this->user->userWorkouts()
@@ -40,9 +34,6 @@ class UserProgress extends Model
             ->exists();
     }
 
-    /**
-     * Обновление streak_days после тренировки
-     */
     public function updateStreakAfterWorkout(): void
     {
         $lastWorkout = $this->user->userWorkouts()
@@ -67,9 +58,6 @@ class UserProgress extends Model
         $this->save();
     }
 
-    /**
-     * Проверка, можно ли перейти на следующую фазу
-     */
     public function canAdvanceToNextPhase(): bool
     {
         $daysPassed = now()->diffInDays($this->created_at);
@@ -88,9 +76,6 @@ class UserProgress extends Model
         return $enoughWorkoutsDone || ($enoughTimePassed && $minWorkoutsDone);
     }
 
-    /**
-     * Сброс прогресса для новой фазы
-     */
     public function resetForNewPhase(Phase $newPhase): self
     {
         $this->phase_id = $newPhase->id;
