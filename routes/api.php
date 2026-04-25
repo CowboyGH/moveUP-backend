@@ -1,26 +1,19 @@
 <?php
 
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\SubscriptionController;
-use App\Http\Controllers\Admin\TestingController;
-use App\Http\Controllers\Admin\TestingExerciseController;
-use App\Http\Controllers\FcmTokenController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\FcmTokenController;
 use App\Http\Controllers\GuestTestController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Payment\SavedCardController;
 use App\Http\Controllers\PhaseController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TestAttemptController;
 use App\Http\Controllers\UserParameterController;
 use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\WorkoutExecution\WorkoutExecutionController;
-use App\Http\Controllers\WorkoutGeneratorController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\ExerciseController;
-use App\Http\Controllers\Admin\WarmupController;
-use App\Http\Controllers\Admin\WorkoutController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -133,70 +126,4 @@ Route::middleware(['jwt.custom', 'track.activity'])->prefix('payment')->group(fu
     Route::post('cards/save', [SavedCardController::class, 'simpleSaveCard']);
     Route::delete('cards/{cardId}', [SavedCardController::class, 'deleteCard']);
     Route::post('cards/{cardId}/default', [SavedCardController::class, 'setDefaultCard']);
-});
-
-Route::middleware(['jwt.custom', 'admin', 'track.activity'])->prefix('admin')->group(function () {
-
-    Route::get('/overview', [App\Http\Controllers\Admin\StatisticsController::class, 'overview']);
-    Route::get('/revenue', [App\Http\Controllers\Admin\StatisticsController::class, 'revenue']);
-    Route::get('/subscriptions/count', [App\Http\Controllers\Admin\StatisticsController::class, 'subscriptionsCount']);
-    Route::get('/subscriptions/period', [App\Http\Controllers\Admin\StatisticsController::class, 'subscriptionsByPeriod']);
-    Route::get('/subscriptions/by-type', [App\Http\Controllers\Admin\StatisticsController::class, 'subscriptionsByType']);
-
-    Route::get('/subscriptions', [SubscriptionController::class, 'index']);
-    Route::post('/subscriptions', [SubscriptionController::class, 'store']);
-    Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
-    Route::put('/subscriptions/{id}', [SubscriptionController::class, 'update']);
-    Route::post('/subscriptions/{id}/image', [SubscriptionController::class, 'updateImage'])->name('admin.subscriptions.updateImage');
-    Route::delete('/subscriptions/{id}', [SubscriptionController::class, 'destroy']);
-
-    Route::get('/categories', [CategoryController::class, 'index']);
-    Route::post('/categories', [CategoryController::class, 'store']);
-    Route::get('/categories/{id}', [CategoryController::class, 'show']);
-    Route::put('/categories/{id}', [CategoryController::class, 'update']);
-    Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
-
-    Route::get('/testings', [TestingController::class, 'index']);
-    Route::post('/testings', [TestingController::class, 'store']);
-    Route::get('/testings/{id}', [TestingController::class, 'show']);
-    Route::put('/testings/{id}', [TestingController::class, 'update']);
-    Route::delete('/testings/{id}', [TestingController::class, 'destroy']);
-    Route::patch('/testings/{id}/toggle-active', [TestingController::class, 'toggleActive']);
-    Route::post('/testings/{id}/image', [TestingController::class, 'updateImage']);
-
-    Route::get('/testing-exercises', [TestingExerciseController::class, 'index']);
-    Route::post('/testing-exercises', [TestingExerciseController::class, 'store']);
-    Route::get('/testing-exercises/{id}', [TestingExerciseController::class, 'show']);
-    Route::put('/testing-exercises/{id}', [TestingExerciseController::class, 'update']);
-    Route::delete('/testing-exercises/{id}', [TestingExerciseController::class, 'destroy']);
-    Route::post('/testing-exercises/{id}/image', [TestingExerciseController::class, 'updateImage']);
-
-    Route::get('/exercises', [ExerciseController::class, 'index']);
-    Route::post('/exercises', [ExerciseController::class, 'store']);
-    Route::get('/exercises/{id}', [ExerciseController::class, 'show']);
-    Route::put('/exercises/{id}', [ExerciseController::class, 'update']);
-    Route::delete('/exercises/{id}', [ExerciseController::class, 'destroy']);
-    Route::post('/exercises/{id}/image', [App\Http\Controllers\Admin\ExerciseController::class, 'uploadImage']);
-    Route::get('/exercises/{id}/image', [App\Http\Controllers\Admin\ExerciseController::class, 'getImage']);
-
-    Route::get('/warmups', [WarmupController::class, 'index']);
-    Route::post('/warmups', [WarmupController::class, 'store']);
-    Route::get('/warmups/{id}', [WarmupController::class, 'show']);
-    Route::put('/warmups/{id}', [WarmupController::class, 'update']);
-    Route::delete('/warmups/{id}', [WarmupController::class, 'destroy']);
-    Route::post('/warmups/{id}/image', [App\Http\Controllers\Admin\WarmupController::class, 'uploadImage']);
-    Route::get('/warmups/{id}/image', [App\Http\Controllers\Admin\WarmupController::class, 'getImage']);
-
-    Route::get('/workouts', [WorkoutController::class, 'index']);
-    Route::post('/workouts', [WorkoutController::class, 'store']);
-    Route::get('/workouts/{id}', [WorkoutController::class, 'show']);
-    Route::put('/workouts/{id}', [WorkoutController::class, 'update']);
-    Route::delete('/workouts/{id}', [WorkoutController::class, 'destroy']);
-    Route::post('/workouts/{id}/image', [App\Http\Controllers\Admin\WorkoutController::class, 'uploadImage']);
-    Route::get('/workouts/{id}/image', [App\Http\Controllers\Admin\WorkoutController::class, 'getImage']);
-
-    Route::post('/workouts/generate-for-user/{userId}', [WorkoutGeneratorController::class, 'generateForUser']);
-    Route::post('/workouts/regenerate-for-user/{userId}', [WorkoutGeneratorController::class, 'regenerateForUser']);
-
-    Route::get('/equipments', [App\Http\Controllers\Admin\EquipmentController::class, 'index']);
 });
