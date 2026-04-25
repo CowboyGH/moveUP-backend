@@ -25,7 +25,12 @@ return [
     |
     */
 
-    'secret' => env('JWT_SECRET'),
+    // Fall back to APP_KEY in local/dev setups where a dedicated JWT secret
+    // has not been generated yet.
+    'secret' => env('JWT_SECRET')
+        ?: (str_starts_with((string) env('APP_KEY', ''), 'base64:')
+            ? substr((string) env('APP_KEY', ''), 7)
+            : env('APP_KEY')),
 
     /*
     |--------------------------------------------------------------------------
