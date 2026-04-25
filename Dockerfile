@@ -19,4 +19,4 @@ RUN chmod -R 775 /var/www/html/storage \
 
 COPY supervisord.conf /opt/docker/etc/supervisor.d/laravel.conf
 
-EXPOSE 80
+EXPOSE 8000

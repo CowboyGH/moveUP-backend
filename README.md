@@ -4,6 +4,7 @@ Laravel API backend for the moveUP mobile application.
 
 ## Базовые команды
 
+- Пересобрать и поднять API-контейнер: `docker compose up --build -d server`
 - Создать миграцию: `docker exec laravel-api php artisan make:migration <name>`
 - Запустить миграции: `docker exec laravel-api php artisan migrate`
 - Сбросить БД и сиды: `docker exec laravel-api php artisan migrate:fresh --seed`
@@ -11,6 +12,7 @@ Laravel API backend for the moveUP mobile application.
 
 ## Swagger
 
+- Открыть Swagger UI: `http://localhost:8000/api/documentation`
 - Сгенерировать документацию: `docker exec -it laravel-api php artisan l5-swagger:generate`
 
 ## Планировщик
