@@ -10625,6 +10625,71 @@
                     }
                 },
                 "type": "object"
+            },
+            "WorkoutReactionAnalysis": {
+                "properties": {
+                    "pattern": {
+                        "type": "string",
+                        "enum": [
+                            "no_data",
+                            "consistently_good",
+                            "consistently_bad",
+                            "mostly_good",
+                            "mostly_bad",
+                            "mixed"
+                        ],
+                        "example": "consistently_good"
+                    },
+                    "consecutive_good": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "consecutive_bad": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "last_reaction": {
+                        "type": "string",
+                        "enum": [
+                            "good",
+                            "normal",
+                            "bad"
+                        ],
+                        "example": "good"
+                    },
+                    "trend": {
+                        "type": "string",
+                        "enum": [
+                            "neutral",
+                            "positive_streak",
+                            "negative",
+                            "negative_critical"
+                        ],
+                        "example": "neutral"
+                    },
+                    "stats": {
+                        "properties": {
+                            "good": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "normal": {
+                                "type": "integer",
+                                "example": 0
+                            },
+                            "bad": {
+                                "type": "integer",
+                                "example": 0
+                            },
+                            "total": {
+                                "type": "integer",
+                                "example": 1
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
