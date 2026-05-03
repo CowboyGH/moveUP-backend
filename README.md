@@ -17,7 +17,10 @@ Laravel API backend for the moveUP mobile application.
 ## Swagger
 
 - Открыть Swagger UI: `http://localhost:8000/api/documentation`
-- Сгенерировать документацию: `docker exec -it laravel-api php artisan l5-swagger:generate`
+- Сгенерировать документацию из контейнера: `docker exec laravel-api php artisan l5-swagger:generate`
+- Альтернатива внутри контейнера: `composer docs:generate`
+- После любого изменения маршрутов, контроллеров или OpenAPI-аннотаций нужно запускать `l5-swagger:generate` и коммитить изменения аннотаций вместе с обновленным `storage/api-docs/api-docs.json`.
+- `storage/api-docs/api-docs.json` не редактируется вручную.
 
 ## Планировщик
 
