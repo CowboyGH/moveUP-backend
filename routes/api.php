@@ -7,7 +7,6 @@ use App\Http\Controllers\GuestTestController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Payment\SavedCardController;
-use App\Http\Controllers\PhaseController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TestAttemptController;
 use App\Http\Controllers\UserParameterController;
@@ -28,27 +27,18 @@ Route::get('/subscriptions', [SubscriptionController::class, 'index']);
 Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
 
 Route::get('/testings', [App\Http\Controllers\TestingController::class, 'index']);
-Route::get('/testings/{id}', [App\Http\Controllers\TestingController::class, 'show']);
 Route::get('/workouts', [App\Http\Controllers\WorkoutController::class, 'index']);
 
-Route::get('/goals', [UserParameterController::class, 'getGoals']);
-Route::get('/levels', [UserParameterController::class, 'getLevels']);
-Route::get('/equipment', [UserParameterController::class, 'getEquipment']);
 Route::get('/user-parameters/references', [UserParameterController::class, 'getAllReferences']);
 
 Route::post('/user-parameters/goal', [UserParameterController::class, 'saveGoal']);
 Route::post('/user-parameters/anthropometry', [UserParameterController::class, 'saveAnthropometry']);
 Route::post('/user-parameters/level', [UserParameterController::class, 'saveLevel']);
-Route::delete('/user-parameters/guest', [UserParameterController::class, 'clearGuestData']);
-
-Route::get('/avatars/{userId}', [App\Http\Controllers\ProfileController::class, 'getAvatar']);
 
 Route::prefix('guest')->group(function () {
     Route::post('/tests/{testing}/start', [GuestTestController::class, 'start']);
     Route::post('/test-attempts/{attempt}/result', [GuestTestController::class, 'storeResult']);
     Route::post('/test-attempts/{attempt}/complete', [GuestTestController::class, 'complete']);
-    Route::get('/tests/history', [GuestTestController::class, 'history']);
-    Route::delete('/tests/reset', [GuestTestController::class, 'reset']);
 });
 
 Route::middleware(['jwt.custom', 'track.activity'])->prefix('profile')->group(function () {
@@ -79,9 +69,6 @@ Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
     Route::post('/refresh', [AuthController::class, 'refresh']);
 
     Route::get('/me', [AuthController::class, 'me']);
-    Route::get('/my-subscriptions', [App\Http\Controllers\SubscriptionController::class, 'mySubscriptions']);
-    Route::get('/my-test-history', [App\Http\Controllers\TestingController::class, 'myTestHistory']);
-    Route::get('/my-workout-history', [App\Http\Controllers\WorkoutController::class, 'myWorkoutHistory']);
 
     Route::post('/cancel-subscription', [App\Http\Controllers\SubscriptionController::class, 'cancel']);
 
@@ -90,28 +77,17 @@ Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
     Route::post('/test-attempts/{attempt}/complete', [TestAttemptController::class, 'complete']);
 
     Route::get('/user-parameters/me', [UserParameterController::class, 'getMyParameters']);
-    Route::put('/user-parameters', [UserParameterController::class, 'update']);
     Route::post('/user/weekly-goal', [UserProgressController::class, 'updateWeeklyGoal']);
 
     Route::post('/fcm/token', [FcmTokenController::class, 'update']);
     Route::delete('/fcm/token', [FcmTokenController::class, 'destroy']);
 
-    Route::get('/user/current-phase', [PhaseController::class, 'getCurrentPhase']);
-    Route::get('/phases', [PhaseController::class, 'getAllPhases']);
-    Route::get('/phases/{phase}', [PhaseController::class, 'getPhaseDetails']);
-
-    Route::post('/exercise/reaction', [App\Http\Controllers\ExerciseReactionController::class, 'react']);
-    Route::get('/exercise/{exerciseId}/reactions/history', [App\Http\Controllers\ExerciseReactionController::class, 'history']);
-    Route::get('/exercise/reactions/statistics', [App\Http\Controllers\ExerciseReactionController::class, 'statistics']);
-    Route::post('/exercise/load-recommendation', [App\Http\Controllers\ExerciseReactionController::class, 'recommendation']);
-    Route::post('/workouts/complete-with-adjustments', [App\Http\Controllers\WorkoutCompletionController::class, 'completeWithAdjustments']);
     Route::post('/workouts/start', [App\Http\Controllers\WorkoutStartController::class, 'start']);
     Route::post('workouts/{userWorkout}/abandon', [App\Http\Controllers\WorkoutStartController::class, 'abandon']);
 
     Route::prefix('workout-execution')->group(function () {
         Route::get('/{userWorkout}', [WorkoutExecutionController::class, 'show'])->name('workout-execution.show');
         Route::post('/{userWorkout}/next-warmup', [WorkoutExecutionController::class, 'nextWarmup'])->name('workout-execution.next-warmup');
-        Route::post('/{userWorkout}/next-exercise', [WorkoutExecutionController::class, 'nextExercise'])->name('workout-execution.next-exercise');
         Route::post('/{userWorkout}/save-exercise-result', [WorkoutExecutionController::class, 'saveExerciseResult'])->name('workout-execution.save-exercise-result');
         Route::post('/{userWorkout}/complete', [WorkoutExecutionController::class, 'complete'])->name('workout-execution.complete');
 

@@ -15,7 +15,6 @@ use App\Services\WorkoutGeneration\WorkoutGeneratorService;
 use App\Http\Requests\UserParameter\SaveGoalRequest;
 use App\Http\Requests\UserParameter\SaveAnthropometryRequest;
 use App\Http\Requests\UserParameter\SaveLevelRequest;
-use App\Http\Requests\UserParameter\UpdateUserParameterRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -34,24 +33,6 @@ class UserParameterController extends Controller
         $this->guestService = $guestService;
         $this->phaseService = $phaseService;
         $this->workoutGenerator = $workoutGenerator;
-    }
-    public function getGoals(): JsonResponse
-    {
-        $goals = Goal::all();
-
-        return ApiResponse::success('Список целей получен', $goals);
-    }
-    public function getLevels(): JsonResponse
-    {
-        $levels = Level::all();
-
-        return ApiResponse::success('Список уровней получен', $levels);
-    }
-    public function getEquipment(): JsonResponse
-    {
-        $equipment = Equipment::all();
-
-        return ApiResponse::success('Список оборудования получен', $equipment);
     }
     public function getAllReferences(): JsonResponse
     {
@@ -224,18 +205,6 @@ class UserParameterController extends Controller
         }
     }
 
-    public function clearGuestData(Request $request)
-    {
-        $guestId = $this->guestService->getGuestId($request);
-
-        if ($guestId && $this->guestService->hasGuestData($guestId)) {
-            $this->guestService->clearGuestData($guestId);
-        }
-
-        return ApiResponse::success('Данные гостя очищены', null)
-            ->withCookie(cookie()->forget('guest_id'));
-    }
-
     public function getMyParameters(Request $request)
     {
         $parameters = $request->user()->userParameters()
@@ -247,56 +216,5 @@ class UserParameterController extends Controller
         }
 
         return ApiResponse::success('Параметры получены', $parameters);
-    }
-
-    public function update(UpdateUserParameterRequest $request)
-    {
-        $user = $request->user();
-        $parameters = UserParameter::firstOrNew(['user_id' => $user->id]);
-
-        if ($request->has('goal_id')) {
-            $goal = Goal::find($request->goal_id);
-            if (!$goal) {
-                return ApiResponse::error(
-                    ErrorResponse::NOT_FOUND,
-                    'Цель не найдена',
-                    404
-                );
-            }
-        }
-
-        if ($request->has('level_id')) {
-            $level = Level::find($request->level_id);
-            if (!$level) {
-                return ApiResponse::error(
-                    ErrorResponse::NOT_FOUND,
-                    'Уровень не найден',
-                    404
-                );
-            }
-        }
-
-        if ($request->has('equipment_id')) {
-            $equipment = Equipment::find($request->equipment_id);
-            if (!$equipment) {
-                return ApiResponse::error(
-                    ErrorResponse::NOT_FOUND,
-                    'Оборудование не найдено',
-                    404
-                );
-            }
-        }
-
-        $goalChanged = $parameters->exists && $parameters->goal_id != $request->goal_id;
-        $levelChanged = $parameters->exists && $parameters->level_id != $request->level_id;
-        $equipmentChanged = $parameters->exists && $parameters->equipment_id != $request->equipment_id;
-
-        $parameters->fill($request->getFillableData());
-        $parameters->save();
-
-        $force = $goalChanged || $levelChanged || $equipmentChanged;
-        $this->regenerateWorkouts($user, $force);
-
-        return ApiResponse::success('Параметры обновлены', $parameters);
     }
 }

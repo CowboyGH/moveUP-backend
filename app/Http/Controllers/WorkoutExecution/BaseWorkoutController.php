@@ -7,25 +7,20 @@ use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\UserWorkout;
 use App\Services\ExerciseLoadService;
-use App\Services\WorkoutLoadManagerService;
 use App\Services\PhaseService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 abstract class BaseWorkoutController extends Controller
 {
     protected ExerciseLoadService $exerciseLoadService;
-    protected WorkoutLoadManagerService $loadManager;
     protected PhaseService $phaseService;
 
     public function __construct(
         ExerciseLoadService $exerciseLoadService,
-        WorkoutLoadManagerService $loadManager,
         PhaseService $phaseService
     ) {
         $this->exerciseLoadService = $exerciseLoadService;
-        $this->loadManager = $loadManager;
         $this->phaseService = $phaseService;
     }
     protected function checkOwnership(UserWorkout $userWorkout): ?JsonResponse

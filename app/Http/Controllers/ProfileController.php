@@ -6,15 +6,12 @@ use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Http\Requests\Profile\ChangePasswordRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
-use App\Models\User;
-use App\Models\SavedCard;
 use App\Services\PhaseService;
 use App\Services\Payment\CardService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Profile\UpdateAvatarRequest;
-use Illuminate\Http\UploadedFile;
 use App\Models\UserWorkout;
 use App\Models\TestAttempt;
 
@@ -266,48 +263,4 @@ class ProfileController extends Controller
         }
     }
 
-    public function getAvatar(int $userId)
-    {
-        $user = User::find($userId);
-
-        if (!$user || !$user->avatar) {
-            return $this->getDefaultAvatar();
-        }
-
-        $path = Storage::disk('public')->path($user->avatar);
-
-        if (!file_exists($path)) {
-            return $this->getDefaultAvatar();
-        }
-
-        return response()->file($path, [
-            'Content-Type' => mime_content_type($path),
-            'Cache-Control' => 'public, max-age=86400'
-        ]);
-    }
-
-    private function getDefaultAvatar()
-    {
-        $defaultPath = public_path('images/default-avatar.png');
-        $defaultJpgPath = public_path('images/default-avatar.jpg');
-
-        if (file_exists($defaultPath)) {
-            return response()->file($defaultPath, [
-                'Content-Type' => mime_content_type($defaultPath),
-                'Cache-Control' => 'public, max-age=86400'
-            ]);
-        }
-
-        if (file_exists($defaultJpgPath)) {
-            return response()->file($defaultJpgPath, [
-                'Content-Type' => mime_content_type($defaultJpgPath),
-                'Cache-Control' => 'public, max-age=86400'
-            ]);
-        }
-
-        return response()->json([
-            'code' => ErrorResponse::NOT_FOUND,
-            'message' => 'Аватар не найден'
-        ], 404);
-    }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\WorkoutExecution;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Workout\NextExerciseRequest;
 use App\Http\Requests\Workout\NextWarmupRequest;
 use App\Http\Requests\Workout\SaveExerciseResultRequest;
 use App\Models\UserWorkout;
@@ -43,11 +42,6 @@ class WorkoutExecutionController extends Controller
     public function nextWarmup(UserWorkout $userWorkout, NextWarmupRequest $request)
     {
         return $this->warmupController->nextWarmup($userWorkout, $request);
-    }
-
-    public function nextExercise(UserWorkout $userWorkout, NextExerciseRequest $request)
-    {
-        return $this->exerciseController->nextExercise($userWorkout, $request);
     }
 
     public function saveExerciseResult(UserWorkout $userWorkout, SaveExerciseResultRequest $request)

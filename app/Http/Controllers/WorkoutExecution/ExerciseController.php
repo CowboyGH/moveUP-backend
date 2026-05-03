@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\WorkoutExecution;
 
-use App\Http\Requests\Workout\NextExerciseRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\UserWorkout;
@@ -43,61 +42,6 @@ class ExerciseController extends BaseWorkoutController
                 'current_weight' => $weight,
                 'is_last' => $exercises->count() === 1,
                 'exercise_number' => 1,
-                'total_exercises' => $exercises->count(),
-            ],
-        ]);
-    }
-
-    public function nextExercise(UserWorkout $userWorkout, NextExerciseRequest $request)
-    {
-        $user = request()->user();
-
-        if ($error = $this->checkOwnership($userWorkout)) {
-            return $error;
-        }
-
-        $exercises = $this->getSortedExercises($userWorkout);
-
-        $currentExercise = $exercises->firstWhere('id', $request->current_exercise_id);
-        $currentIndex = $exercises->search(function ($item) use ($currentExercise) {
-            return $item->id === $currentExercise->id;
-        });
-
-        // Если пользователь ввел вес, сохраняем его
-        if ($request->has('weight_used') && $request->weight_used) {
-            $this->exerciseLoadService->saveExerciseWeight(
-                $user->id,
-                $request->current_exercise_id,
-                $request->weight_used
-            );
-        }
-
-        $nextExercise = $exercises->get($currentIndex + 1);
-
-        if (!$nextExercise) {
-            // Это было последнее упражнение - тренировка завершена
-            return ApiResponse::data([
-                'type' => 'completed',
-                'message' => 'Все упражнения выполнены. Завершите тренировку.',
-            ]);
-        }
-
-        $weight = $this->exerciseLoadService->getUserCurrentWeight($user->id, $nextExercise->id);
-
-        return ApiResponse::data([
-            'type' => 'exercise',
-            'needs_weight_input' => $weight === null,
-            'exercise' => [
-                'id' => $nextExercise->id,
-                'title' => $nextExercise->title,
-                'description' => $nextExercise->description,
-                'image' => $nextExercise->image_url,
-                'sets' => $nextExercise->pivot->sets,
-                'reps' => $nextExercise->pivot->reps,
-                'order_number' => $nextExercise->pivot->order_number,
-                'current_weight' => $weight,
-                'is_last' => $currentIndex + 1 === $exercises->count() - 1,
-                'exercise_number' => $currentIndex + 2,
                 'total_exercises' => $exercises->count(),
             ],
         ]);
