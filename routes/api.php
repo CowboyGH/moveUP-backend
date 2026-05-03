@@ -6,6 +6,9 @@ use App\Http\Controllers\GuestTestController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Payment\SavedCardController;
+use App\Http\Controllers\Profile\ProfileAvatarController;
+use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\Profile\ProfileSecurityController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TestAttemptController;
 use App\Http\Controllers\UserParameterController;
@@ -48,12 +51,12 @@ Route::middleware(['jwt.custom', 'track.activity'])->prefix('profile')->group(fu
     Route::get('/history', [App\Http\Controllers\ProfileDetailController::class, 'history']);
     Route::get('/phase', [App\Http\Controllers\ProfileDetailController::class, 'phase']);
 
-    Route::get('/', [App\Http\Controllers\ProfileController::class, 'show']);
-    Route::put('/', [App\Http\Controllers\ProfileController::class, 'update']);
-    Route::post('/avatar', [App\Http\Controllers\ProfileController::class, 'updateAvatar']);
-    Route::delete('/avatar', [App\Http\Controllers\ProfileController::class, 'deleteAvatar']);
-    Route::post('/change-password', [App\Http\Controllers\ProfileController::class, 'changePassword']);
-    Route::delete('/', [App\Http\Controllers\ProfileController::class, 'destroy']);
+    Route::get('/', [ProfileController::class, 'show']);
+    Route::put('/', [ProfileController::class, 'update']);
+    Route::post('/avatar', [ProfileAvatarController::class, 'update']);
+    Route::delete('/avatar', [ProfileAvatarController::class, 'destroy']);
+    Route::post('/change-password', [ProfileSecurityController::class, 'changePassword']);
+    Route::delete('/', [ProfileController::class, 'destroy']);
 
     Route::get('statistics', [App\Http\Controllers\ProfileStatisticsController::class, 'index']);
     Route::get('statistics/volume', [App\Http\Controllers\ProfileStatisticsController::class, 'volume']);

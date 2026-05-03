@@ -1,30 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Profile;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\UpdateProfileRequest;
-use App\Http\Requests\Profile\ChangePasswordRequest;
 use App\Http\Responses\ApiResponse;
-use App\Http\Responses\ErrorResponse;
-use App\Services\PhaseService;
-use App\Services\Payment\CardService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use App\Http\Requests\Profile\UpdateAvatarRequest;
-use App\Models\UserWorkout;
 use App\Models\TestAttempt;
+use App\Models\UserWorkout;
+use App\Services\Payment\CardService;
+use App\Services\PhaseService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    protected PhaseService $phaseService;
-    protected CardService $cardService;
-
-    public function __construct(PhaseService $phaseService, CardService $cardService)
-    {
-        $this->phaseService = $phaseService;
-        $this->cardService = $cardService;
-    }
+    public function __construct(
+        private readonly PhaseService $phaseService,
+        private readonly CardService $cardService
+    ) {}
 
     public function show(): JsonResponse
     {
@@ -102,7 +95,6 @@ class ProfileController extends Controller
         });
 
         $phaseProgress = $this->phaseService->getUserPhaseProgress($user);
-
         $cards = $this->cardService->getUserCards($user);
 
         $data = [
@@ -147,18 +139,6 @@ class ProfileController extends Controller
         return ApiResponse::success('success', $data);
     }
 
-    private function getSubscriptionStatus($subscription): string
-    {
-        if ($subscription->is_active && $subscription->end_date->isFuture()) {
-            return 'active';
-        } elseif ($subscription->end_date->isPast()) {
-            return 'expired';
-        } elseif (!$subscription->is_active && $subscription->end_date->isFuture()) {
-            return 'cancelled';
-        }
-        return 'inactive';
-    }
-
     public function update(UpdateProfileRequest $request): JsonResponse
     {
         $user = auth()->user();
@@ -171,26 +151,6 @@ class ProfileController extends Controller
             'email' => $user->email,
             'avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
         ]);
-    }
-
-    public function changePassword(ChangePasswordRequest $request): JsonResponse
-    {
-        $user = auth()->user();
-        $data = $request->validated();
-
-        if (!Hash::check($data['old_password'], $user->password)) {
-            return ApiResponse::error(
-                ErrorResponse::VALIDATION_FAILED,
-                'Неверный текущий пароль',
-                400
-            );
-        }
-
-        $user->update([
-            'password' => Hash::make($data['new_password'])
-        ]);
-
-        return ApiResponse::success('Пароль успешно изменен');
     }
 
     public function destroy(): JsonResponse
@@ -206,61 +166,15 @@ class ProfileController extends Controller
         return ApiResponse::success('Профиль успешно удален');
     }
 
-    public function updateAvatar(UpdateAvatarRequest $request): JsonResponse
+    private function getSubscriptionStatus($subscription): string
     {
-        $user = auth()->user();
-
-        try {
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
-            }
-
-            $path = $request->file('avatar')->store('avatars', 'public');
-
-            $user->update(['avatar' => $path]);
-
-            return ApiResponse::success('Аватар успешно загружен', [
-                'avatar_url' => asset('storage/' . $path),
-                'avatar_path' => $path,
-            ]);
-
-        } catch (\Exception $e) {
-            return ApiResponse::error(
-                ErrorResponse::SERVER_ERROR,
-                'Ошибка при загрузке аватара',
-                500
-            );
+        if ($subscription->is_active && $subscription->end_date->isFuture()) {
+            return 'active';
+        } elseif ($subscription->end_date->isPast()) {
+            return 'expired';
+        } elseif (!$subscription->is_active && $subscription->end_date->isFuture()) {
+            return 'cancelled';
         }
+        return 'inactive';
     }
-
-    public function deleteAvatar(): JsonResponse
-    {
-        $user = auth()->user();
-
-        if (!$user->avatar) {
-            return ApiResponse::error(
-                ErrorResponse::NOT_FOUND,
-                'Аватар не найден',
-                404
-            );
-        }
-
-        try {
-            Storage::disk('public')->delete($user->avatar);
-
-            $user->update(['avatar' => null]);
-
-            return ApiResponse::success('Аватар удален', [
-                'avatar_url' => null
-            ]);
-
-        } catch (\Exception $e) {
-            return ApiResponse::error(
-                ErrorResponse::SERVER_ERROR,
-                'Ошибка при удалении аватара',
-                500
-            );
-        }
-    }
-
 }
