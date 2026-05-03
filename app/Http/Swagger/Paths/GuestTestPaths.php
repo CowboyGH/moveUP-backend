@@ -173,33 +173,3 @@ class GuestTestStoreResult {}
  * )
  */
 class GuestTestComplete {}
-
-/**
- * @OA\Get(
- *     path="/api/guest/tests/history",
- *     summary="Получить историю тестов гостя",
- *     description="Возвращает статистику и список всех завершённых попыток гостя из Redis",
- *     tags={"Guest Tests"},
- *     @OA\Response(
- *         response=200,
- *         description="Успешный ответ. История тестов гостя",
- *         @OA\JsonContent(ref="#/components/schemas/GuestTestHistoryResponse")
- *     )
- * )
- */
-class GuestTestHistory {}
-
-/**
- * @OA\Delete(
- *     path="/api/guest/tests/reset",
- *     summary="Сбросить результаты тестов гостя",
- *     description="Удаляет все результаты тестов гостя из Redis",
- *     tags={"Guest Tests"},
- *     @OA\Response(
- *         response=200,
- *         description="Результаты успешно сброшены",
- *         @OA\JsonContent(ref="#/components/schemas/GuestTestResetResponse")
- *     )
- * )
- */
-class GuestTestReset {}
