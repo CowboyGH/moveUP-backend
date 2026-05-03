@@ -8,7 +8,9 @@ use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Payment\SavedCardController;
 use App\Http\Controllers\Profile\ProfileAvatarController;
 use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\Profile\ProfileDetailController;
 use App\Http\Controllers\Profile\ProfileSecurityController;
+use App\Http\Controllers\Profile\ProfileStatisticsController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TestAttemptController;
 use App\Http\Controllers\UserParameterController;
@@ -44,12 +46,12 @@ Route::prefix('guest')->group(function () {
 });
 
 Route::middleware(['jwt.custom', 'track.activity'])->prefix('profile')->group(function () {
-    Route::get('/user', [App\Http\Controllers\ProfileDetailController::class, 'user']);
-    Route::get('/active-subscription', [App\Http\Controllers\ProfileDetailController::class, 'activeSubscription']);
-    Route::get('/my-cards', [App\Http\Controllers\ProfileDetailController::class, 'myCards']);
-    Route::get('/user-parameters', [App\Http\Controllers\ProfileDetailController::class, 'userParameters']);
-    Route::get('/history', [App\Http\Controllers\ProfileDetailController::class, 'history']);
-    Route::get('/phase', [App\Http\Controllers\ProfileDetailController::class, 'phase']);
+    Route::get('/user', [ProfileDetailController::class, 'user']);
+    Route::get('/active-subscription', [ProfileDetailController::class, 'activeSubscription']);
+    Route::get('/my-cards', [ProfileDetailController::class, 'myCards']);
+    Route::get('/user-parameters', [ProfileDetailController::class, 'userParameters']);
+    Route::get('/history', [ProfileDetailController::class, 'history']);
+    Route::get('/phase', [ProfileDetailController::class, 'phase']);
 
     Route::get('/', [ProfileController::class, 'show']);
     Route::put('/', [ProfileController::class, 'update']);
@@ -58,12 +60,12 @@ Route::middleware(['jwt.custom', 'track.activity'])->prefix('profile')->group(fu
     Route::post('/change-password', [ProfileSecurityController::class, 'changePassword']);
     Route::delete('/', [ProfileController::class, 'destroy']);
 
-    Route::get('statistics', [App\Http\Controllers\ProfileStatisticsController::class, 'index']);
-    Route::get('statistics/volume', [App\Http\Controllers\ProfileStatisticsController::class, 'volume']);
-    Route::get('statistics/frequency', [App\Http\Controllers\ProfileStatisticsController::class, 'frequency']);
-    Route::get('statistics/trend', [App\Http\Controllers\ProfileStatisticsController::class, 'trend']);
-    Route::get('statistics/exercises', [App\Http\Controllers\ProfileStatisticsController::class, 'exercises']);
-    Route::get('statistics/workouts', [App\Http\Controllers\ProfileStatisticsController::class, 'workouts']);
+    Route::get('statistics', [ProfileStatisticsController::class, 'index']);
+    Route::get('statistics/volume', [ProfileStatisticsController::class, 'volume']);
+    Route::get('statistics/frequency', [ProfileStatisticsController::class, 'frequency']);
+    Route::get('statistics/trend', [ProfileStatisticsController::class, 'trend']);
+    Route::get('statistics/exercises', [ProfileStatisticsController::class, 'exercises']);
+    Route::get('statistics/workouts', [ProfileStatisticsController::class, 'workouts']);
 });
 
 Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
