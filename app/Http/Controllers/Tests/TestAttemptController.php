@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Tests;
 
+use App\Http\Controllers\Controller;
 use App\Services\WorkoutGeneration\WorkoutGeneratorService;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;

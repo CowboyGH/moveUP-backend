@@ -3,7 +3,6 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\PasswordResetController;
-use App\Http\Controllers\GuestTestController;
 use App\Http\Controllers\Onboarding\UserParameterController;
 use App\Http\Controllers\Onboarding\UserProgressController;
 use App\Http\Controllers\Payment\PaymentController;
@@ -14,7 +13,9 @@ use App\Http\Controllers\Profile\ProfileDetailController;
 use App\Http\Controllers\Profile\ProfileSecurityController;
 use App\Http\Controllers\Profile\ProfileStatisticsController;
 use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\TestAttemptController;
+use App\Http\Controllers\Tests\GuestTestController;
+use App\Http\Controllers\Tests\TestAttemptController;
+use App\Http\Controllers\Tests\TestingController;
 use App\Http\Controllers\WorkoutExecution\WorkoutExecutionController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,7 +31,7 @@ Route::post('/resend-reset-code', [PasswordResetController::class, 'resendResetC
 Route::get('/subscriptions', [SubscriptionController::class, 'index']);
 Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
 
-Route::get('/testings', [App\Http\Controllers\TestingController::class, 'index']);
+Route::get('/testings', [TestingController::class, 'index']);
 Route::get('/workouts', [App\Http\Controllers\WorkoutController::class, 'index']);
 
 Route::get('/user-parameters/references', [UserParameterController::class, 'getAllReferences']);

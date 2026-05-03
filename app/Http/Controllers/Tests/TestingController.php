@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Tests;
 
+use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
 use App\Models\Testing;
 use Illuminate\Http\JsonResponse;
