@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\WorkoutExecution;
+namespace App\Http\Controllers\Workouts\Execution;
 
 use App\Http\Responses\ApiResponse;
 use App\Models\UserWorkout;

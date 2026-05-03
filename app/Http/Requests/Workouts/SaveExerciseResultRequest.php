@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Workout;
+namespace App\Http\Requests\Workouts;
 
 use App\Http\Requests\ApiFormRequest;
 

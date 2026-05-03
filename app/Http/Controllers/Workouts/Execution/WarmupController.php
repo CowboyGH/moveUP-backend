@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\WorkoutExecution;
+namespace App\Http\Controllers\Workouts\Execution;
 
-use App\Http\Requests\Workout\NextWarmupRequest;
+use App\Http\Requests\Workouts\NextWarmupRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\UserWorkout;

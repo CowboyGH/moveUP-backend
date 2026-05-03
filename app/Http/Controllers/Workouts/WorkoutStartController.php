@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Workouts;
 
-use App\Http\Requests\Workout\StartWorkoutRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\Workouts\Execution\ExerciseController;
+use App\Http\Requests\Workouts\StartWorkoutRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\UserWorkout;
 use App\Models\Workout;
-use App\Http\Controllers\WorkoutExecution\ExerciseController;
 use Illuminate\Http\Request;
 
 class WorkoutStartController extends Controller

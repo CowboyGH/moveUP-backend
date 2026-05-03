@@ -16,7 +16,9 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\Tests\GuestTestController;
 use App\Http\Controllers\Tests\TestAttemptController;
 use App\Http\Controllers\Tests\TestingController;
-use App\Http\Controllers\WorkoutExecution\WorkoutExecutionController;
+use App\Http\Controllers\Workouts\Execution\WorkoutExecutionController;
+use App\Http\Controllers\Workouts\WorkoutController;
+use App\Http\Controllers\Workouts\WorkoutStartController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -32,7 +34,7 @@ Route::get('/subscriptions', [SubscriptionController::class, 'index']);
 Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
 
 Route::get('/testings', [TestingController::class, 'index']);
-Route::get('/workouts', [App\Http\Controllers\WorkoutController::class, 'index']);
+Route::get('/workouts', [WorkoutController::class, 'index']);
 
 Route::get('/user-parameters/references', [UserParameterController::class, 'getAllReferences']);
 
@@ -84,8 +86,8 @@ Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
     Route::get('/user-parameters/me', [UserParameterController::class, 'getMyParameters']);
     Route::post('/user/weekly-goal', [UserProgressController::class, 'updateWeeklyGoal']);
 
-    Route::post('/workouts/start', [App\Http\Controllers\WorkoutStartController::class, 'start']);
-    Route::post('workouts/{userWorkout}/abandon', [App\Http\Controllers\WorkoutStartController::class, 'abandon']);
+    Route::post('/workouts/start', [WorkoutStartController::class, 'start']);
+    Route::post('workouts/{userWorkout}/abandon', [WorkoutStartController::class, 'abandon']);
 
     Route::prefix('workout-execution')->group(function () {
         Route::get('/{userWorkout}', [WorkoutExecutionController::class, 'show'])->name('workout-execution.show');

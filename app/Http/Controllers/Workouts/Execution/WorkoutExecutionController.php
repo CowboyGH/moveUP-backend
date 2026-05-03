@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\WorkoutExecution;
+namespace App\Http\Controllers\Workouts\Execution;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Workout\NextWarmupRequest;
-use App\Http\Requests\Workout\SaveExerciseResultRequest;
+use App\Http\Requests\Workouts\NextWarmupRequest;
+use App\Http\Requests\Workouts\SaveExerciseResultRequest;
 use App\Models\UserWorkout;
 use Illuminate\Http\Request;
 
