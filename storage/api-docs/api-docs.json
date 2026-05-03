@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8000/",
+            "url": "http://my-default-host.com",
             "description": "Основной сервер"
         }
     ],
@@ -1221,111 +1221,6 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ValidationErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ServerErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/user/weekly-goal": {
-            "post": {
-                "tags": [
-                    "Phases"
-                ],
-                "summary": "Обновить недельную цель тренировок",
-                "operationId": "7d710bd251bd0f64230781ded3a133be",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UpdateWeeklyGoalRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Цель успешно обновлена",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Недельная цель обновлена"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "weekly_goal": {
-                                                    "type": "integer",
-                                                    "example": 5
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Ошибка валидации",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationErrorWeeklyGoal"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Не авторизован",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "У пользователя нет активной фазы",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "У пользователя нет активной фазы"
-                                        }
-                                    },
-                                    "type": "object"
                                 }
                             }
                         }
@@ -3431,7 +3326,7 @@
                 ],
                 "summary": "Получить все справочные данные сразу (цели, уровни, оборудование)",
                 "description": "Полезно для первоначальной загрузки приложения, чтобы сократить количество запросов",
-                "operationId": "233c4a7cff5323e83a8584d8bf96cf31",
+                "operationId": "68d8a70c18b10f621025358f95543f1e",
                 "responses": {
                     "200": {
                         "description": "Справочные данные получены",
@@ -3526,7 +3421,7 @@
                 ],
                 "summary": "Сохранить цель тренировок (шаг 1)",
                 "description": "Сохраняет цель тренировок для авторизованного пользователя или гостя",
-                "operationId": "2ce546d47c58cdfce6d097beef23ca53",
+                "operationId": "6978f7e8c107b0d847999c57e5bb3a58",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3657,7 +3552,7 @@
                 ],
                 "summary": "Сохранить антропометрические данные (шаг 2)",
                 "description": "Сохраняет антропометрические данные для авторизованного пользователя или гостя",
-                "operationId": "5f06333ae034245948d070e7f53d8a88",
+                "operationId": "2d79b82693445c73017bfd9113aa74cf",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3841,7 +3736,7 @@
                 ],
                 "summary": "Сохранить уровень подготовки (шаг 3)",
                 "description": "Сохраняет уровень подготовки для авторизованного пользователя или гостя",
-                "operationId": "10a80227c0d08738755621941a6a91bb",
+                "operationId": "6be16217e3a9286d7c5d3ee81a942421",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3988,7 +3883,7 @@
                 ],
                 "summary": "Получить параметры авторизованного пользователя",
                 "description": "Возвращает параметры текущего авторизованного пользователя с связанными моделями цели, уровня и оборудования",
-                "operationId": "d39cfbe801b98434cfd646e6cbb8bb3c",
+                "operationId": "1e8112e0fbb7baa64ce008719d4a6cc0",
                 "responses": {
                     "200": {
                         "description": "Параметры получены",
@@ -6983,121 +6878,6 @@
                 },
                 "type": "object"
             },
-            "WorkoutSimple": {
-                "title": "Тренировка (кратко)",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "phase_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "ОФП тренировка"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Жимы, тяги и подтягивания для верхней части тела"
-                    },
-                    "duration_minutes": {
-                        "type": "string",
-                        "example": "32"
-                    },
-                    "type": {
-                        "type": "string",
-                        "example": "general"
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "image": {
-                        "type": "string",
-                        "example": "workouts/morning-workout.jpg",
-                        "nullable": true
-                    },
-                    "image_url": {
-                        "type": "string",
-                        "example": "http://localhost/storage/workouts/morning-workout.jpg",
-                        "nullable": true
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-03-05T07:29:23.000000Z"
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-03-05T07:29:23.000000Z"
-                    }
-                },
-                "type": "object"
-            },
-            "UpdateWeeklyGoalRequest": {
-                "required": [
-                    "weekly_goal"
-                ],
-                "properties": {
-                    "weekly_goal": {
-                        "type": "integer",
-                        "maximum": 7,
-                        "minimum": 1,
-                        "example": 5
-                    }
-                },
-                "type": "object"
-            },
-            "UpdateWeeklyGoalResponse": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Недельная цель обновлена"
-                    },
-                    "data": {
-                        "properties": {
-                            "weekly_goal": {
-                                "type": "integer",
-                                "example": 5
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
-            "ValidationErrorWeeklyGoal": {
-                "properties": {
-                    "code": {
-                        "type": "string",
-                        "example": "validation_failed"
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Ошибка валидации"
-                    },
-                    "errors": {
-                        "properties": {
-                            "weekly_goal": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string",
-                                    "example": "The weekly goal field is required."
-                                }
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
             "ProfileUser": {
                 "properties": {
                     "id": {
@@ -9970,6 +9750,71 @@
                 },
                 "type": "object"
             },
+            "WorkoutReactionAnalysis": {
+                "properties": {
+                    "pattern": {
+                        "type": "string",
+                        "enum": [
+                            "no_data",
+                            "consistently_good",
+                            "consistently_bad",
+                            "mostly_good",
+                            "mostly_bad",
+                            "mixed"
+                        ],
+                        "example": "consistently_good"
+                    },
+                    "consecutive_good": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "consecutive_bad": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "last_reaction": {
+                        "type": "string",
+                        "enum": [
+                            "good",
+                            "normal",
+                            "bad"
+                        ],
+                        "example": "good"
+                    },
+                    "trend": {
+                        "type": "string",
+                        "enum": [
+                            "neutral",
+                            "positive_streak",
+                            "negative",
+                            "negative_critical"
+                        ],
+                        "example": "neutral"
+                    },
+                    "stats": {
+                        "properties": {
+                            "good": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "normal": {
+                                "type": "integer",
+                                "example": 0
+                            },
+                            "bad": {
+                                "type": "integer",
+                                "example": 0
+                            },
+                            "total": {
+                                "type": "integer",
+                                "example": 1
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "WorkoutLoadAdjustment": {
                 "properties": {
                     "applied": {
@@ -10625,71 +10470,6 @@
                     }
                 },
                 "type": "object"
-            },
-            "WorkoutReactionAnalysis": {
-                "properties": {
-                    "pattern": {
-                        "type": "string",
-                        "enum": [
-                            "no_data",
-                            "consistently_good",
-                            "consistently_bad",
-                            "mostly_good",
-                            "mostly_bad",
-                            "mixed"
-                        ],
-                        "example": "consistently_good"
-                    },
-                    "consecutive_good": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "consecutive_bad": {
-                        "type": "integer",
-                        "example": 0
-                    },
-                    "last_reaction": {
-                        "type": "string",
-                        "enum": [
-                            "good",
-                            "normal",
-                            "bad"
-                        ],
-                        "example": "good"
-                    },
-                    "trend": {
-                        "type": "string",
-                        "enum": [
-                            "neutral",
-                            "positive_streak",
-                            "negative",
-                            "negative_critical"
-                        ],
-                        "example": "neutral"
-                    },
-                    "stats": {
-                        "properties": {
-                            "good": {
-                                "type": "integer",
-                                "example": 1
-                            },
-                            "normal": {
-                                "type": "integer",
-                                "example": 0
-                            },
-                            "bad": {
-                                "type": "integer",
-                                "example": 0
-                            },
-                            "total": {
-                                "type": "integer",
-                                "example": 1
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
             }
         },
         "securitySchemes": {
@@ -10715,10 +10495,6 @@
             "description": "Email Verification"
         },
         {
-            "name": "Workouts",
-            "description": "Workouts"
-        },
-        {
             "name": "Guest Tests",
             "description": "Guest Tests"
         },
@@ -10729,10 +10505,6 @@
         {
             "name": "Payments",
             "description": "Payments"
-        },
-        {
-            "name": "Phases",
-            "description": "Phases"
         },
         {
             "name": "Profile Details",
@@ -10765,6 +10537,10 @@
         {
             "name": "Workout Execution",
             "description": "Workout Execution"
+        },
+        {
+            "name": "Workouts",
+            "description": "Workouts"
         }
     ]
 }

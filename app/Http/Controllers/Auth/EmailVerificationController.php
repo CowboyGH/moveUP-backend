@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ResendVerificationRequest;
 use App\Http\Requests\Auth\VerifyEmailRequest;
 use App\Http\Responses\ApiResponse;

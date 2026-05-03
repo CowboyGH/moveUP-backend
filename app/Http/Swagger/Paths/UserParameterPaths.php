@@ -2,6 +2,8 @@
 
 namespace App\Http\Swagger\Paths;
 
+class UserParameterPaths
+{
 /**
  * @OA\Get(
  *     path="/api/user-parameters/references",
@@ -54,7 +56,7 @@ namespace App\Http\Swagger\Paths;
  *     )
  * )
  */
-class GetAllReferences {}
+    public function getAllReferences(): void {}
 
 /**
  * @OA\Post(
@@ -116,7 +118,7 @@ class GetAllReferences {}
  *     )
  * )
  */
-class SaveGoal {}
+    public function saveGoal(): void {}
 
 /**
  * @OA\Post(
@@ -189,7 +191,7 @@ class SaveGoal {}
  *     )
  * )
  */
-class SaveAnthropometry {}
+    public function saveAnthropometry(): void {}
 
 /**
  * @OA\Post(
@@ -255,7 +257,7 @@ class SaveAnthropometry {}
  *     )
  * )
  */
-class SaveLevel {}
+    public function saveLevel(): void {}
 
 /**
  * @OA\Get(
@@ -331,4 +333,5 @@ class SaveLevel {}
  *     )
  * )
  */
-class GetMyParameters {}
+    public function getMyParameters(): void {}
+}
