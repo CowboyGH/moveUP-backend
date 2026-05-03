@@ -4,6 +4,8 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\GuestTestController;
+use App\Http\Controllers\Onboarding\UserParameterController;
+use App\Http\Controllers\Onboarding\UserProgressController;
 use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Payment\SavedCardController;
 use App\Http\Controllers\Profile\ProfileAvatarController;
@@ -13,8 +15,6 @@ use App\Http\Controllers\Profile\ProfileSecurityController;
 use App\Http\Controllers\Profile\ProfileStatisticsController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TestAttemptController;
-use App\Http\Controllers\UserParameterController;
-use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\WorkoutExecution\WorkoutExecutionController;
 use Illuminate\Support\Facades\Route;
 

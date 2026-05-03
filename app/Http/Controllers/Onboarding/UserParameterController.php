@@ -1,7 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Onboarding;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Onboarding\SaveAnthropometryRequest;
+use App\Http\Requests\Onboarding\SaveGoalRequest;
+use App\Http\Requests\Onboarding\SaveLevelRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\Equipment;
@@ -12,9 +16,6 @@ use App\Models\UserParameter;
 use App\Services\GuestDataService;
 use App\Services\PhaseService;
 use App\Services\WorkoutGeneration\WorkoutGeneratorService;
-use App\Http\Requests\UserParameter\SaveGoalRequest;
-use App\Http\Requests\UserParameter\SaveAnthropometryRequest;
-use App\Http\Requests\UserParameter\SaveLevelRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;

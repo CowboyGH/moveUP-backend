@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\UserParameter;
+namespace App\Http\Requests\Onboarding;
 
 use Illuminate\Foundation\Http\FormRequest;
 

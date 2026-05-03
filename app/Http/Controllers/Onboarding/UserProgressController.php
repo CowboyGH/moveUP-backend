@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Onboarding;
 
+use App\Http\Controllers\Controller;
 use App\Models\UserProgress;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Validation\Rule;
 
 class UserProgressController extends Controller
 {
