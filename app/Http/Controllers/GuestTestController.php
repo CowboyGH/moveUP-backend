@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\Testing;
 use App\Services\GuestDataService;
+use App\Services\Tests\TestAttemptFlowService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -12,12 +14,10 @@ use Illuminate\Support\Str;
 
 class GuestTestController extends Controller
 {
-    private GuestDataService $guestService;
-
-    public function __construct(GuestDataService $guestService)
-    {
-        $this->guestService = $guestService;
-    }
+    public function __construct(
+        private readonly GuestDataService $guestService,
+        private readonly TestAttemptFlowService $attemptFlow
+    ) {}
 
     /**
      * Найти индекс попытки в массиве тестов
@@ -69,9 +69,7 @@ class GuestTestController extends Controller
             );
         }
         $guestId = $this->guestService->getGuestId($request);
-        $firstExercise = $testing->testExercises()
-            ->orderBy('order_number')
-            ->first();
+        $firstExercise = $this->attemptFlow->firstExercise($testing);
 
         if (!$firstExercise) {
             return ApiResponse::error(
@@ -90,25 +88,10 @@ class GuestTestController extends Controller
             'results' => [],
         ];
         $this->guestService->saveGuestTestResult($guestId, $attemptData);
-        $data = [
-            'attempt_id' => 'guest_' . $attemptId,
-            'testing' => [
-                'id' => $testing->id,
-                'title' => $testing->title,
-                'description' => $testing->description,
-                'duration_minutes' => $testing->duration_minutes,
-                'image' => $testing->image,
-                'total_exercises' => $testing->testExercises()->count(),
-            ],
-            'current_exercise' => [
-                'id' => $firstExercise->id,
-                'description' => $firstExercise->description,
-                'image' => $firstExercise->image,
-                'order_number' => $firstExercise->pivot->order_number,
-            ],
-        ];
-
-        return ApiResponse::data($data, 'Тест начат для гостя')
+        return ApiResponse::data(
+            $this->attemptFlow->startPayload($testing, 'guest_' . $attemptId, $firstExercise),
+            'Тест начат для гостя'
+        )
             ->withCookie(cookie('guest_id', $guestId, 60 * 24 * 30));
     }
 
@@ -152,11 +135,7 @@ class GuestTestController extends Controller
                 404
             );
         }
-        $belongsToTest = $testing->testExercises()
-            ->where('testing_exercises.id', $request->testing_exercise_id)
-            ->exists();
-
-        if (!$belongsToTest) {
+        if (!$this->attemptFlow->exerciseBelongsToTesting($testing, $request->testing_exercise_id)) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
                 'Упражнение не принадлежит этому тесту',
@@ -180,32 +159,15 @@ class GuestTestController extends Controller
         $attempt['completed_exercises'][] = $request->testing_exercise_id;
 
         $this->guestService->updateGuestTestResults($guestId, $attemptInfo['all_tests']);
-        $nextExercise = $testing->testExercises()
-            ->whereNotIn('testing_exercises.id', $attempt['completed_exercises'])
-            ->orderBy('order_number')
-            ->first();
+        $nextExercise = $this->attemptFlow->nextExercise($testing, $attempt['completed_exercises']);
 
-        $responseData = [
-            'saved' => true,
-            'result' => [
+        return ApiResponse::data(
+            $this->attemptFlow->resultPayload([
                 'testing_exercise_id' => $request->testing_exercise_id,
                 'result_value' => $request->result_value,
-            ],
-        ];
-
-        if ($nextExercise) {
-            $responseData['next_exercise'] = [
-                'id' => $nextExercise->id,
-                'description' => $nextExercise->description,
-                'image' => $nextExercise->image,
-                'order_number' => $nextExercise->pivot->order_number,
-            ];
-        } else {
-            $responseData['all_exercises_completed'] = true;
-            $responseData['message'] = 'Все упражнения выполнены. Введите пульс для завершения теста.';
-        }
-
-        return ApiResponse::data($responseData, 'Результат сохранён для гостя');
+            ], $nextExercise),
+            'Результат сохранён для гостя'
+        );
     }
 
     /**
@@ -250,7 +212,7 @@ class GuestTestController extends Controller
             );
         }
 
-        $totalExercises = $testing->testExercises()->count();
+        $totalExercises = $this->attemptFlow->totalExercises($testing);
         $completedExercises = count($attempt['completed_exercises']);
 
         if ($completedExercises < $totalExercises) {

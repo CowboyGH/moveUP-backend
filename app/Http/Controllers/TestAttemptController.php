@@ -9,20 +9,18 @@ use App\Models\TestAttempt;
 use App\Models\Testing;
 use App\Models\TestResult;
 use App\Models\User;
+use App\Services\Tests\TestAttemptFlowService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class TestAttemptController extends Controller
 {
-    protected WorkoutGeneratorService $workoutGenerator;
-
-    public function __construct(WorkoutGeneratorService $workoutGenerator)
-    {
-        $this->workoutGenerator = $workoutGenerator;
-    }
+    public function __construct(
+        private readonly WorkoutGeneratorService $workoutGenerator,
+        private readonly TestAttemptFlowService $attemptFlow
+    ) {}
 
     /**
      * Начать прохождение теста
@@ -42,9 +40,7 @@ class TestAttemptController extends Controller
             'started_at' => now(),
         ]);
 
-        $firstExercise = $testing->testExercises()
-            ->orderBy('order_number')
-            ->first();
+        $firstExercise = $this->attemptFlow->firstExercise($testing);
 
         if (!$firstExercise) {
             return ApiResponse::error(
@@ -54,25 +50,10 @@ class TestAttemptController extends Controller
             );
         }
 
-        $data = [
-            'attempt_id' => $attempt->id,
-            'testing' => [
-                'id' => $testing->id,
-                'title' => $testing->title,
-                'description' => $testing->description,
-                'duration_minutes' => $testing->duration_minutes,
-                'image' => $testing->image,
-                'total_exercises' => $testing->testExercises()->count(),
-            ],
-            'current_exercise' => [
-                'id' => $firstExercise->id,
-                'description' => $firstExercise->description,
-                'image' => $firstExercise->image,
-                'order_number' => $firstExercise->pivot->order_number,
-            ],
-        ];
-
-        return ApiResponse::data($data, 'Тест начат');
+        return ApiResponse::data(
+            $this->attemptFlow->startPayload($testing, $attempt->id, $firstExercise),
+            'Тест начат'
+        );
     }
 
     /**
@@ -102,12 +83,7 @@ class TestAttemptController extends Controller
             );
         }
 
-        $belongsToTest = DB::table('testing_test_exercises')
-            ->where('testing_id', $attempt->testing_id)
-            ->where('testing_exercise_id', $request->testing_exercise_id)
-            ->exists();
-
-        if (!$belongsToTest) {
+        if (!$this->attemptFlow->exerciseBelongsToTesting($attempt->testing, $request->testing_exercise_id)) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
                 'Упражнение не принадлежит этому тесту',
@@ -140,29 +116,12 @@ class TestAttemptController extends Controller
             ->pluck('testing_exercise_id')
             ->toArray();
 
-        $nextExercise = $attempt->testing->testExercises()
-            ->whereNotIn('testing_exercises.id', $completedIds)
-            ->orderBy('order_number')
-            ->first();
+        $nextExercise = $this->attemptFlow->nextExercise($attempt->testing, $completedIds);
 
-        $responseData = [
-            'saved' => true,
-            'result' => $result,
-        ];
-
-        if ($nextExercise) {
-            $responseData['next_exercise'] = [
-                'id' => $nextExercise->id,
-                'description' => $nextExercise->description,
-                'image' => $nextExercise->image,
-                'order_number' => $nextExercise->pivot->order_number,
-            ];
-        } else {
-            $responseData['all_exercises_completed'] = true;
-            $responseData['message'] = 'Все упражнения выполнены. Введите пульс для завершения теста.';
-        }
-
-        return ApiResponse::data($responseData, 'Результат сохранён');
+        return ApiResponse::data(
+            $this->attemptFlow->resultPayload($result, $nextExercise),
+            'Результат сохранён'
+        );
     }
 
     /**
@@ -191,7 +150,7 @@ class TestAttemptController extends Controller
             );
         }
 
-        $totalExercises = $attempt->testing->testExercises()->count();
+        $totalExercises = $this->attemptFlow->totalExercises($attempt->testing);
         $completedExercises = TestResult::where('test_attempt_id', $attempt->id)->count();
 
         if ($completedExercises < $totalExercises) {
