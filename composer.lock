@@ -216,62 +216,6 @@
             "time": "2025-02-06T14:54:32+00:00"
         },
         {
-            "name": "devkandil/notifire",
-            "version": "v1.2.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/DevKandil/notifire.git",
-                "reference": "1cf295538af8658051c5b7474427c6d2b00a6961"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/DevKandil/notifire/zipball/1cf295538af8658051c5b7474427c6d2b00a6961",
-                "reference": "1cf295538af8658051c5b7474427c6d2b00a6961",
-                "shasum": ""
-            },
-            "require": {
-                "google/apiclient": "^2.0",
-                "laravel/framework": "^10.0|^11.0|^12.0",
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^8.0|^9.0",
-                "phpunit/phpunit": "^10.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Fcm": "DevKandil\\NotiFire\\Facades\\Fcm"
-                    },
-                    "providers": [
-                        "DevKandil\\NotiFire\\FcmServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "DevKandil\\NotiFire\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Abdelrazek Kandil",
-                    "email": "devkandil@gmail.com"
-                }
-            ],
-            "description": "A Laravel package for sending Firebase Cloud Messaging (FCM) notifications",
-            "support": {
-                "issues": "https://github.com/DevKandil/notifire/issues",
-                "source": "https://github.com/DevKandil/notifire/tree/v1.2.4"
-            },
-            "time": "2026-01-23T17:32:50+00:00"
-        },
-        {
             "name": "dflydev/dot-access-data",
             "version": "v3.0.3",
             "source": {

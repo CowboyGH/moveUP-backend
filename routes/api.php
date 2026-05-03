@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailVerificationController;
-use App\Http\Controllers\FcmTokenController;
 use App\Http\Controllers\GuestTestController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\Payment\PaymentController;
@@ -78,9 +77,6 @@ Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
 
     Route::get('/user-parameters/me', [UserParameterController::class, 'getMyParameters']);
     Route::post('/user/weekly-goal', [UserProgressController::class, 'updateWeeklyGoal']);
-
-    Route::post('/fcm/token', [FcmTokenController::class, 'update']);
-    Route::delete('/fcm/token', [FcmTokenController::class, 'destroy']);
 
     Route::post('/workouts/start', [App\Http\Controllers\WorkoutStartController::class, 'start']);
     Route::post('workouts/{userWorkout}/abandon', [App\Http\Controllers\WorkoutStartController::class, 'abandon']);

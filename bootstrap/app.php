@@ -2,7 +2,6 @@
 
 use App\Console\Commands\CheckPhasesProgress;
 use App\Console\Commands\ProcessAutoPayments;
-use App\Console\Commands\TestPushNotification;
 use App\Http\Middleware\JwtAuthenticate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -16,7 +15,6 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withCommands([
         ProcessAutoPayments::class,
-        TestPushNotification::class,
         CheckPhasesProgress::class
     ])
     ->withMiddleware(function (Middleware $middleware): void {

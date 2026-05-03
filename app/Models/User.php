@@ -10,11 +10,10 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Cache;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use DevKandil\NotiFire\Traits\HasFcm;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, HasFcm;
+    use HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -22,7 +21,6 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'role_id',
         'avatar',
-        'fcm_token',
     ];
 
     protected $hidden = [

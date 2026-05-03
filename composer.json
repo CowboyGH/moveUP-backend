@@ -8,7 +8,6 @@
     "require": {
         "php": "^8.2",
         "darkaonline/l5-swagger": "^8.0",
-        "devkandil/notifire": "^1.2",
         "laravel/framework": "^12.0",
         "tymon/jwt-auth": "^2.2"
     },
