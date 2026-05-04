@@ -3,16 +3,16 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Billing\PaymentController;
+use App\Http\Controllers\Billing\SavedCardController;
+use App\Http\Controllers\Billing\SubscriptionController;
 use App\Http\Controllers\Onboarding\UserParameterController;
 use App\Http\Controllers\Onboarding\UserProgressController;
-use App\Http\Controllers\Payment\PaymentController;
-use App\Http\Controllers\Payment\SavedCardController;
 use App\Http\Controllers\Profile\ProfileAvatarController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Profile\ProfileDetailController;
 use App\Http\Controllers\Profile\ProfileSecurityController;
 use App\Http\Controllers\Profile\ProfileStatisticsController;
-use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\Tests\GuestTestController;
 use App\Http\Controllers\Tests\TestAttemptController;
 use App\Http\Controllers\Tests\TestingController;
@@ -77,7 +77,7 @@ Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
 
     Route::get('/me', [AuthController::class, 'me']);
 
-    Route::post('/cancel-subscription', [App\Http\Controllers\SubscriptionController::class, 'cancel']);
+    Route::post('/cancel-subscription', [SubscriptionController::class, 'cancel']);
 
     Route::post('/tests/{testing}/start', [TestAttemptController::class, 'start']);
     Route::post('/test-attempts/{attempt}/result', [TestAttemptController::class, 'storeResult']);

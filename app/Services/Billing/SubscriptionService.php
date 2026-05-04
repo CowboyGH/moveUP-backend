@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Payment;
+namespace App\Services\Billing;
 
 use App\Models\Payment;
 use App\Models\SavedCard;

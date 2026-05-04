@@ -7,7 +7,7 @@ use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\TestAttempt;
 use App\Models\UserWorkout;
-use App\Services\Payment\CardService;
+use App\Services\Billing\CardService;
 use App\Services\PhaseService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;

@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Requests\Payment;
+namespace App\Http\Requests\Billing;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Payment;
+namespace App\Http\Controllers\Billing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Payment\SaveCardRequest;
+use App\Http\Requests\Billing\SaveCardRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\SavedCard;
-use App\Services\Payment\CardService;
+use App\Services\Billing\CardService;
 use Illuminate\Http\JsonResponse;
 
 class SavedCardController extends Controller

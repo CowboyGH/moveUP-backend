@@ -3,9 +3,9 @@
 
 namespace App\Providers;
 
-use App\Services\Payment\CardService;
-use App\Services\Payment\PaymentService;
-use App\Services\Payment\SubscriptionService;
+use App\Services\Billing\CardService;
+use App\Services\Billing\PaymentService;
+use App\Services\Billing\SubscriptionService;
 use Illuminate\Support\ServiceProvider;
 
 class PaymentServiceProvider extends ServiceProvider

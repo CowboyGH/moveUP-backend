@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Payment;
+namespace App\Http\Controllers\Billing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Payment\SubscriptionPaymentRequest;
+use App\Http\Requests\Billing\SubscriptionPaymentRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\Subscription;
-use App\Services\Payment\CardService;
-use App\Services\Payment\PaymentService;
-use App\Services\Payment\SubscriptionService;
+use App\Services\Billing\CardService;
+use App\Services\Billing\PaymentService;
+use App\Services\Billing\SubscriptionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

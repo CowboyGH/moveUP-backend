@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Models\TestAttempt;
 use App\Models\UserWorkout;
 use App\Services\PhaseService;
-use App\Services\Payment\CardService;
+use App\Services\Billing\CardService;
 use Illuminate\Http\JsonResponse;
 
 class ProfileDetailController extends Controller
