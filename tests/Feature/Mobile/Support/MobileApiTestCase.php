@@ -63,9 +63,9 @@ abstract class MobileApiTestCase extends TestCase
     protected function createReferences(): array
     {
         return [
-            'goal' => Goal::factory()->create(),
-            'level' => Level::factory()->create(),
-            'equipment' => Equipment::factory()->create(),
+            'goal' => Goal::firstOrCreate(['name' => 'Жиросжигание']),
+            'level' => Level::firstOrCreate(['name' => 'Начинающий']),
+            'equipment' => Equipment::firstOrCreate(['name' => 'Зал']),
             'phase' => Phase::factory()->create(['order_number' => 1, 'duration_days' => 7]),
         ];
     }
