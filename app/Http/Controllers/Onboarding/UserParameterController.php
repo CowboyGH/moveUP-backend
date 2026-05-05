@@ -11,45 +11,24 @@ use App\Http\Responses\ErrorResponse;
 use App\Models\Equipment;
 use App\Models\Goal;
 use App\Models\Level;
-use App\Models\User;
-use App\Models\UserParameter;
-use App\Services\GuestDataService;
-use App\Services\PhaseService;
-use App\Services\WorkoutGeneration\WorkoutGeneratorService;
+use App\Services\Onboarding\UserParameterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class UserParameterController extends Controller
 {
-    private GuestDataService $guestService;
-    private PhaseService $phaseService;
-    private WorkoutGeneratorService $workoutGenerator;
-
     public function __construct(
-        GuestDataService $guestService,
-        PhaseService $phaseService,
-        WorkoutGeneratorService $workoutGenerator
-    ) {
-        $this->guestService = $guestService;
-        $this->phaseService = $phaseService;
-        $this->workoutGenerator = $workoutGenerator;
-    }
+        private readonly UserParameterService $userParameterService
+    ) {}
+
     public function getAllReferences(): JsonResponse
     {
-        $data = [
-            'goals' => Goal::select('id', 'name')->get(),
-            'levels' => Level::select('id', 'name',)->get(),
-            'equipment' => Equipment::select('id', 'name')->get(),
-        ];
-
-        return ApiResponse::success('Справочные данные получены', $data);
+        return ApiResponse::success('Справочные данные получены', $this->userParameterService->references());
     }
 
-    public function saveGoal(SaveGoalRequest $request)
+    public function saveGoal(SaveGoalRequest $request): JsonResponse
     {
-        $goal = Goal::find($request->goal_id);
-        if (!$goal) {
+        if (!Goal::find($request->goal_id)) {
             return ApiResponse::error(
                 ErrorResponse::NOT_FOUND,
                 'Цель не найдена',
@@ -57,32 +36,21 @@ class UserParameterController extends Controller
             );
         }
 
+        $result = $this->userParameterService->saveGoal($request, $request->goal_id);
+
         if ($request->user()) {
-            $user = $request->user();
-            $parameters = UserParameter::firstOrNew(['user_id' => $user->id]);
-            $parameters->goal_id = $request->goal_id;
-            $parameters->save();
-
-            $this->regenerateWorkouts($user, true);
-
-            return ApiResponse::success('Цель сохранена', $parameters);
+            return ApiResponse::success('Цель сохранена', $result);
         }
 
-        $guestId = $this->guestService->getGuestId($request);
-        $guestData = $this->guestService->updateGuestField($guestId, 'goal_id', $request->goal_id);
-
-        return ApiResponse::success('Цель сохранена для гостя', [
-            'guest_id' => $guestId,
-            'guest_data' => $guestData
-        ])->withCookie(cookie('guest_id', $guestId, 60 * 24 * 30));
+        return ApiResponse::success('Цель сохранена для гостя', $result)
+            ->withCookie(cookie('guest_id', $result['guest_id'], 60 * 24 * 30));
     }
 
-    public function saveAnthropometry(SaveAnthropometryRequest $request)
+    public function saveAnthropometry(SaveAnthropometryRequest $request): JsonResponse
     {
         $data = $request->getData();
 
-        $equipment = Equipment::find($data['equipment_id']);
-        if (!$equipment) {
+        if (!Equipment::find($data['equipment_id'])) {
             return ApiResponse::error(
                 ErrorResponse::NOT_FOUND,
                 'Оборудование не найдено',
@@ -90,34 +58,19 @@ class UserParameterController extends Controller
             );
         }
 
+        $result = $this->userParameterService->saveAnthropometry($request, $data);
+
         if ($request->user()) {
-            $user = $request->user();
-            $parameters = UserParameter::firstOrNew(['user_id' => $user->id]);
-
-            $equipmentChanged = $parameters->exists && $parameters->equipment_id != ($data['equipment_id'] ?? null);
-
-            $parameters->fill($data);
-            $parameters->save();
-
-            $force = $equipmentChanged || !$this->allParametersFilled($user);
-            $this->regenerateWorkouts($user, $force);
-
-            return ApiResponse::success('Антропометрия сохранена', $parameters);
+            return ApiResponse::success('Антропометрия сохранена', $result);
         }
 
-        $guestId = $this->guestService->getGuestId($request);
-        $guestData = $this->guestService->updateGuestFields($guestId, $data);
-
-        return ApiResponse::success('Антропометрия сохранена для гостя', [
-            'guest_id' => $guestId,
-            'guest_data' => $guestData
-        ])->withCookie(cookie('guest_id', $guestId, 60 * 24 * 30));
+        return ApiResponse::success('Антропометрия сохранена для гостя', $result)
+            ->withCookie(cookie('guest_id', $result['guest_id'], 60 * 24 * 30));
     }
 
-    public function saveLevel(SaveLevelRequest $request)
+    public function saveLevel(SaveLevelRequest $request): JsonResponse
     {
-        $level = Level::find($request->level_id);
-        if (!$level) {
+        if (!Level::find($request->level_id)) {
             return ApiResponse::error(
                 ErrorResponse::NOT_FOUND,
                 'Уровень не найден',
@@ -125,92 +78,19 @@ class UserParameterController extends Controller
             );
         }
 
+        $result = $this->userParameterService->saveLevel($request, $request->level_id);
+
         if ($request->user()) {
-            $user = $request->user();
-            $parameters = UserParameter::firstOrNew(['user_id' => $user->id]);
-            $parameters->level_id = $request->level_id;
-            $parameters->save();
-
-            $this->regenerateWorkouts($user, true);
-
-            return ApiResponse::success('Уровень сохранен', $parameters);
+            return ApiResponse::success('Уровень сохранен', $result);
         }
 
-        $guestId = $this->guestService->getGuestId($request);
-        $guestData = $this->guestService->updateGuestField($guestId, 'level_id', $request->level_id);
-
-        return ApiResponse::success('Уровень сохранен для гостя', [
-            'guest_id' => $guestId,
-            'guest_data' => $guestData
-        ])->withCookie(cookie('guest_id', $guestId, 60 * 24 * 30));
+        return ApiResponse::success('Уровень сохранен для гостя', $result)
+            ->withCookie(cookie('guest_id', $result['guest_id'], 60 * 24 * 30));
     }
 
-    /**
-     * Проверяет, заполнены ли все необходимые параметры
-     */
-    private function allParametersFilled(User $user): bool
+    public function getMyParameters(Request $request): JsonResponse
     {
-        $params = $user->userParameters;
-        return $params && $params->goal_id && $params->level_id && $params->equipment_id;
-    }
-
-    /**
-     * Перегенерирует тренировки пользователя при необходимости
-     */
-    public function regenerateWorkouts(User $user, bool $force = false): void
-    {
-        Log::info("🔄 regenerateWorkouts вызван", [
-            'user_id' => $user->id,
-            'force' => $force,
-            'all_parameters_filled' => $this->allParametersFilled($user)
-        ]);
-
-        $params = $user->userParameters;
-
-        if (!$this->allParametersFilled($user)) {
-            return;
-        }
-
-        // Получаем или создаем прогресс
-        $currentProgress = $user->currentProgress();
-        if (!$currentProgress) {
-            $currentProgress = $this->phaseService->assignInitialPhase($user);
-        }
-
-        if ($force) {
-            // Принудительно удаляем старые тренировки
-            $deleted = $user->userWorkouts()
-                ->where('status', 'started')
-                ->delete();
-
-            Log::info("Удалено {$deleted} старых тренировок пользователя {$user->id} перед перегенерацией");
-        }
-
-        // Проверяем, есть ли активные тренировки
-        $hasActiveWorkouts = $user->userWorkouts()
-            ->where('status', 'started')
-            ->exists();
-
-        // Генерируем новые, если их нет или мы их удалили
-        if ($force || !$hasActiveWorkouts) {
-            Log::info("✅ Начинаем генерацию тренировок", [
-                'user_id' => $user->id,
-                'phase_id' => $currentProgress->phase_id
-            ]);
-            $workouts = $this->workoutGenerator->generateForPhase($user, $currentProgress->phase);
-
-            if ($workouts->isNotEmpty()) {
-                $this->workoutGenerator->assignWorkoutsToUser($user, $workouts);
-                Log::info("Сгенерировано {$workouts->count()} тренировок для пользователя {$user->id}");
-            }
-        }
-    }
-
-    public function getMyParameters(Request $request)
-    {
-        $parameters = $request->user()->userParameters()
-            ->with(['goal', 'level', 'equipment'])
-            ->first();
+        $parameters = $this->userParameterService->getMyParameters($request->user());
 
         if (!$parameters) {
             return ApiResponse::success('Параметры не найдены', null);
