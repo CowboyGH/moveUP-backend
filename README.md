@@ -9,6 +9,7 @@ Laravel API backend for the moveUP mobile application.
 - Сгенерировать отдельный JWT secret: `docker exec laravel-api php artisan jwt:secret`
 - Пересобрать и поднять API-контейнер: `docker compose up --build -d server`
 - Пересоздать контейнер после изменения env/compose: `docker compose up -d --force-recreate server`
+- Поднять optional phpMyAdmin: `docker compose --profile tools up -d phpmyadmin`
 - Создать миграцию: `docker exec laravel-api php artisan make:migration <name>`
 - Запустить миграции: `docker exec laravel-api php artisan migrate`
 - Сбросить БД и сиды: `docker exec laravel-api php artisan migrate:fresh --seed`
