@@ -3,16 +3,19 @@
 namespace App\Http\Controllers\Workouts;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Workouts\Execution\ExerciseController;
 use App\Http\Requests\Workouts\StartWorkoutRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\UserWorkout;
 use App\Models\Workout;
-use Illuminate\Http\Request;
+use App\Services\ExerciseLoadService;
 
 class WorkoutStartController extends Controller
 {
+    public function __construct(
+        private readonly ExerciseLoadService $exerciseLoadService
+    ) {}
+
     public function start(StartWorkoutRequest $request)
     {
         $user = $request->user();
@@ -109,9 +112,7 @@ class WorkoutStartController extends Controller
             );
         }
 
-        // Используем метод-геттер вместо прямого доступа к свойству
-        $exerciseController = app(ExerciseController::class);
-        $weight = $exerciseController->getExerciseLoadService()->getUserCurrentWeight(
+        $weight = $this->exerciseLoadService->getUserCurrentWeight(
             $userWorkout->user_id,
             $firstExercise->id
         );

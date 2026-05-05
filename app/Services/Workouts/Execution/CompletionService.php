@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Workouts\Execution;
+namespace App\Services\Workouts\Execution;
 
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
@@ -8,7 +8,7 @@ use App\Models\UserWorkout;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class CompletionController extends BaseWorkoutController
+class CompletionService extends BaseWorkoutExecutionService
 {
     public function complete(UserWorkout $userWorkout)
     {
@@ -31,7 +31,7 @@ class CompletionController extends BaseWorkoutController
                 'status' => 'completed',
                 'completed_at' => now(),
             ]);
-            // Обновляем прогресс и проверяем переход на следующую фазу
+
             $this->phaseService->handleWorkoutCompletion($userWorkout);
 
             DB::commit();

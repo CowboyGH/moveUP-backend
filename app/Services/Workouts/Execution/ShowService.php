@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Workouts\Execution;
+namespace App\Services\Workouts\Execution;
 
 use App\Http\Responses\ApiResponse;
 use App\Models\UserWorkout;
 
-class ShowController extends BaseWorkoutController
+class ShowService extends BaseWorkoutExecutionService
 {
     public function show(UserWorkout $userWorkout)
     {
@@ -35,7 +35,7 @@ class ShowController extends BaseWorkoutController
             ];
         })->sortBy('order_number')->values();
 
-        $data = [
+        return ApiResponse::data([
             'user_workout_id' => $userWorkout->id,
             'workout' => [
                 'id' => $userWorkout->workout->id,
@@ -58,8 +58,6 @@ class ShowController extends BaseWorkoutController
             'exercises' => $exercisesWithWeights,
             'started_at' => $userWorkout->started_at,
             'status' => $userWorkout->status,
-        ];
-
-        return ApiResponse::data($data, 'Детали тренировки');
+        ], 'Детали тренировки');
     }
 }

@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Workouts\Execution;
+namespace App\Services\Workouts\Execution;
 
-use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\UserWorkout;
@@ -11,18 +10,13 @@ use App\Services\PhaseService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
-abstract class BaseWorkoutController extends Controller
+abstract class BaseWorkoutExecutionService
 {
-    protected ExerciseLoadService $exerciseLoadService;
-    protected PhaseService $phaseService;
-
     public function __construct(
-        ExerciseLoadService $exerciseLoadService,
-        PhaseService $phaseService
-    ) {
-        $this->exerciseLoadService = $exerciseLoadService;
-        $this->phaseService = $phaseService;
-    }
+        protected readonly ExerciseLoadService $exerciseLoadService,
+        protected readonly PhaseService $phaseService
+    ) {}
+
     protected function checkOwnership(UserWorkout $userWorkout): ?JsonResponse
     {
         $user = request()->user();
@@ -37,19 +31,18 @@ abstract class BaseWorkoutController extends Controller
 
         return null;
     }
+
     protected function getSortedExercises(UserWorkout $userWorkout): Collection
     {
         $workout = $userWorkout->workout()->with('exercises')->first();
+
         return $workout->exercises->sortBy('pivot.order_number');
     }
+
     protected function getSortedWarmups(UserWorkout $userWorkout): Collection
     {
         $workout = $userWorkout->workout()->with('warmups')->first();
-        return $workout->warmups->sortBy('pivot.order_number');
-    }
 
-    public function getExerciseLoadService(): ExerciseLoadService
-    {
-        return $this->exerciseLoadService;
+        return $workout->warmups->sortBy('pivot.order_number');
     }
 }

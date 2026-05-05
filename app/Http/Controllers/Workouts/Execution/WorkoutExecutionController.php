@@ -6,51 +6,47 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Workouts\NextWarmupRequest;
 use App\Http\Requests\Workouts\SaveExerciseResultRequest;
 use App\Models\UserWorkout;
-use Illuminate\Http\Request;
+use App\Services\Workouts\Execution\CompletionService;
+use App\Services\Workouts\Execution\ExerciseService;
+use App\Services\Workouts\Execution\ShowService;
+use App\Services\Workouts\Execution\WarmupService;
 
 class WorkoutExecutionController extends Controller
 {
-    protected ShowController $showController;
-    protected WarmupController $warmupController;
-    protected ExerciseController $exerciseController;
-    protected CompletionController $completionController;
-
     public function __construct(
-        ShowController $showController,
-        WarmupController $warmupController,
-        ExerciseController $exerciseController,
-        CompletionController $completionController
-    ) {
-        $this->showController = $showController;
-        $this->warmupController = $warmupController;
-        $this->exerciseController = $exerciseController;
-        $this->completionController = $completionController;
-    }
+        private readonly ShowService $showService,
+        private readonly WarmupService $warmupService,
+        private readonly ExerciseService $exerciseService,
+        private readonly CompletionService $completionService
+    ) {}
 
     public function show(UserWorkout $userWorkout)
     {
-        return $this->showController->show($userWorkout);
+        return $this->showService->show($userWorkout);
     }
+
     public function startWarmup(UserWorkout $userWorkout)
     {
-        return $this->warmupController->startWarmup($userWorkout);
+        return $this->warmupService->startWarmup($userWorkout);
     }
+
     public function completeWarmup(UserWorkout $userWorkout)
     {
-        return $this->warmupController->completeWarmup($userWorkout);
+        return $this->warmupService->completeWarmup($userWorkout);
     }
+
     public function nextWarmup(UserWorkout $userWorkout, NextWarmupRequest $request)
     {
-        return $this->warmupController->nextWarmup($userWorkout, $request);
+        return $this->warmupService->nextWarmup($userWorkout, $request);
     }
 
     public function saveExerciseResult(UserWorkout $userWorkout, SaveExerciseResultRequest $request)
     {
-        return $this->exerciseController->saveExerciseResult($userWorkout, $request);
+        return $this->exerciseService->saveExerciseResult($userWorkout, $request);
     }
 
     public function complete(UserWorkout $userWorkout)
     {
-        return $this->completionController->complete($userWorkout);
+        return $this->completionService->complete($userWorkout);
     }
 }

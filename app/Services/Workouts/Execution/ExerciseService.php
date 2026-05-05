@@ -1,14 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\Workouts\Execution;
+namespace App\Services\Workouts\Execution;
 
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\UserWorkout;
 use Illuminate\Http\Request;
 
-class ExerciseController extends BaseWorkoutController
+class ExerciseService extends BaseWorkoutExecutionService
 {
+    public function __construct(
+        \App\Services\ExerciseLoadService $exerciseLoadService,
+        \App\Services\PhaseService $phaseService,
+        private readonly RegenerationService $regenerationService
+    ) {
+        parent::__construct($exerciseLoadService, $phaseService);
+    }
+
     public function getFirstExercise(UserWorkout $userWorkout)
     {
         if ($userWorkout->status !== UserWorkout::STATUS_STARTED) {
@@ -63,30 +71,23 @@ class ExerciseController extends BaseWorkoutController
             'reps_completed' => 'nullable|integer|min:0|max:50',
         ]);
 
-        $performanceData = [
-            'sets_completed' => $request->sets_completed,
-            'reps_completed' => $request->reps_completed,
-            'weight_used' => $request->weight_used,
-        ];
-
-        // Обрабатываем реакцию через ExerciseLoadService
         $result = $this->exerciseLoadService->processReaction(
             $user,
             $request->exercise_id,
             $request->reaction,
             $userWorkout->id,
-            $performanceData
+            [
+                'sets_completed' => $request->sets_completed,
+                'reps_completed' => $request->reps_completed,
+                'weight_used' => $request->weight_used,
+            ]
         );
 
-        // Проверяем фазу отдыха и перегенерируем тренировки при необходимости
         if ($result['rest_phase'] && $result['rest_phase']['required']) {
-            app(RegenerationController::class)->checkAndRegenerateWorkouts($user, $request->exercise_id);
+            $this->regenerationService->checkAndRegenerateWorkouts($user, $request->exercise_id);
         }
 
-        // Получаем следующее упражнение
         $exercises = $this->getSortedExercises($userWorkout);
-
-        // Проверяем, существует ли текущее упражнение
         $currentExercise = $exercises->firstWhere('id', $request->exercise_id);
 
         if (!$currentExercise) {
@@ -102,13 +103,11 @@ class ExerciseController extends BaseWorkoutController
         });
 
         $nextExercise = $exercises->get($currentIndex + 1);
-
         $responseData = [
             'exercise_result' => $result,
         ];
 
         if ($nextExercise) {
-            // Если есть следующее упражнение, возвращаем его
             $weight = $this->exerciseLoadService->getUserCurrentWeight($user->id, $nextExercise->id);
 
             $responseData['next_exercise'] = [
@@ -132,6 +131,7 @@ class ExerciseController extends BaseWorkoutController
             $responseData['all_exercises_completed'] = true;
             $responseData['message'] = 'Упражнений больше нет, завершите тренировку!';
         }
+
         return ApiResponse::success('Результат упражнения сохранен', $responseData);
     }
 }

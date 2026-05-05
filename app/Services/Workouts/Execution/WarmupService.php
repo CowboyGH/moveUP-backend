@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Workouts\Execution;
+namespace App\Services\Workouts\Execution;
 
 use App\Http\Requests\Workouts\NextWarmupRequest;
 use App\Http\Responses\ApiResponse;
@@ -8,11 +8,16 @@ use App\Http\Responses\ErrorResponse;
 use App\Models\UserWorkout;
 use Illuminate\Support\Facades\Auth;
 
-class WarmupController extends BaseWorkoutController
+class WarmupService extends BaseWorkoutExecutionService
 {
-    /**
-     * Начинаем разминку
-     */
+    public function __construct(
+        \App\Services\ExerciseLoadService $exerciseLoadService,
+        \App\Services\PhaseService $phaseService,
+        private readonly ExerciseService $exerciseService
+    ) {
+        parent::__construct($exerciseLoadService, $phaseService);
+    }
+
     public function startWarmup(UserWorkout $userWorkout)
     {
         if (!Auth::check()) {
@@ -53,18 +58,6 @@ class WarmupController extends BaseWorkoutController
         ], 'Разминка начата');
     }
 
-    protected function startWorkout(UserWorkout $userWorkout)
-    {
-        $userWorkout->update([
-            'status' => UserWorkout::STATUS_STARTED,
-            'started_at' => now(),
-        ]);
-        return app(ExerciseController::class)->getFirstExercise($userWorkout);
-    }
-
-    /**
-     * Получить следующее упражнение разминки
-     */
     public function nextWarmup(UserWorkout $userWorkout, NextWarmupRequest $request)
     {
         if (!Auth::check()) {
@@ -86,6 +79,7 @@ class WarmupController extends BaseWorkoutController
             if (!$firstWarmup) {
                 return $this->startWorkout($userWorkout);
             }
+
             return ApiResponse::data([
                 'type' => 'warmup',
                 'warmup' => [
@@ -100,7 +94,6 @@ class WarmupController extends BaseWorkoutController
             ]);
         }
 
-        // Ищем следующее упражнение разминки
         $currentWarmup = $warmups->firstWhere('id', $request->current_warmup_id);
         $currentIndex = $warmups->search(function ($item) use ($currentWarmup) {
             return $item->id === $currentWarmup->id;
@@ -121,12 +114,10 @@ class WarmupController extends BaseWorkoutController
                 ],
             ]);
         }
+
         return $this->startWorkout($userWorkout);
     }
 
-    /**
-     * Завершение разминки
-     */
     public function completeWarmup(UserWorkout $userWorkout)
     {
         if (!Auth::check()) {
@@ -147,6 +138,17 @@ class WarmupController extends BaseWorkoutController
                 409
             );
         }
+
         return $this->startWorkout($userWorkout);
+    }
+
+    private function startWorkout(UserWorkout $userWorkout)
+    {
+        $userWorkout->update([
+            'status' => UserWorkout::STATUS_STARTED,
+            'started_at' => now(),
+        ]);
+
+        return $this->exerciseService->getFirstExercise($userWorkout);
     }
 }
