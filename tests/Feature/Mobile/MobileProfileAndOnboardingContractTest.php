@@ -83,7 +83,17 @@ class MobileProfileAndOnboardingContractTest extends MobileApiTestCase
         $this->getJson('/api/profile', $headers)
             ->assertOk()
             ->assertJsonPath('success', true)
-            ->assertJsonStructure(['data' => ['user', 'parameters', 'subscriptions', 'workouts', 'tests', 'phase', 'cards']]);
+            ->assertJsonStructure([
+                'data' => [
+                    'user' => ['id', 'name', 'email', 'avatar_url', 'created_at', 'email_verified'],
+                    'parameters',
+                    'subscriptions' => ['active', 'history'],
+                    'workouts' => ['history'],
+                    'tests' => ['history'],
+                    'phase',
+                    'cards',
+                ],
+            ]);
 
         $this->putJson('/api/profile', ['name' => 'Updated User'], $headers)
             ->assertOk()
@@ -110,23 +120,26 @@ class MobileProfileAndOnboardingContractTest extends MobileApiTestCase
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.avatar_url', null);
 
-        foreach ([
-            '/api/profile/user',
-            '/api/profile/active-subscription',
-            '/api/profile/my-cards',
-            '/api/profile/user-parameters',
-            '/api/profile/history',
-            '/api/profile/phase',
-            '/api/profile/statistics',
-            '/api/profile/statistics/volume',
-            '/api/profile/statistics/trend',
-            '/api/profile/statistics/frequency',
-            '/api/profile/statistics/exercises',
-            '/api/profile/statistics/workouts',
-        ] as $endpoint) {
+        $detailEndpoints = [
+            '/api/profile/user' => ['data' => ['id', 'name', 'email', 'avatar_url', 'created_at', 'email_verified']],
+            '/api/profile/active-subscription' => ['data'],
+            '/api/profile/my-cards' => ['data'],
+            '/api/profile/user-parameters' => ['data'],
+            '/api/profile/history' => ['data' => ['subscriptions', 'workouts', 'tests']],
+            '/api/profile/phase' => ['data'],
+            '/api/profile/statistics' => ['data' => ['current_phase', 'volume', 'trend', 'frequency']],
+            '/api/profile/statistics/volume' => ['data' => ['has_data', 'period', 'summary', 'chart']],
+            '/api/profile/statistics/trend' => ['data' => ['has_data', 'chart', 'available_workouts']],
+            '/api/profile/statistics/frequency' => ['data' => ['has_data', 'period_info', 'summary', 'chart']],
+            '/api/profile/statistics/exercises' => ['data'],
+            '/api/profile/statistics/workouts' => ['data'],
+        ];
+
+        foreach ($detailEndpoints as $endpoint => $structure) {
             $this->getJson($endpoint, $headers)
                 ->assertOk()
-                ->assertJsonPath('success', true);
+                ->assertJsonPath('success', true)
+                ->assertJsonStructure($structure);
         }
 
         $this->deleteJson('/api/profile', [], $headers)

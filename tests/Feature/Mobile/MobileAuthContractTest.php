@@ -22,6 +22,7 @@ class MobileAuthContractTest extends MobileApiTestCase
         $this->postJson('/api/register', $payload, ['X-Guest-ID' => 'guest-auth'])
             ->assertCreated()
             ->assertJsonPath('success', true)
+            ->assertJsonPath('user.role_id', Role::where('name', 'user')->first()->id)
             ->assertJsonStructure([
                 'success',
                 'message',
@@ -52,12 +53,13 @@ class MobileAuthContractTest extends MobileApiTestCase
         ])
             ->assertOk()
             ->assertJsonPath('success', true)
+            ->assertJsonPath('token_type', 'bearer')
             ->assertJsonStructure([
                 'access_token',
                 'token_type',
                 'expires_in',
                 'refresh_expires_in',
-                'session',
+                'session' => ['lifetime_days', 'inactivity_limit_days', 'access_token_expires_in_minutes'],
                 'user' => ['id', 'email', 'role_id'],
             ]);
 
@@ -73,6 +75,7 @@ class MobileAuthContractTest extends MobileApiTestCase
             ->postJson('/api/refresh')
             ->assertOk()
             ->assertJsonPath('success', true)
+            ->assertJsonPath('token_type', 'bearer')
             ->assertJsonStructure(['access_token', 'token_type', 'expires_in']);
 
         $this->withHeader('Authorization', 'Bearer ' . $refresh->json('access_token'))
