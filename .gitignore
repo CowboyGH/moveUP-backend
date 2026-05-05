@@ -1,8 +1,12 @@
 .DS_Store
 .env
 .env.backup
+.env.local
 .env.production
+.env.*.local
 .phpactor.json
+.php-cs-fixer.cache
+.pint.cache
 .phpunit.result.cache
 /.fleet
 /.idea
@@ -13,6 +17,10 @@
 /auth.json
 /public/storage
 /vendor
+/composer.phar
+/coverage
+/reports
+/docker-compose.override.yml
 Homestead.json
 Homestead.yaml
 Thumbs.db
