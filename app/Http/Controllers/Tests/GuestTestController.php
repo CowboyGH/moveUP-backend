@@ -80,15 +80,11 @@ class GuestTestController extends Controller
             );
         }
         $attemptId = (string) Str::uuid();
-        $attemptData = [
-            'attempt_id' => $attemptId,
-            'testing_id' => $testing->id,
-            'started_at' => now()->toDateTimeString(),
-            'status' => 'started',
-            'completed_exercises' => [],
-            'results' => [],
-        ];
-        $this->guestService->saveGuestTestResult($guestId, $attemptData);
+        $this->guestService->saveGuestTestResult(
+            $guestId,
+            $this->attemptFlow->newGuestAttemptData($testing, $attemptId)
+        );
+
         return ApiResponse::data(
             $this->attemptFlow->startPayload($testing, 'guest_' . $attemptId, $firstExercise),
             'Тест начат для гостя'
@@ -145,7 +141,7 @@ class GuestTestController extends Controller
         }
 
         // Проверяем, не сохранен ли уже результат
-        if (in_array($request->testing_exercise_id, $attempt['completed_exercises'])) {
+        if ($this->attemptFlow->resultAlreadySaved($attempt['completed_exercises'], $request->testing_exercise_id)) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
                 'Результат для этого упражнения уже сохранён',
@@ -213,13 +209,13 @@ class GuestTestController extends Controller
             );
         }
 
-        $totalExercises = $this->attemptFlow->totalExercises($testing);
         $completedExercises = count($attempt['completed_exercises']);
+        $remainingExercises = $this->attemptFlow->remainingExercises($testing, $completedExercises);
 
-        if ($completedExercises < $totalExercises) {
+        if (!$this->attemptFlow->canComplete($testing, $completedExercises)) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
-                'Не все упражнения выполнены. Осталось: ' . ($totalExercises - $completedExercises),
+                'Не все упражнения выполнены. Осталось: ' . $remainingExercises,
                 409
             );
         }
@@ -229,11 +225,9 @@ class GuestTestController extends Controller
 
         $this->guestService->updateGuestTestResults($guestId, $attemptInfo['all_tests']);
 
-        return ApiResponse::success('Тест успешно завершён для гостя', [
-            'attempt_id' => $attemptId,
-            'completed_at' => $attempt['completed_at'],
-            'pulse' => $attempt['pulse'],
-        ]);
+        return ApiResponse::success(
+            'Тест успешно завершён для гостя',
+            $this->attemptFlow->completePayload($attemptId, $attempt['completed_at'], $attempt['pulse'])
+        );
     }
-
 }

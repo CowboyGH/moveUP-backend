@@ -151,13 +151,13 @@ class TestAttemptController extends Controller
             );
         }
 
-        $totalExercises = $this->attemptFlow->totalExercises($attempt->testing);
         $completedExercises = TestResult::where('test_attempt_id', $attempt->id)->count();
+        $remainingExercises = $this->attemptFlow->remainingExercises($attempt->testing, $completedExercises);
 
-        if ($completedExercises < $totalExercises) {
+        if (!$this->attemptFlow->canComplete($attempt->testing, $completedExercises)) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
-                'Не все упражнения выполнены. Осталось: ' . ($totalExercises - $completedExercises),
+                'Не все упражнения выполнены. Осталось: ' . $remainingExercises,
                 409
             );
         }
@@ -174,12 +174,12 @@ class TestAttemptController extends Controller
         $user = auth()->user();
         $this->regenerateWorkoutsAfterTest($user);
 
-        return ApiResponse::success('Тест успешно завершён! Тренировки сгенерированы!', [
-            'attempt_id' => $attempt->id,
-            'completed_at' => $attempt->completed_at,
-            'pulse' => $attempt->pulse,
-        ]);
+        return ApiResponse::success(
+            'Тест успешно завершён! Тренировки сгенерированы!',
+            $this->attemptFlow->completePayload($attempt->id, $attempt->completed_at, $attempt->pulse)
+        );
     }
+
     private function regenerateWorkoutsAfterTest(User $user): void
     {
         $currentProgress = $user->currentProgress();

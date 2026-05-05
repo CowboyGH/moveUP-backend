@@ -34,6 +34,33 @@ class TestAttemptFlowService
         return $testing->testExercises()->count();
     }
 
+    public function newGuestAttemptData(Testing $testing, string $attemptId): array
+    {
+        return [
+            'attempt_id' => $attemptId,
+            'testing_id' => $testing->id,
+            'started_at' => now()->toDateTimeString(),
+            'status' => 'started',
+            'completed_exercises' => [],
+            'results' => [],
+        ];
+    }
+
+    public function resultAlreadySaved(array $completedExerciseIds, int $exerciseId): bool
+    {
+        return in_array($exerciseId, $completedExerciseIds);
+    }
+
+    public function remainingExercises(Testing $testing, int $completedExercises): int
+    {
+        return max(0, $this->totalExercises($testing) - $completedExercises);
+    }
+
+    public function canComplete(Testing $testing, int $completedExercises): bool
+    {
+        return $this->remainingExercises($testing, $completedExercises) === 0;
+    }
+
     public function startPayload(Testing $testing, int|string $attemptId, TestingExercise $firstExercise): array
     {
         return [
@@ -65,6 +92,15 @@ class TestAttemptFlowService
         }
 
         return $payload;
+    }
+
+    public function completePayload(int|string $attemptId, mixed $completedAt, int $pulse): array
+    {
+        return [
+            'attempt_id' => $attemptId,
+            'completed_at' => $completedAt,
+            'pulse' => $pulse,
+        ];
     }
 
     private function exercisePayload(TestingExercise $exercise): array
