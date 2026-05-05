@@ -1,5 +1,4 @@
 <?php
-// app/Providers/PaymentServiceProvider.php
 
 namespace App\Providers;
 
@@ -15,7 +14,6 @@ class PaymentServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Регистрируем сервисы
         $this->app->singleton(CardService::class, function ($app) {
             return new CardService();
         });
@@ -25,15 +23,7 @@ class PaymentServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(PaymentService::class, function ($app) {
-            return new PaymentService(
-                $app->make(CardService::class),
-                $app->make(SubscriptionService::class)
-            );
-        });
-
-        // Для обратной совместимости с 'payment' фасадом
-        $this->app->singleton('payment', function ($app) {
-            return $app->make(PaymentService::class);
+            return new PaymentService($app->make(CardService::class));
         });
     }
 
@@ -42,6 +32,5 @@ class PaymentServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
     }
 }

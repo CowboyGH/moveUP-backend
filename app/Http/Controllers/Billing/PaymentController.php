@@ -12,23 +12,14 @@ use App\Services\Billing\PaymentService;
 use App\Services\Billing\SubscriptionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PaymentController extends Controller
 {
-    protected $paymentService;
-    protected $cardService;
-    protected $subscriptionService;
-
     public function __construct(
-        PaymentService $paymentService,
-        CardService $cardService,
-        SubscriptionService $subscriptionService
-    ) {
-        $this->paymentService = $paymentService;
-        $this->cardService = $cardService;
-        $this->subscriptionService = $subscriptionService;
-    }
+        private readonly PaymentService $paymentService,
+        private readonly CardService $cardService,
+        private readonly SubscriptionService $subscriptionService
+    ) {}
 
     public function processPayment(SubscriptionPaymentRequest $request): JsonResponse
     {
@@ -61,7 +52,7 @@ class PaymentController extends Controller
             }
 
             $savedCard = null;
-            $cardData = $this->paymentService->getCardData($user, $validated, $this->cardService);
+            $cardData = $this->paymentService->getCardData($user, $validated);
 
             if (!$cardData) {
                 DB::rollBack();

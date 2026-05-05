@@ -8,14 +8,9 @@ use Illuminate\Support\Facades\Log;
 
 class PaymentService
 {
-    protected $cardService;
-    protected $subscriptionService;
-
-    public function __construct(CardService $cardService, SubscriptionService $subscriptionService)
-    {
-        $this->cardService = $cardService;
-        $this->subscriptionService = $subscriptionService;
-    }
+    public function __construct(
+        private readonly CardService $cardService
+    ) {}
 
     /**
      * Имитация обработки платежа
@@ -123,25 +118,38 @@ class PaymentService
     /**
      * Получение данных карты из запроса
      */
-    public function getCardData(User $user, array $validated, CardService $cardService): ?array
+    public function getCardData(User $user, array $validated, ?CardService $cardService = null): ?array
     {
-        if (isset($validated['use_saved_card']) && filter_var($validated['use_saved_card'], FILTER_VALIDATE_BOOLEAN)) {
-            $savedCard = $cardService->getSavedCard($user, $validated['saved_card_id']);
+        $cardService ??= $this->cardService;
 
-            if (!$savedCard) {
-                return null;
-            }
-            return [
-                'card_number' => $cardService->generateMaskedNumber($savedCard->card_last_four),
-                'card_holder' => $savedCard->card_holder,
-                'expiry_month' => $savedCard->expiry_month,
-                'expiry_year' => $savedCard->expiry_year,
-                'is_saved_card' => true,
-                'saved_card_id' => $savedCard->id,
-                'is_auto_payment' => false, // По умолчанию не автооплата
-            ];
+        if (isset($validated['use_saved_card']) && filter_var($validated['use_saved_card'], FILTER_VALIDATE_BOOLEAN)) {
+            return $this->savedCardPaymentData($user, $validated, $cardService);
         }
 
+        return $this->newCardPaymentData($validated);
+    }
+
+    private function savedCardPaymentData(User $user, array $validated, CardService $cardService): ?array
+    {
+        $savedCard = $cardService->getSavedCard($user, $validated['saved_card_id']);
+
+        if (!$savedCard) {
+            return null;
+        }
+
+        return [
+            'card_number' => $cardService->generateMaskedNumber($savedCard->card_last_four),
+            'card_holder' => $savedCard->card_holder,
+            'expiry_month' => $savedCard->expiry_month,
+            'expiry_year' => $savedCard->expiry_year,
+            'is_saved_card' => true,
+            'saved_card_id' => $savedCard->id,
+            'is_auto_payment' => false,
+        ];
+    }
+
+    private function newCardPaymentData(array $validated): array
+    {
         return [
             'card_number' => $validated['card_number'],
             'card_holder' => $validated['card_holder'],
