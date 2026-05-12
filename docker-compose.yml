@@ -19,6 +19,7 @@ services:
       - REDIS_PORT=6379
     volumes:
       - .:/var/www/html
+      - ./supervisord.conf:/opt/docker/etc/supervisor.d/laravel.conf:ro
     depends_on:
       - mysql
       - redis

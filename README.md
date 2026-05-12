@@ -25,6 +25,8 @@ Laravel API backend for the moveUP mobile application.
 
 ## Планировщик
 
+- Очередь писем и фоновых jobs обрабатывается `queue:work` внутри `laravel-api` через Supervisor
+- После изменения `MAIL_*`, `QUEUE_*` или `supervisord.conf` нужно выполнить `docker compose up -d --force-recreate server`
 - Запустить планировщик в foreground: `docker exec -it laravel-api php artisan schedule:work`
 - Запустить планировщик в фоне: `docker exec -d laravel-api php artisan schedule:work`
 - Выполнить один проход расписания: `docker exec laravel-api php artisan schedule:run`
