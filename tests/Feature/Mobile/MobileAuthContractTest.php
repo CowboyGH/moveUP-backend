@@ -11,7 +11,7 @@ class MobileAuthContractTest extends MobileApiTestCase
 {
     public function test_auth_lifecycle_preserves_mobile_contract(): void
     {
-        Role::firstOrCreate(['name' => 'user']);
+        Role::query()->where('name', 'user')->delete();
 
         $payload = [
             'name' => 'Mobile User',

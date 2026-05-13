@@ -22,11 +22,13 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         $validated = $request->validated();
+        $defaultRole = Role::query()->firstOrCreate(['name' => 'user']);
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role_id' => Role::where('name', 'user')->first()->id,
+            'role_id' => $defaultRole->id,
         ]);
         $this->guestAccountMergeService->mergeFromRequest($user, $request);
 
