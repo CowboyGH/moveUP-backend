@@ -15,7 +15,7 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'role_id' => Role::where('name', 'user')->first()->id,
+            'role_id' => Role::firstOrCreate(['name' => 'user'])->id,
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => fake()->boolean(70) ? now() : null,
@@ -24,18 +24,10 @@ class UserFactory extends Factory
         ];
     }
 
-    public function admin(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'role_id' => Role::where('name', 'admin')->first()->id,
-            'email' => 'admin@moveup.com',
-        ]);
-    }
-
     public function user(): static
     {
         return $this->state(fn (array $attributes) => [
-            'role_id' => Role::where('name', 'user')->first()->id,
+            'role_id' => Role::firstOrCreate(['name' => 'user'])->id,
         ]);
     }
 

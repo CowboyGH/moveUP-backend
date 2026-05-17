@@ -2,14 +2,8 @@
 
 use App\Console\Commands\GenerateWorkoutsForUsers;
 use App\Console\Commands\ProcessAutoPayments;
-use App\Console\Commands\TestPushNotification;
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
-
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
 
 Artisan::command('payments:process-auto', function () {
     $this->call(ProcessAutoPayments::class);
@@ -25,10 +19,6 @@ Schedule::command('phases:check-progress')
     ->withoutOverlapping()
     ->appendOutputTo(storage_path('logs/phases.log'));
 
-Artisan::command('push:test', function () {
-    $this->call(TestPushNotification::class);
-})->purpose('Send test push notification to user(s)');
-
 Schedule::command('workouts:generate-for-all-users')
     ->dailyAt('03:00')
     ->withoutOverlapping()
@@ -37,5 +27,3 @@ Schedule::command('workouts:generate-for-all-users')
 Artisan::command('workouts:generate', function () {
     $this->call(GenerateWorkoutsForUsers::class);
 })->purpose('Generate workouts for users (alias for workouts:generate-for-all-users)');
-
-

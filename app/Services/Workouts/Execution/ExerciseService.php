@@ -1,0 +1,137 @@
+<?php
+
+namespace App\Services\Workouts\Execution;
+
+use App\Http\Responses\ApiResponse;
+use App\Http\Responses\ErrorResponse;
+use App\Models\UserWorkout;
+use Illuminate\Http\Request;
+
+class ExerciseService extends BaseWorkoutExecutionService
+{
+    public function __construct(
+        \App\Services\ExerciseLoadService $exerciseLoadService,
+        \App\Services\PhaseService $phaseService,
+        private readonly RegenerationService $regenerationService
+    ) {
+        parent::__construct($exerciseLoadService, $phaseService);
+    }
+
+    public function getFirstExercise(UserWorkout $userWorkout)
+    {
+        if ($userWorkout->status !== UserWorkout::STATUS_STARTED) {
+            $userWorkout->update([
+                'status' => UserWorkout::STATUS_STARTED,
+                'started_at' => now(),
+            ]);
+        }
+
+        $exercises = $this->getSortedExercises($userWorkout);
+        $firstExercise = $exercises->first();
+
+        if (!$firstExercise) {
+            return ApiResponse::error(ErrorResponse::NOT_FOUND, 'В тренировке нет упражнений', 404);
+        }
+
+        $weight = $this->exerciseLoadService->getUserCurrentWeight($userWorkout->user_id, $firstExercise->id);
+
+        return ApiResponse::data([
+            'type' => 'exercise',
+            'user_workout_id' => $userWorkout->id,
+            'needs_weight_input' => $weight === null,
+            'exercise' => [
+                'id' => $firstExercise->id,
+                'title' => $firstExercise->title,
+                'description' => $firstExercise->description,
+                'image' => $firstExercise->image_url,
+                'sets' => $firstExercise->pivot->sets,
+                'reps' => $firstExercise->pivot->reps,
+                'order_number' => $firstExercise->pivot->order_number,
+                'current_weight' => $weight,
+                'is_last' => $exercises->count() === 1,
+                'exercise_number' => 1,
+                'total_exercises' => $exercises->count(),
+            ],
+        ]);
+    }
+
+    public function saveExerciseResult(UserWorkout $userWorkout, Request $request)
+    {
+        $user = request()->user();
+
+        if ($error = $this->checkOwnership($userWorkout)) {
+            return $error;
+        }
+
+        $request->validate([
+            'exercise_id' => 'required|exists:exercises,id',
+            'reaction' => 'required|in:good,normal,bad',
+            'weight_used' => 'nullable|numeric|min:0|max:500',
+            'sets_completed' => 'nullable|integer|min:0|max:10',
+            'reps_completed' => 'nullable|integer|min:0|max:50',
+        ]);
+
+        $result = $this->exerciseLoadService->processReaction(
+            $user,
+            $request->exercise_id,
+            $request->reaction,
+            $userWorkout->id,
+            [
+                'sets_completed' => $request->sets_completed,
+                'reps_completed' => $request->reps_completed,
+                'weight_used' => $request->weight_used,
+            ]
+        );
+
+        if ($result['rest_phase'] && $result['rest_phase']['required']) {
+            $this->regenerationService->checkAndRegenerateWorkouts($user, $request->exercise_id);
+        }
+
+        $exercises = $this->getSortedExercises($userWorkout);
+        $currentExercise = $exercises->firstWhere('id', $request->exercise_id);
+
+        if (!$currentExercise) {
+            return ApiResponse::error(
+                ErrorResponse::NOT_FOUND,
+                'Упражнение не найдено в этой тренировке',
+                404
+            );
+        }
+
+        $currentIndex = $exercises->search(function ($item) use ($currentExercise) {
+            return $item->id === $currentExercise->id;
+        });
+
+        $nextExercise = $exercises->get($currentIndex + 1);
+        $responseData = [
+            'exercise_result' => $result,
+        ];
+
+        if ($nextExercise) {
+            $weight = $this->exerciseLoadService->getUserCurrentWeight($user->id, $nextExercise->id);
+
+            $responseData['next_exercise'] = [
+                'type' => 'exercise',
+                'needs_weight_input' => $weight === null,
+                'exercise' => [
+                    'id' => $nextExercise->id,
+                    'title' => $nextExercise->title,
+                    'description' => $nextExercise->description,
+                    'image' => $nextExercise->image_url,
+                    'sets' => $nextExercise->pivot->sets,
+                    'reps' => $nextExercise->pivot->reps,
+                    'order_number' => $nextExercise->pivot->order_number,
+                    'current_weight' => $weight,
+                    'is_last' => $currentIndex + 1 === $exercises->count() - 1,
+                    'exercise_number' => $currentIndex + 2,
+                    'total_exercises' => $exercises->count(),
+                ],
+            ];
+        } else {
+            $responseData['all_exercises_completed'] = true;
+            $responseData['message'] = 'Упражнений больше нет, завершите тренировку!';
+        }
+
+        return ApiResponse::success('Результат упражнения сохранен', $responseData);
+    }
+}

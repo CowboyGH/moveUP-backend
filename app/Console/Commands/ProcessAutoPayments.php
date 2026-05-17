@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Payment\AutoPaymentService;
+use App\Services\Billing\AutoPaymentService;
 use Illuminate\Console\Command;
 
 class ProcessAutoPayments extends Command

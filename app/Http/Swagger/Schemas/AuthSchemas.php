@@ -58,7 +58,6 @@ namespace App\Http\Swagger\Schemas;
  *     @OA\Property(property="avatar", type="string", nullable=true, example=null),
  *     @OA\Property(property="created_at", type="string", format="date-time", example="2026-03-09T14:49:53.000000Z"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", example="2026-03-09T14:50:56.000000Z"),
- *     @OA\Property(property="fcm_token", type="string", nullable=true, example=null),
  *     @OA\Property(property="avatar_url", type="string", nullable=true, example=null)
  * )
  * @OA\Schema(
