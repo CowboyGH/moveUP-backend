@@ -6,7 +6,7 @@ use Tests\Feature\Mobile\Support\MobileApiTestCase;
 
 class MobileTestsContractTest extends MobileApiTestCase
 {
-    public function test_guest_and_authenticated_test_attempt_contracts(): void
+    public function test_authenticated_test_attempt_contracts(): void
     {
         [$testing, $exercises] = $this->createTestingWithExercises();
         $exercise = $exercises->first();
@@ -15,28 +15,6 @@ class MobileTestsContractTest extends MobileApiTestCase
             ->assertOk()
             ->assertJsonPath('success', true)
             ->assertJsonStructure(['data' => [['id', 'title', 'exercises_count']]]);
-
-        $guestHeaders = ['X-Guest-ID' => 'guest-tests'];
-        $guestStart = $this->postJson("/api/guest/tests/{$testing->id}/start", [], $guestHeaders)
-            ->assertOk()
-            ->assertCookie('guest_id')
-            ->assertJsonPath('success', true)
-            ->assertJsonStructure(['data' => ['attempt_id', 'current_exercise']]);
-
-        $guestAttemptId = $guestStart->json('data.attempt_id');
-
-        $this->postJson("/api/guest/test-attempts/{$guestAttemptId}/result", [
-            'testing_exercise_id' => $exercise->id,
-            'result_value' => 3,
-        ], $guestHeaders)
-            ->assertOk()
-            ->assertJsonPath('success', true)
-            ->assertJsonPath('data.all_exercises_completed', true);
-
-        $this->postJson("/api/guest/test-attempts/{$guestAttemptId}/complete", ['pulse' => 120], $guestHeaders)
-            ->assertOk()
-            ->assertJsonPath('success', true)
-            ->assertJsonStructure(['data' => ['attempt_id', 'completed_at', 'pulse']]);
 
         $user = $this->createVerifiedUser();
         $headers = $this->authHeaders($user);

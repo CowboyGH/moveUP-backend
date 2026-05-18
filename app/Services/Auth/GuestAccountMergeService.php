@@ -2,8 +2,6 @@
 
 namespace App\Services\Auth;
 
-use App\Models\TestAttempt;
-use App\Models\TestResult;
 use App\Models\User;
 use App\Models\UserParameter;
 use App\Services\GuestDataService;
@@ -33,14 +31,9 @@ class GuestAccountMergeService
         }
 
         $hasParams = false;
-        $hasTests = false;
 
         if ($this->guestService->hasGuestData($guestId)) {
             $hasParams = $this->transferGuestParameters($user, $guestId);
-        }
-
-        if ($this->guestService->hasGuestTestResults($guestId)) {
-            $hasTests = $this->transferGuestTestResults($user, $guestId);
         }
 
         $user->refresh();
@@ -72,7 +65,6 @@ class GuestAccountMergeService
             'guest_id' => $guestId,
             'user_id' => $user->id,
             'has_params' => $hasParams,
-            'has_tests' => $hasTests,
         ]);
     }
 
@@ -123,53 +115,6 @@ class GuestAccountMergeService
             'level_id' => $parameters->level_id,
             'equipment_id' => $parameters->equipment_id,
         ]);
-
-        return true;
-    }
-
-    private function transferGuestTestResults(User $user, string $guestId): bool
-    {
-        $guestTests = $this->guestService->getGuestTestResults($guestId);
-        $completedTests = array_filter($guestTests, fn($test) => ($test['status'] ?? '') === 'completed');
-
-        if (empty($completedTests)) {
-            return false;
-        }
-
-        Log::info('Merging guest test results into user account', [
-            'guest_id' => $guestId,
-            'user_id' => $user->id,
-            'tests_count' => count($completedTests),
-        ]);
-
-        DB::transaction(function () use ($user, $completedTests) {
-            foreach ($completedTests as $testData) {
-                $attempt = TestAttempt::create([
-                    'testing_id' => $testData['testing_id'],
-                    'started_at' => $testData['started_at'] ?? now(),
-                    'completed_at' => $testData['completed_at'] ?? now(),
-                    'pulse' => $testData['pulse'] ?? null,
-                ]);
-
-                if (!empty($testData['results'])) {
-                    foreach ($testData['results'] as $result) {
-                        TestResult::create([
-                            'user_id' => $user->id,
-                            'testing_id' => $testData['testing_id'],
-                            'test_attempt_id' => $attempt->id,
-                            'testing_exercise_id' => $result['testing_exercise_id'],
-                            'result_value' => $result['result_value'],
-                            'test_date' => now()->toDateString(),
-                        ]);
-                    }
-                }
-
-                Log::info('Guest test result merged into user account', [
-                    'user_id' => $user->id,
-                    'attempt_id' => $attempt->id,
-                ]);
-            }
-        });
 
         return true;
     }
