@@ -13,7 +13,6 @@ use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Profile\ProfileDetailController;
 use App\Http\Controllers\Profile\ProfileSecurityController;
 use App\Http\Controllers\Profile\ProfileStatisticsController;
-use App\Http\Controllers\Tests\GuestTestController;
 use App\Http\Controllers\Tests\TestAttemptController;
 use App\Http\Controllers\Tests\TestingController;
 use App\Http\Controllers\Workouts\Execution\WorkoutExecutionController;
@@ -41,12 +40,6 @@ Route::get('/user-parameters/references', [UserParameterController::class, 'getA
 Route::post('/user-parameters/goal', [UserParameterController::class, 'saveGoal']);
 Route::post('/user-parameters/anthropometry', [UserParameterController::class, 'saveAnthropometry']);
 Route::post('/user-parameters/level', [UserParameterController::class, 'saveLevel']);
-
-Route::prefix('guest')->group(function () {
-    Route::post('/tests/{testing}/start', [GuestTestController::class, 'start']);
-    Route::post('/test-attempts/{attempt}/result', [GuestTestController::class, 'storeResult']);
-    Route::post('/test-attempts/{attempt}/complete', [GuestTestController::class, 'complete']);
-});
 
 Route::middleware(['jwt.custom', 'track.activity'])->prefix('profile')->group(function () {
     Route::get('/user', [ProfileDetailController::class, 'user']);
