@@ -36,13 +36,13 @@ abstract class BaseWorkoutExecutionService
     {
         $workout = $userWorkout->workout()->with('exercises')->first();
 
-        return $workout->exercises->sortBy('pivot.order_number');
+        return $workout->exercises->sortBy('pivot.order_number')->values();
     }
 
     protected function getSortedWarmups(UserWorkout $userWorkout): Collection
     {
         $workout = $userWorkout->workout()->with('warmups')->first();
 
-        return $workout->warmups->sortBy('pivot.order_number');
+        return $workout->warmups->sortBy('pivot.order_number')->values();
     }
 }

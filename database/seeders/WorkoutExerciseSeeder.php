@@ -36,9 +36,15 @@ class WorkoutExerciseSeeder extends Seeder
 
             $orderNumber = 1;
             $workoutCreated = 0;
+            $usedIds = [];
 
             for ($i = 0; $i < $exerciseCount; $i++) {
-                $exercise = $exercises->random();
+                $available = $exercises->whereNotIn('id', $usedIds);
+                if ($available->isEmpty()) {
+                    $available = $exercises;
+                }
+                $exercise = $available->random();
+                $usedIds[] = $exercise->id;
 
                 WorkoutExercise::create([
                     'workout_id' => $workout->id,
