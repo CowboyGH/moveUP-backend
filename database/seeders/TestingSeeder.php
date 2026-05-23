@@ -88,7 +88,6 @@ class TestingSeeder extends Seeder
                 $testData
             );
         }
-        Testing::factory(5)->create();
 
         $this->command->info('Создано ' . Testing::count() . ' тестов');
     }

@@ -104,11 +104,6 @@ class TestingExerciseSeeder extends Seeder
             );
         }
 
-        TestingExercise::factory()
-            ->count(10)
-            ->randomData()
-            ->create();
-
         $this->command->info('Создано ' . TestingExercise::count() . ' тестовых упражнений');
     }
 }

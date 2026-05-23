@@ -36,9 +36,15 @@ class WorkoutWarmupSeeder extends Seeder
 
             $orderNumber = 1;
             $workoutCreated = 0;
+            $usedIds = [];
 
             for ($i = 0; $i < $warmupCount; $i++) {
-                $warmup = $warmups->random();
+                $available = $warmups->whereNotIn('id', $usedIds);
+                if ($available->isEmpty()) {
+                    $available = $warmups;
+                }
+                $warmup = $available->random();
+                $usedIds[] = $warmup->id;
 
                 WorkoutWarmup::create([
                     'workout_id' => $workout->id,

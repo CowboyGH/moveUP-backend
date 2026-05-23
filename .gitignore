@@ -21,6 +21,7 @@
 /coverage
 /reports
 /docker-compose.override.yml
+/script.sql
 Homestead.json
 Homestead.yaml
 Thumbs.db

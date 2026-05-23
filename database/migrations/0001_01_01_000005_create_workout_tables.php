@@ -65,6 +65,8 @@ return new class extends Migration
             $table->integer('reps');
             $table->integer('order_number');
             $table->timestamps();
+
+            $table->unique(['workout_id', 'exercise_id'], 'workout_exercise_unique');
         });
 
         Schema::create('workout_warmups', function (Blueprint $table) {
@@ -73,6 +75,8 @@ return new class extends Migration
             $table->foreignId('warmup_id')->constrained()->cascadeOnDelete();
             $table->integer('order_number');
             $table->timestamps();
+
+            $table->unique(['workout_id', 'warmup_id'], 'workout_warmup_unique');
         });
 
         Schema::create('user_workouts', function (Blueprint $table) {

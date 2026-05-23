@@ -68,11 +68,8 @@ class WorkoutSeeder extends Seeder
             }
         }
 
-        $factoryCount = 5;
-        Workout::factory($factoryCount)->create();
-
         $totalCount = Workout::count();
-        $this->command->info("Создано {$createdCount} тренировок из списка + {$factoryCount} через фабрику. Всего: {$totalCount}");
+        $this->command->info("Создано {$createdCount} тренировок из списка. Всего: {$totalCount}");
     }
 
     private function getDescription(string $title): string
