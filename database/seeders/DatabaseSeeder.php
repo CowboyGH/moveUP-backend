@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             $this->call(WorkoutSeeder::class);
             $this->call(WorkoutExerciseSeeder::class);
             $this->call(WorkoutWarmupSeeder::class);
+            $this->call(RealisticWorkoutSeeder::class);
 
             $this->call(TestingSeeder::class);
             $this->call(TestingExerciseSeeder::class);
@@ -45,7 +46,5 @@ class DatabaseSeeder extends Seeder
             $this->call(SavedCardSeeder::class);
             $this->call(PaymentSeeder::class);
         }
-
-        $this->call(RealisticWorkoutSeeder::class);
     }
 }
