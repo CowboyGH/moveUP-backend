@@ -14,6 +14,7 @@ class ExerciseSeeder extends Seeder
         ['title' => 'Жим гантелей на наклонной скамье', 'muscle_group' => 'Грудь', 'equipment' => 'Зал'],
         ['title' => 'Сведение рук в кроссовере', 'muscle_group' => 'Грудь', 'equipment' => 'Зал'],
         ['title' => 'Отжимания от пола', 'muscle_group' => 'Грудь', 'equipment' => 'Смешанное'],
+        ['title' => 'Отжимания', 'muscle_group' => 'Грудь', 'equipment' => 'Смешанное', 'image' => 'exercises/training_frame2_card2.png', 'description' => 'Классические отжимания от пола. При необходимости можно выполнять с колен.'],
 
         ['title' => 'Тяга верхнего блока', 'muscle_group' => 'Спина', 'equipment' => 'Зал'],
         ['title' => 'Подтягивания', 'muscle_group' => 'Спина', 'equipment' => 'Зал'],
@@ -25,6 +26,10 @@ class ExerciseSeeder extends Seeder
         ['title' => 'Выпады с гантелями', 'muscle_group' => 'Ноги', 'equipment' => 'Смешанное'],
         ['title' => 'Жим ногами', 'muscle_group' => 'Ноги', 'equipment' => 'Зал'],
         ['title' => 'Приседания без веса', 'muscle_group' => 'Ноги', 'equipment' => 'Смешанное'],
+        ['title' => 'Приседания', 'muscle_group' => 'Ноги', 'equipment' => 'Смешанное', 'image' => 'exercises/training_frame1__card2.png', 'description' => 'Базовое упражнение для развития мышц ног и ягодиц. Держите спину ровно, колени не выходят за носки.'],
+        ['title' => 'Выпады', 'muscle_group' => 'Ноги', 'equipment' => 'Смешанное', 'image' => 'exercises/training_frame4_card2.png', 'description' => 'Выпады вперед с гантелями или без. Колено передней ноги не выходит за носок, заднее колено касается пола.'],
+        ['title' => 'Приседания сумо', 'muscle_group' => 'Ноги', 'equipment' => 'Смешанное', 'image' => 'exercises/training_frame4_card1.png', 'description' => 'Широкая постановка ног, носки развернуты. Приседайте глубоко, держа спину прямой.'],
+        ['title' => 'Болгарские выпады', 'muscle_group' => 'Ноги', 'equipment' => 'Смешанное', 'image' => 'exercises/training_frame1__card2.png', 'description' => 'Одна нога сзади на опоре (стул, скамья). Выпады вперед с акцентом на ягодицы.'],
 
         ['title' => 'Жим гантелей сидя', 'muscle_group' => 'Плечи', 'equipment' => 'Зал'],
         ['title' => 'Махи гантелями в стороны', 'muscle_group' => 'Плечи', 'equipment' => 'Зал'],
@@ -43,6 +48,13 @@ class ExerciseSeeder extends Seeder
         ['title' => 'Скакалка', 'muscle_group' => 'Кардио', 'equipment' => 'Смешанное'],
         ['title' => 'Берпи', 'muscle_group' => 'Кардио', 'equipment' => 'Смешанное'],
         ['title' => 'Велотренажер', 'muscle_group' => 'Кардио', 'equipment' => 'Зал'],
+        ['title' => 'Скалолаз', 'muscle_group' => 'Кардио', 'equipment' => 'Смешанное', 'image' => 'exercises/training_frame3_card1.png', 'description' => 'В положении планки поочередно подтягивайте колени к груди в быстром темпе.'],
+        ['title' => 'Прыжки', 'muscle_group' => 'Кардио', 'equipment' => 'Смешанное', 'image' => 'exercises/training_frame1_card1.png', 'description' => 'Прыжки на месте или джампинг джеки. Отталкивайтесь носками, мягко приземляйтесь.'],
+
+        ['title' => 'Поза ребенка', 'muscle_group' => 'Растяжка', 'equipment' => 'Смешанное', 'image' => 'exercises/training_frame3_card1.png', 'description' => 'Сидя на пятках, наклонитесь вперед, лбом коснитесь пола. Расслабьте спину и плечи.'],
+        ['title' => 'Складка сидя', 'muscle_group' => 'Растяжка', 'equipment' => 'Смешанное', 'image' => 'exercises/training_frame4_card1.png', 'description' => 'Сидя на полу с прямыми ногами, наклонитесь к стопам, держа спину ровной.'],
+        ['title' => 'Скручивания лежа', 'muscle_group' => 'Растяжка', 'equipment' => 'Смешанное', 'image' => 'exercises/training_frame2_card1.png', 'description' => 'Лежа на спине, согните одну ногу и перекиньте через другую, разворачивая корпус.'],
+        ['title' => 'Поза голубя', 'muscle_group' => 'Растяжка', 'equipment' => 'Смешанное', 'image' => 'exercises/training_frame3_card2.png', 'description' => 'Одна нога согнута вперед, другая вытянута назад. Глубокое раскрытие тазобедренных суставов.'],
     ];
 
     public function run(): void
@@ -60,8 +72,8 @@ class ExerciseSeeder extends Seeder
                 [
                     'equipment_id' => $equipment->id,
                     'muscle_group' => $exerciseData['muscle_group'],
-                    'description' => $this->getDescription($exerciseData['title']),
-                    'image' => 'exercises/' . $this->getImageName($exerciseData['title']),
+                    'description' => $exerciseData['description'] ?? $this->getDescription($exerciseData['title']),
+                    'image' => $exerciseData['image'] ?? ('exercises/' . $this->getImageName($exerciseData['title'])),
                 ]
             );
 
