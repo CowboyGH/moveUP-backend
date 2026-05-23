@@ -22,6 +22,26 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         $validated = $request->validated();
+
+        $existing = User::where('email', $validated['email'])->first();
+
+        if ($existing) {
+            if (!$existing->email_verified_at) {
+                return ErrorResponse::make(
+                    ErrorResponse::EMAIL_NOT_VERIFIED,
+                    'Этот email уже зарегистрирован, но не подтверждён. Проверьте почту.',
+                    400
+                );
+            }
+
+            return ErrorResponse::make(
+                ErrorResponse::VALIDATION_FAILED,
+                'Ошибка валидации',
+                422,
+                ['email' => ['Этот email уже зарегистрирован.']]
+            );
+        }
+
         $defaultRole = Role::query()->firstOrCreate(['name' => 'user']);
 
         $user = User::create([

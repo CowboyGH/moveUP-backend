@@ -24,7 +24,7 @@ class RegisterRequest extends ApiFormRequest
     {
         return [
             'name' => ['required', 'string', 'min:2', 'max:20', 'regex:/^[a-zA-Zа-яА-ЯёЁ\s]+$/u'],
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255',
             'password' => ['required', 'string', 'min:8', 'max:64', 'regex:/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/'],
         ];
     }
@@ -39,7 +39,6 @@ class RegisterRequest extends ApiFormRequest
 
             'email.required' => 'Поле "Email" обязательно для заполнения.',
             'email.email' => 'Введите корректный адрес электронной почты.',
-            'email.unique' => 'Этот email уже зарегистрирован.',
 
             'password.required' => 'Поле "Пароль" обязательно для заполнения.',
             'password.min' => 'Пароль должен содержать минимум 8 символов.',
