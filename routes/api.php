@@ -64,9 +64,10 @@ Route::middleware(['jwt.custom', 'track.activity'])->prefix('profile')->group(fu
     Route::get('statistics/workouts', [ProfileStatisticsController::class, 'workouts']);
 });
 
+Route::post('/refresh', [AuthController::class, 'refresh']);
+
 Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
 
     Route::get('/me', [AuthController::class, 'me']);
 
