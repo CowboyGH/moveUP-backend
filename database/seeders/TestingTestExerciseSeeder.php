@@ -6,20 +6,42 @@ use App\Models\Testing;
 use App\Models\TestingExercise;
 use App\Models\TestingTestExercise;
 use Illuminate\Database\Seeder;
+use RuntimeException;
 
 class TestingTestExerciseSeeder extends Seeder
 {
+    private array $testToExercises = [
+        'Тест Купера (12-минутный бег)' => ['12-минутный бег'],
+        'Гарвардский степ-тест' => ['Гарвардский степ-тест'],
+        'Тест Руфье' => ['Тест Руфье (приседания)'],
+        'Определение максимальной силы (1ПМ)' => [
+            'Жим лежа (1ПМ)',
+            'Приседания со штангой (1ПМ)',
+            'Становая тяга (1ПМ)',
+        ],
+        'Гибкость: Тест "Сядь и достань"' => ['Наклон вперед сидя'],
+        'Тест на выносливость мышц кора' => [
+            'Планка',
+            'Скручивания',
+            'Гиперэкстензия',
+        ],
+        'Взрывная сила: Прыжок в длину с места' => ['Прыжок в длину с места'],
+        'Скоростно-силовая выносливость' => ['Берпи'],
+        'Координация и ловкость: Челночный бег' => ['Челночный бег 3x10 м'],
+        'Баланс и стабильность' => ['Стойка на одной ноге'],
+    ];
+
     public function run(): void
     {
         $testings = Testing::all();
-        $testingExercises = TestingExercise::all();
+        $exerciseByTitle = TestingExercise::all()->keyBy('title');
 
         if ($testings->isEmpty()) {
             $this->command->error('Нет тестов! Сначала запустите TestingSeeder.');
             return;
         }
 
-        if ($testingExercises->isEmpty()) {
+        if ($exerciseByTitle->isEmpty()) {
             $this->command->error('Нет тестовых упражнений! Сначала запустите TestingExerciseSeeder.');
             return;
         }
@@ -29,18 +51,25 @@ class TestingTestExerciseSeeder extends Seeder
         $this->command->info("Привязываем тестовые упражнения к тестам...");
 
         foreach ($testings as $testing) {
-            $matchingExercises = $this->getMatchingExercises($testing->title, $testingExercises);
-
-            if ($matchingExercises->isEmpty()) {
-                $this->command->warn("Для теста '{$testing->title}' не найдено подходящих упражнений");
-                continue;
+            if (!isset($this->testToExercises[$testing->title])) {
+                throw new RuntimeException(
+                    "TestingTestExerciseSeeder: нет маппинга для теста '{$testing->title}'. "
+                    . "Добавь его в \$testToExercises или удали тест из TestingSeeder."
+                );
             }
 
             TestingTestExercise::where('testing_id', $testing->id)->delete();
 
             $orderNumber = 1;
+            foreach ($this->testToExercises[$testing->title] as $exerciseTitle) {
+                $exercise = $exerciseByTitle->get($exerciseTitle);
+                if (!$exercise) {
+                    throw new RuntimeException(
+                        "TestingTestExerciseSeeder: упражнение '{$exerciseTitle}' не найдено. "
+                        . "Проверь TestingExerciseSeeder."
+                    );
+                }
 
-            foreach ($matchingExercises as $exercise) {
                 TestingTestExercise::create([
                     'testing_id' => $testing->id,
                     'testing_exercise_id' => $exercise->id,
@@ -49,85 +78,10 @@ class TestingTestExerciseSeeder extends Seeder
                 $totalCreated++;
             }
 
-            $this->command->info("✓ Тест '{$testing->title}' получил {$matchingExercises->count()} упражнений");
+            $count = count($this->testToExercises[$testing->title]);
+            $this->command->info("✓ Тест '{$testing->title}' получил {$count} упражнений");
         }
 
         $this->command->info("Всего создано {$totalCreated} связей тест-тестовое упражнение");
-    }
-
-    private function getMatchingExercises(string $testTitle, $allExercises)
-    {
-        $collection = collect($allExercises);
-
-        if (str_contains($testTitle, 'Купера') || str_contains($testTitle, 'бег')) {
-            return $collection->filter(function ($exercise) {
-                return str_contains($exercise->description, 'бег') ||
-                    str_contains($exercise->description, 'дистанцию');
-            });
-        }
-
-        if (str_contains($testTitle, 'Гарвардский')) {
-            return $collection->filter(function ($exercise) {
-                return str_contains($exercise->description, 'степ') ||
-                    str_contains($exercise->description, 'восхождение');
-            });
-        }
-
-        if (str_contains($testTitle, 'Руфье')) {
-            return $collection->filter(function ($exercise) {
-                return str_contains($exercise->description, 'приседания');
-            });
-        }
-
-        if (str_contains($testTitle, '1ПМ') || str_contains($testTitle, 'максимальной силы')) {
-            return $collection->filter(function ($exercise) {
-                return str_contains($exercise->description, 'жим') ||
-                    str_contains($exercise->description, 'приседания') ||
-                    str_contains($exercise->description, 'тяга');
-            });
-        }
-
-        if (str_contains($testTitle, 'Гибкость')) {
-            return $collection->filter(function ($exercise) {
-                return str_contains($exercise->description, 'наклон') ||
-                    str_contains($exercise->description, 'гибкость');
-            });
-        }
-
-        if (str_contains($testTitle, 'кора') || str_contains($testTitle, 'выносливость мышц кора')) {
-            return $collection->filter(function ($exercise) {
-                return str_contains($exercise->description, 'планка') ||
-                    str_contains($exercise->description, 'скручивания') ||
-                    str_contains($exercise->description, 'гиперэкстензия');
-            });
-        }
-
-        if (str_contains($testTitle, 'Взрывная') || str_contains($testTitle, 'прыжок')) {
-            return $collection->filter(function ($exercise) {
-                return str_contains($exercise->description, 'прыжок');
-            });
-        }
-
-        if (str_contains($testTitle, 'берпи') || str_contains($testTitle, 'Скоростно-силовая')) {
-            return $collection->filter(function ($exercise) {
-                return str_contains($exercise->description, 'берпи');
-            });
-        }
-
-        if (str_contains($testTitle, 'Челночный') || str_contains($testTitle, 'ловкость')) {
-            return $collection->filter(function ($exercise) {
-                return str_contains($exercise->description, 'челночный') ||
-                    str_contains($exercise->description, 'бег');
-            });
-        }
-
-        if (str_contains($testTitle, 'Баланс')) {
-            return $collection->filter(function ($exercise) {
-                return str_contains($exercise->description, 'стойка') ||
-                    str_contains($exercise->description, 'баланс');
-            });
-        }
-
-        return $collection->random(min(4, $collection->count()));
     }
 }
