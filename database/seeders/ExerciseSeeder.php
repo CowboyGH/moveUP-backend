@@ -91,7 +91,7 @@ class ExerciseSeeder extends Seeder
                 continue;
             }
 
-            Exercise::firstOrCreate(
+            Exercise::updateOrCreate(
                 ['title' => $exerciseData['title']],
                 [
                     'equipment_id' => $equipment->id,
