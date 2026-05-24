@@ -21,6 +21,7 @@ class Testing extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'duration_minutes' => 'integer',
     ];
 
     public function testExercises(): BelongsToMany

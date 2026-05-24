@@ -25,6 +25,7 @@ class Workout extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'duration_minutes' => 'integer',
     ];
 
     protected $appends = ['image_url'];
