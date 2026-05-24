@@ -42,6 +42,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->string('image')->nullable();
+            $table->integer('duration_seconds')->default(60);
             $table->timestamps();
         });
 

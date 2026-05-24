@@ -78,16 +78,6 @@ class TestingExerciseSeeder extends Seeder
             'description' => 'Стоя на одной ноге с закрытыми глазами, засекается время до потери равновесия.',
             'image' => 'testing/tests_authorized_card2.png',
         ],
-        [
-            'title' => 'Отжимания от пола',
-            'description' => 'Максимальное количество отжиманий от пола за 60 секунд. Техника: грудь касается пола, полное выпрямление рук.',
-            'image' => 'testing/tests_authorized_card3.png',
-        ],
-        [
-            'title' => 'Подтягивания',
-            'description' => 'Максимальное количество подтягиваний. Хват прямой, подбородок выше перекладины.',
-            'image' => 'testing/tests_authorized_card4.png',
-        ],
     ];
 
     public function run(): void

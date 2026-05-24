@@ -80,7 +80,7 @@ class WorkoutStartController extends Controller
                     'name' => $firstWarmup->name,
                     'description' => $firstWarmup->description,
                     'image' => $firstWarmup->image_url,
-                    'duration_seconds' => 60,
+                    'duration_seconds' => $firstWarmup->duration_seconds,
                     'order_number' => $firstWarmup->pivot->order_number,
                     'is_last' => $warmups->count() === 1,
                 ],

@@ -49,6 +49,28 @@ class UserWorkout extends Model
         return $this->hasMany(UserWarmupPerformance::class);
     }
 
+    public function resolveRouteBinding($value, $field = null): ?Model
+    {
+        $userId = auth()->id();
+
+        if ($userId) {
+            $record = $this->where($field ?? 'id', $value)
+                ->where('user_id', $userId)
+                ->first();
+
+            if ($record) {
+                return $record;
+            }
+
+            return $this->where('workout_id', $value)
+                ->where('user_id', $userId)
+                ->latest('id')
+                ->first();
+        }
+
+        return $this->where($field ?? 'id', $value)->first();
+    }
+
     public function canBeStarted(): bool
     {
         return $this->status === self::STATUS_ASSIGNED;
