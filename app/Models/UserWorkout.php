@@ -51,21 +51,24 @@ class UserWorkout extends Model
 
     public function resolveRouteBinding($value, $field = null): ?Model
     {
-        $record = $this->where($field ?? 'id', $value)->first();
-
-        if ($record) {
-            return $record;
-        }
-
         $userId = auth()->id();
+
         if ($userId) {
+            $record = $this->where($field ?? 'id', $value)
+                ->where('user_id', $userId)
+                ->first();
+
+            if ($record) {
+                return $record;
+            }
+
             return $this->where('workout_id', $value)
                 ->where('user_id', $userId)
                 ->latest('id')
                 ->first();
         }
 
-        return null;
+        return $this->where($field ?? 'id', $value)->first();
     }
 
     public function canBeStarted(): bool
