@@ -51,7 +51,7 @@ class ShowService extends BaseWorkoutExecutionService
                     'name' => $warmup->name,
                     'description' => $warmup->description,
                     'image' => $warmup->image_url,
-                    'duration_seconds' => 60,
+                    'duration_seconds' => $warmup->duration_seconds,
                     'order_number' => $warmup->pivot->order_number,
                 ];
             })->sortBy('order_number')->values(),

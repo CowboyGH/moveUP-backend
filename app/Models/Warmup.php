@@ -16,6 +16,7 @@ class Warmup extends Model
         'name',
         'description',
         'image',
+        'duration_seconds',
     ];
 
     protected $appends = ['image_url'];
