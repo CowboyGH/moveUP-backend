@@ -9,6 +9,7 @@ use App\Models\Workout;
 use App\Models\WorkoutExercise;
 use App\Models\WorkoutWarmup;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 class WorkoutSeeder extends Seeder
@@ -459,46 +460,48 @@ class WorkoutSeeder extends Seeder
                 throw new RuntimeException("WorkoutSeeder: фаза с order_number={$workoutData['phase_order']} не найдена.");
             }
 
-            $workout = Workout::updateOrCreate(
-                ['title' => $workoutData['title']],
-                [
-                    'phase_id' => $phase->id,
-                    'type' => $workoutData['type'],
-                    'description' => $workoutData['description'],
-                    'duration_minutes' => $workoutData['duration_minutes'],
-                    'image' => $workoutData['image'],
-                    'is_active' => true,
-                ]
-            );
+            DB::transaction(function () use ($workoutData, $phase, $warmups, $exercises) {
+                $workout = Workout::updateOrCreate(
+                    ['title' => $workoutData['title']],
+                    [
+                        'phase_id' => $phase->id,
+                        'type' => $workoutData['type'],
+                        'description' => $workoutData['description'],
+                        'duration_minutes' => $workoutData['duration_minutes'],
+                        'image' => $workoutData['image'],
+                        'is_active' => true,
+                    ]
+                );
 
-            WorkoutWarmup::where('workout_id', $workout->id)->delete();
-            $warmupOrder = 1;
-            foreach ($workoutData['warmups'] as $warmupName) {
-                $warmup = $warmups->get($warmupName);
-                if (!$warmup) {
-                    throw new RuntimeException("WorkoutSeeder: разминка '{$warmupName}' не найдена. Добавь её в WarmupSeeder.");
+                WorkoutWarmup::where('workout_id', $workout->id)->delete();
+                $warmupOrder = 1;
+                foreach ($workoutData['warmups'] as $warmupName) {
+                    $warmup = $warmups->get($warmupName);
+                    if (!$warmup) {
+                        throw new RuntimeException("WorkoutSeeder: разминка '{$warmupName}' не найдена. Добавь её в WarmupSeeder.");
+                    }
+                    WorkoutWarmup::create([
+                        'workout_id' => $workout->id,
+                        'warmup_id' => $warmup->id,
+                        'order_number' => $warmupOrder++,
+                    ]);
                 }
-                WorkoutWarmup::create([
-                    'workout_id' => $workout->id,
-                    'warmup_id' => $warmup->id,
-                    'order_number' => $warmupOrder++,
-                ]);
-            }
 
-            WorkoutExercise::where('workout_id', $workout->id)->delete();
-            foreach ($workoutData['exercises'] as $exerciseItem) {
-                $exercise = $exercises->get($exerciseItem['title']);
-                if (!$exercise) {
-                    throw new RuntimeException("WorkoutSeeder: упражнение '{$exerciseItem['title']}' не найдено. Добавь его в ExerciseSeeder.");
+                WorkoutExercise::where('workout_id', $workout->id)->delete();
+                foreach ($workoutData['exercises'] as $exerciseItem) {
+                    $exercise = $exercises->get($exerciseItem['title']);
+                    if (!$exercise) {
+                        throw new RuntimeException("WorkoutSeeder: упражнение '{$exerciseItem['title']}' не найдено. Добавь его в ExerciseSeeder.");
+                    }
+                    WorkoutExercise::create([
+                        'workout_id' => $workout->id,
+                        'exercise_id' => $exercise->id,
+                        'sets' => $exerciseItem['sets'],
+                        'reps' => $exerciseItem['reps'],
+                        'order_number' => $exerciseItem['order'],
+                    ]);
                 }
-                WorkoutExercise::create([
-                    'workout_id' => $workout->id,
-                    'exercise_id' => $exercise->id,
-                    'sets' => $exerciseItem['sets'],
-                    'reps' => $exerciseItem['reps'],
-                    'order_number' => $exerciseItem['order'],
-                ]);
-            }
+            });
 
             $this->command->info("Тренировка '{$workoutData['title']}' создана/обновлена.");
         }
