@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->string('duration_minutes');
+            $table->unsignedInteger('duration_minutes');
             $table->string('image')->nullable();
             $table->boolean('is_active');
             $table->timestamps();
