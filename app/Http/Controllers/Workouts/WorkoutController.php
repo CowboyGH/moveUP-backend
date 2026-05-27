@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Workouts;
 
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
-use App\Http\Responses\ErrorResponse;
 use App\Models\UserWorkout;
 use Illuminate\Http\JsonResponse;
 
@@ -12,13 +11,6 @@ class WorkoutController extends Controller
 {
     public function index(): JsonResponse
     {
-        if (!auth()->check()) {
-            return ApiResponse::error(
-                ErrorResponse::UNAUTHORIZED,
-                'Неавторизован.',
-                401
-            );
-        }
         $user = auth()->user();
 
         $userWorkouts = UserWorkout::with(['workout.phase', 'workout.exercises', 'workout.warmups'])

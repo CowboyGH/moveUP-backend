@@ -11,13 +11,13 @@ class MobileTestsContractTest extends MobileApiTestCase
         [$testing, $exercises] = $this->createTestingWithExercises();
         $exercise = $exercises->first();
 
-        $this->getJson('/api/testings')
+        $user = $this->createVerifiedUser();
+        $headers = $this->authHeaders($user);
+
+        $this->getJson('/api/testings', $headers)
             ->assertOk()
             ->assertJsonPath('success', true)
             ->assertJsonStructure(['data' => [['id', 'title', 'exercises_count']]]);
-
-        $user = $this->createVerifiedUser();
-        $headers = $this->authHeaders($user);
 
         $authStart = $this->postJson("/api/tests/{$testing->id}/start", [], $headers)
             ->assertOk()

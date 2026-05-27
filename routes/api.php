@@ -38,9 +38,6 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 Route::get('/subscriptions', [SubscriptionController::class, 'index']);
 Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
 
-Route::get('/testings', [TestingController::class, 'index']);
-Route::get('/workouts', [WorkoutController::class, 'index']);
-
 Route::get('/user-parameters/references', [UserParameterController::class, 'getAllReferences']);
 
 Route::post('/user-parameters/goal', [UserParameterController::class, 'saveGoal']);
@@ -73,6 +70,9 @@ Route::middleware(['jwt.custom', 'track.activity'])->prefix('profile')->group(fu
 Route::post('/refresh', [AuthController::class, 'refresh']);
 
 Route::middleware(['jwt.custom', 'track.activity'])->group(function () {
+    Route::get('/testings', [TestingController::class, 'index']);
+    Route::get('/workouts', [WorkoutController::class, 'index']);
+
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/me', [AuthController::class, 'me']);
