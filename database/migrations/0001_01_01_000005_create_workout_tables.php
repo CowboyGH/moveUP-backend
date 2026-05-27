@@ -25,6 +25,8 @@ return new class extends Migration
             $table->integer('completed_workouts')->default(0);
             $table->integer('weekly_workout_goal')->default(4);
             $table->timestamps();
+
+            $table->index(['user_id', 'created_at']);
         });
 
         Schema::create('exercises', function (Blueprint $table) {
@@ -88,6 +90,9 @@ return new class extends Migration
             $table->timestamp('completed_at')->nullable();
             $table->enum('status', ['assigned', 'started', 'completed'])->default('assigned');
             $table->timestamps();
+
+            $table->index(['user_id', 'status']);
+            $table->index(['user_id', 'status', 'completed_at']);
         });
 
         Schema::create('exercise_performances', function (Blueprint $table) {
@@ -134,6 +139,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['user_id', 'exercise_id', 'reaction_date'], 'user_exercise_reaction_unique');
+            $table->index(['user_id', 'exercise_id']);
         });
     }
 
