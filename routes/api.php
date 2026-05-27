@@ -20,14 +20,20 @@ use App\Http\Controllers\Workouts\WorkoutController;
 use App\Http\Controllers\Workouts\WorkoutStartController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/verify-email', [EmailVerificationController::class, 'verifyEmail']);
-Route::post('/resend-verification-code', [EmailVerificationController::class, 'resendVerificationCode']);
-Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
-Route::post('/verify-reset-code', [PasswordResetController::class, 'verifyResetCode']);
+Route::middleware('throttle:auth-attempts')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/verify-email', [EmailVerificationController::class, 'verifyEmail']);
+    Route::post('/verify-reset-code', [PasswordResetController::class, 'verifyResetCode']);
+});
+
+Route::middleware('throttle:auth-codes')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/resend-verification-code', [EmailVerificationController::class, 'resendVerificationCode']);
+    Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
+    Route::post('/resend-reset-code', [PasswordResetController::class, 'resendResetCode']);
+});
+
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
-Route::post('/resend-reset-code', [PasswordResetController::class, 'resendResetCode']);
 
 Route::get('/subscriptions', [SubscriptionController::class, 'index']);
 Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show']);
