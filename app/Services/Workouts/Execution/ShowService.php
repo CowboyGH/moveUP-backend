@@ -9,10 +9,6 @@ class ShowService extends BaseWorkoutExecutionService
 {
     public function show(UserWorkout $userWorkout)
     {
-        if ($error = $this->checkOwnership($userWorkout)) {
-            return $error;
-        }
-
         $userWorkout->load([
             'workout.warmups',
             'workout.exercises' => function ($query) {

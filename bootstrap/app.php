@@ -67,6 +67,16 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
+        $exceptions->renderable(function (\Illuminate\Auth\Access\AuthorizationException $e, $request) {
+            if ($request->is('api/*')) {
+                return \App\Http\Responses\ErrorResponse::make(
+                    'forbidden',
+                    'Доступ запрещён',
+                    403
+                );
+            }
+        });
+
         $exceptions->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
             if ($request->is('api/*')) {
                 return \App\Http\Responses\ErrorResponse::make(

@@ -140,11 +140,7 @@ class WorkoutStartController extends Controller
 
     public function abandon(UserWorkout $userWorkout)
     {
-        $user = request()->user();
-
-        if ($userWorkout->user_id !== $user->id) {
-            return ApiResponse::error(ErrorResponse::FORBIDDEN, 'Тренировка не принадлежит текущему пользователю', 403);
-        }
+        $this->authorize('update', $userWorkout);
 
         if ($userWorkout->status === UserWorkout::STATUS_STARTED) {
             $userWorkout->update(['status' => UserWorkout::STATUS_ASSIGNED]);

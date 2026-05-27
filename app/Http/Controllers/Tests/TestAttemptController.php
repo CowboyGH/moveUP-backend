@@ -63,9 +63,7 @@ class TestAttemptController extends Controller
      */
     public function storeResult(Request $request, TestAttempt $attempt): JsonResponse
     {
-        if ($attempt->user_id !== auth()->id()) {
-            return ApiResponse::error(ErrorResponse::FORBIDDEN, 'Тест не принадлежит текущему пользователю', 403);
-        }
+        $this->authorize('update', $attempt);
 
         if ($attempt->completed_at) {
             return ApiResponse::error(
@@ -135,9 +133,7 @@ class TestAttemptController extends Controller
      */
     public function complete(Request $request, TestAttempt $attempt): JsonResponse
     {
-        if ($attempt->user_id !== auth()->id()) {
-            return ApiResponse::error(ErrorResponse::FORBIDDEN, 'Тест не принадлежит текущему пользователю', 403);
-        }
+        $this->authorize('update', $attempt);
 
         if ($attempt->completed_at) {
             return ApiResponse::error(

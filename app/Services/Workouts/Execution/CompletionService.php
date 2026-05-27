@@ -14,9 +14,6 @@ class CompletionService extends BaseWorkoutExecutionService
     {
         $user = request()->user();
 
-        if ($error = $this->checkOwnership($userWorkout)) {
-            return $error;
-        }
         if ($userWorkout->status === 'completed') {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
