@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ResendVerificationRequest;
 use App\Http\Requests\Auth\VerifyEmailRequest;
+use App\Http\Resources\UserResource;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\User;
@@ -54,7 +55,7 @@ class EmailVerificationController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => config('jwt.ttl') * 60,
-            'user' => $user->fresh()
+            'user' => new UserResource($user->fresh())
         ];
 
         return ApiResponse::success('Email успешно подтвержден.', $data);

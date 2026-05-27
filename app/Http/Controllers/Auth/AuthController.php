@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Http\Responses\ErrorResponse;
 use App\Models\User;
 use App\Models\Role;
@@ -57,7 +58,7 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Регистрация прошла успешно. Проверьте вашу почту для получения кода подтверждения.',
-            'user' => $user
+            'user' => new UserResource($user),
         ], 201);
     }
 
@@ -93,7 +94,7 @@ class AuthController extends Controller
                 'inactivity_limit_days' => 7,
                 'access_token_expires_in_minutes' => config('jwt.ttl')
             ],
-            'user' => $user
+            'user' => new UserResource($user),
         ]);
     }
 
@@ -136,7 +137,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'success' => true,
-            'user' => Auth::user()
+            'user' => new UserResource(Auth::user()),
         ]);
     }
 }
