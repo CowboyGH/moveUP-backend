@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class TestAttempt extends Model
 {
@@ -15,6 +14,7 @@ class TestAttempt extends Model
     protected $table = 'test_attempts';
 
     protected $fillable = [
+        'user_id',
         'testing_id',
         'started_at',
         'completed_at',
@@ -36,15 +36,8 @@ class TestAttempt extends Model
         return $this->hasMany(TestResult::class);
     }
 
-    public function user(): HasOneThrough
+    public function user(): BelongsTo
     {
-        return $this->hasOneThrough(
-            User::class,
-            TestResult::class,
-            'test_attempt_id',
-            'id',
-            'id',
-            'user_id'
-        );
+        return $this->belongsTo(User::class);
     }
 }

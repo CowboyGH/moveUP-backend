@@ -51,11 +51,14 @@ return new class extends Migration
 
         Schema::create('test_attempts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('testing_id')->constrained()->cascadeOnDelete();
             $table->timestamp('started_at')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->integer('pulse')->nullable();
             $table->timestamps();
+
+            $table->index(['user_id', 'completed_at']);
         });
 
         Schema::create('test_results', function (Blueprint $table) {

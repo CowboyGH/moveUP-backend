@@ -57,6 +57,16 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
+        $exceptions->renderable(function (\Illuminate\Http\Exceptions\ThrottleRequestsException $e, $request) {
+            if ($request->is('api/*')) {
+                return \App\Http\Responses\ErrorResponse::make(
+                    \App\Http\Responses\ErrorResponse::RATE_LIMITED,
+                    'Слишком много попыток. Попробуйте через минуту.',
+                    429
+                );
+            }
+        });
+
         $exceptions->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
             if ($request->is('api/*')) {
                 return \App\Http\Responses\ErrorResponse::make(

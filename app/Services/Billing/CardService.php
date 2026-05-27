@@ -22,7 +22,7 @@ class CardService
                 return null;
             }
 
-            $cardHash = bcrypt($cardData['card_number']);
+            $cardHash = hash_hmac('sha256', $cardData['card_number'], config('app.key'));
 
             $existingCard = SavedCard::where('user_id', $user->id)->where('card_number_hash', $cardHash)->first();
 

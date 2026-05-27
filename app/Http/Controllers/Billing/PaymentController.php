@@ -12,6 +12,7 @@ use App\Services\Billing\PaymentService;
 use App\Services\Billing\SubscriptionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -129,10 +130,11 @@ class PaymentController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Payment processing failed', ['exception' => $e]);
 
             return ApiResponse::error(
                 ErrorResponse::SERVER_ERROR,
-                'Ошибка при обработке платежа: ' . $e->getMessage(),
+                'Ошибка при обработке платежа. Попробуйте позже.',
                 500
             );
         }

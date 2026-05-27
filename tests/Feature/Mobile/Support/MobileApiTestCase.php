@@ -20,6 +20,7 @@ use App\Services\GuestDataService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -37,6 +38,8 @@ abstract class MobileApiTestCase extends TestCase
         config(['jwt.secret' => 'mobile-contract-test-secret-32-bytes-ok']);
         Queue::fake();
         Storage::fake('public');
+        RateLimiter::clear('auth-attempts');
+        RateLimiter::clear('auth-codes');
 
         $this->guestService = new InMemoryGuestDataService();
         $this->app->instance(GuestDataService::class, $this->guestService);

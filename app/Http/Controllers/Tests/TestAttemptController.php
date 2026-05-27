@@ -37,6 +37,7 @@ class TestAttemptController extends Controller
         }
 
         $attempt = TestAttempt::create([
+            'user_id' => auth()->id(),
             'testing_id' => $testing->id,
             'started_at' => now(),
         ]);
@@ -62,6 +63,10 @@ class TestAttemptController extends Controller
      */
     public function storeResult(Request $request, TestAttempt $attempt): JsonResponse
     {
+        if ($attempt->user_id !== auth()->id()) {
+            return ApiResponse::error(ErrorResponse::FORBIDDEN, 'Тест не принадлежит текущему пользователю', 403);
+        }
+
         if ($attempt->completed_at) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
@@ -130,6 +135,10 @@ class TestAttemptController extends Controller
      */
     public function complete(Request $request, TestAttempt $attempt): JsonResponse
     {
+        if ($attempt->user_id !== auth()->id()) {
+            return ApiResponse::error(ErrorResponse::FORBIDDEN, 'Тест не принадлежит текущему пользователю', 403);
+        }
+
         if ($attempt->completed_at) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,
