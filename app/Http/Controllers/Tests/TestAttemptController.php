@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Tests;
 
 use App\Http\Controllers\Controller;
-use App\Services\WorkoutGeneration\WorkoutGeneratorService;
+use App\Http\Requests\Tests\CompleteTestAttemptRequest;
+use App\Http\Requests\Tests\StoreTestResultRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\TestAttempt;
@@ -11,10 +12,9 @@ use App\Models\Testing;
 use App\Models\TestResult;
 use App\Models\User;
 use App\Services\Tests\TestAttemptFlowService;
+use App\Services\WorkoutGeneration\WorkoutGeneratorService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 
 class TestAttemptController extends Controller
 {
@@ -61,7 +61,7 @@ class TestAttemptController extends Controller
     /**
      * Сохранить результат выполнения упражнения
      */
-    public function storeResult(Request $request, TestAttempt $attempt): JsonResponse
+    public function storeResult(StoreTestResultRequest $request, TestAttempt $attempt): JsonResponse
     {
         $this->authorize('update', $attempt);
 
@@ -70,20 +70,6 @@ class TestAttemptController extends Controller
                 ErrorResponse::CONFLICT,
                 'Тест уже завершён',
                 409
-            );
-        }
-
-        $validator = Validator::make($request->all(), [
-            'testing_exercise_id' => 'required|exists:testing_exercises,id',
-            'result_value' => 'required|integer|between:1,4',
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::error(
-                ErrorResponse::VALIDATION_FAILED,
-                'Ошибка валидации',
-                422,
-                $validator->errors()->toArray()
             );
         }
 
@@ -131,7 +117,7 @@ class TestAttemptController extends Controller
     /**
      * Завершить тест и сохранить пульс
      */
-    public function complete(Request $request, TestAttempt $attempt): JsonResponse
+    public function complete(CompleteTestAttemptRequest $request, TestAttempt $attempt): JsonResponse
     {
         $this->authorize('update', $attempt);
 
@@ -140,19 +126,6 @@ class TestAttemptController extends Controller
                 ErrorResponse::CONFLICT,
                 'Тест уже завершён',
                 409
-            );
-        }
-
-        $validator = Validator::make($request->all(), [
-            'pulse' => 'required|integer|min:30|max:220',
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::error(
-                ErrorResponse::VALIDATION_FAILED,
-                'Ошибка валидации',
-                422,
-                $validator->errors()->toArray()
             );
         }
 
