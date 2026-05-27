@@ -22,31 +22,37 @@ class WorkoutExecutionController extends Controller
 
     public function show(UserWorkout $userWorkout)
     {
+        $this->authorize('view', $userWorkout);
         return $this->showService->show($userWorkout);
     }
 
     public function startWarmup(UserWorkout $userWorkout)
     {
+        $this->authorize('view', $userWorkout);
         return $this->warmupService->startWarmup($userWorkout);
     }
 
     public function completeWarmup(UserWorkout $userWorkout)
     {
+        $this->authorize('view', $userWorkout);
         return $this->warmupService->completeWarmup($userWorkout);
     }
 
     public function nextWarmup(UserWorkout $userWorkout, NextWarmupRequest $request)
     {
+        $this->authorize('view', $userWorkout);
         return $this->warmupService->nextWarmup($userWorkout, $request);
     }
 
     public function saveExerciseResult(UserWorkout $userWorkout, SaveExerciseResultRequest $request)
     {
+        $this->authorize('view', $userWorkout);
         return $this->exerciseService->saveExerciseResult($userWorkout, $request);
     }
 
     public function complete(UserWorkout $userWorkout)
     {
+        $this->authorize('view', $userWorkout);
         return $this->completionService->complete($userWorkout);
     }
 }

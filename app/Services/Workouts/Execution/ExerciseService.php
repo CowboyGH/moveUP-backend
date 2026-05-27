@@ -59,10 +59,6 @@ class ExerciseService extends BaseWorkoutExecutionService
     {
         $user = request()->user();
 
-        if ($error = $this->checkOwnership($userWorkout)) {
-            return $error;
-        }
-
         $request->validate([
             'exercise_id' => 'required|exists:exercises,id',
             'reaction' => 'required|in:good,normal,bad',

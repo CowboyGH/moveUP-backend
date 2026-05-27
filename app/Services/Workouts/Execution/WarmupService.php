@@ -6,7 +6,6 @@ use App\Http\Requests\Workouts\NextWarmupRequest;
 use App\Http\Responses\ApiResponse;
 use App\Http\Responses\ErrorResponse;
 use App\Models\UserWorkout;
-use Illuminate\Support\Facades\Auth;
 
 class WarmupService extends BaseWorkoutExecutionService
 {
@@ -20,16 +19,6 @@ class WarmupService extends BaseWorkoutExecutionService
 
     public function startWarmup(UserWorkout $userWorkout)
     {
-        if (!Auth::check()) {
-            return ApiResponse::error(
-                ErrorResponse::UNAUTHORIZED,
-                'Пользователь не авторизован',
-                401
-            );
-        }
-        if ($error = $this->checkOwnership($userWorkout)) {
-            return $error;
-        }
         $warmups = $this->getSortedWarmups($userWorkout);
 
         if ($warmups->isEmpty()) {
@@ -60,17 +49,6 @@ class WarmupService extends BaseWorkoutExecutionService
 
     public function nextWarmup(UserWorkout $userWorkout, NextWarmupRequest $request)
     {
-        if (!Auth::check()) {
-            return ApiResponse::error(
-                ErrorResponse::UNAUTHORIZED,
-                'Пользователь не авторизован',
-                401
-            );
-        }
-        if ($error = $this->checkOwnership($userWorkout)) {
-            return $error;
-        }
-
         $warmups = $this->getSortedWarmups($userWorkout);
 
         if (!$request->current_warmup_id) {
@@ -120,17 +98,6 @@ class WarmupService extends BaseWorkoutExecutionService
 
     public function completeWarmup(UserWorkout $userWorkout)
     {
-        if (!Auth::check()) {
-            return ApiResponse::error(
-                ErrorResponse::UNAUTHORIZED,
-                'Пользователь не авторизован',
-                401
-            );
-        }
-        if ($error = $this->checkOwnership($userWorkout)) {
-            return $error;
-        }
-
         if ($userWorkout->status !== UserWorkout::STATUS_STARTED) {
             return ApiResponse::error(
                 ErrorResponse::CONFLICT,

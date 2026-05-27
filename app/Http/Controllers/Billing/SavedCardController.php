@@ -71,25 +71,17 @@ class SavedCardController extends Controller
 
     public function deleteCard(int $cardId): JsonResponse
     {
-        $user = auth()->user();
+        $card = SavedCard::find($cardId);
 
-        if (!$user) {
-            return ApiResponse::error(
-                ErrorResponse::UNAUTHORIZED,
-                'Пользователь не авторизован',
-                401
-            );
+        if (!$card) {
+            return ApiResponse::error(ErrorResponse::NOT_FOUND, 'Карта не найдена', 404);
         }
 
-        if ($this->cardService->deleteCard($user, $cardId)) {
-            return ApiResponse::success('Карта успешно удалена');
-        }
+        $this->authorize('delete', $card);
 
-        return ApiResponse::error(
-            ErrorResponse::NOT_FOUND,
-            'Карта не найдена',
-            404
-        );
+        $this->cardService->deleteCard(auth()->user(), $cardId);
+
+        return ApiResponse::success('Карта успешно удалена');
     }
 
     public function setDefaultCard(int $cardId): JsonResponse
