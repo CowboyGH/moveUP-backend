@@ -11,7 +11,6 @@ use App\Services\Billing\CardService;
 use App\Services\Billing\PaymentService;
 use App\Services\Billing\SubscriptionService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
@@ -36,34 +35,22 @@ class PaymentController extends Controller
 
         $validated = $request->validated();
 
-        DB::beginTransaction();
-
         try {
             $subscription = Subscription::where('id', $validated['subscription_id'])
                 ->where('is_active', true)
                 ->first();
 
             if (!$subscription) {
-                DB::rollBack();
-                return ApiResponse::error(
-                    ErrorResponse::NOT_FOUND,
-                    'Подписка не найдена',
-                    404
-                );
+                return ApiResponse::error(ErrorResponse::NOT_FOUND, 'Подписка не найдена', 404);
             }
 
-            $savedCard = null;
             $cardData = $this->paymentService->getCardData($user, $validated);
 
             if (!$cardData) {
-                DB::rollBack();
-                return ApiResponse::error(
-                    ErrorResponse::PAYMENT_FAILED,
-                    'Не удалось получить данные карты',
-                    400
-                );
+                return ApiResponse::error(ErrorResponse::PAYMENT_FAILED, 'Не удалось получить данные карты', 400);
             }
 
+            $savedCard = null;
             $saveCard = filter_var($validated['save_card'], FILTER_VALIDATE_BOOLEAN);
 
             if (!$validated['use_saved_card'] && $saveCard) {
@@ -73,24 +60,14 @@ class PaymentController extends Controller
             if ($validated['use_saved_card'] && isset($validated['saved_card_id'])) {
                 $savedCard = $this->cardService->getSavedCard($user, $validated['saved_card_id']);
                 if (!$savedCard) {
-                    DB::rollBack();
-                    return ApiResponse::error(
-                        ErrorResponse::NOT_FOUND,
-                        'Сохраненная карта не найдена',
-                        404
-                    );
+                    return ApiResponse::error(ErrorResponse::NOT_FOUND, 'Сохраненная карта не найдена', 404);
                 }
             }
 
             $paymentResult = $this->paymentService->processPayment($user, $subscription, $cardData);
 
             if (!$paymentResult['success']) {
-                DB::rollBack();
-                return ApiResponse::error(
-                    ErrorResponse::PAYMENT_FAILED,
-                    $paymentResult['message'],
-                    400
-                );
+                return ApiResponse::error(ErrorResponse::PAYMENT_FAILED, $paymentResult['message'], 400);
             }
 
             $userSubscription = $this->subscriptionService->activateSubscription(
@@ -99,8 +76,6 @@ class PaymentController extends Controller
                 $paymentResult['transaction_id'],
                 $savedCard
             );
-
-            DB::commit();
 
             $response = [
                 'transaction_id' => $paymentResult['transaction_id'],
@@ -129,7 +104,6 @@ class PaymentController extends Controller
             return ApiResponse::success('Подписка успешно оформлена', $response);
 
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error('Payment processing failed', ['exception' => $e]);
 
             return ApiResponse::error(
