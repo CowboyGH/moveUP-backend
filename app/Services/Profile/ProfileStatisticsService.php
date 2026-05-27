@@ -334,19 +334,23 @@ class ProfileStatisticsService
         $now = Carbon::now();
         $weekOffset = $weeksCount * $offset;
 
+        $weeklyGoal = $user->currentProgress()?->weekly_workout_goal ?? 4;
+
+        $startOfRange = $now->copy()->subWeeks($weeksCount - 1 + $weekOffset)->startOfWeek();
+        $endOfRange = $now->copy()->subWeeks($weekOffset)->endOfWeek();
+
+        $countsByWeek = $user->userWorkouts()
+            ->where('status', 'completed')
+            ->whereBetween('completed_at', [$startOfRange, $endOfRange])
+            ->selectRaw('YEARWEEK(completed_at, 1) as yw, COUNT(*) as cnt')
+            ->groupBy('yw')
+            ->pluck('cnt', 'yw');
+
         for ($i = $weeksCount - 1; $i >= 0; $i--) {
-            $startOfWeek = $now->copy()
-                ->subWeeks($i + $weekOffset)
-                ->startOfWeek();
-            $endOfWeek = $now->copy()
-                ->subWeeks($i + $weekOffset)
-                ->endOfWeek();
+            $startOfWeek = $now->copy()->subWeeks($i + $weekOffset)->startOfWeek();
+            $endOfWeek = $now->copy()->subWeeks($i + $weekOffset)->endOfWeek();
 
-            $count = $user->userWorkouts()
-                ->where('status', 'completed')
-                ->whereBetween('completed_at', [$startOfWeek, $endOfWeek])
-                ->count();
-
+            $yw = (int) $startOfWeek->format('oW');
             $weekNumber = $weeksCount - $i;
 
             $weeks->push([
@@ -356,8 +360,8 @@ class ProfileStatisticsService
                 'short_label' => (string) $weekNumber,
                 'start_date' => $startOfWeek->format('Y-m-d'),
                 'end_date' => $endOfWeek->format('Y-m-d'),
-                'count' => $count,
-                'goal' => $user->currentProgress()?->weekly_workout_goal ?? 4,
+                'count' => (int) ($countsByWeek[$yw] ?? 0),
+                'goal' => $weeklyGoal,
             ]);
         }
 
@@ -368,15 +372,18 @@ class ProfileStatisticsService
     {
         $days = collect();
         $startOfWeek = Carbon::now()->copy()->subWeeks($offset)->startOfWeek();
+        $endOfWeek = $startOfWeek->copy()->endOfWeek();
         $dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+        $countsByDay = $user->userWorkouts()
+            ->where('status', 'completed')
+            ->whereBetween('completed_at', [$startOfWeek, $endOfWeek])
+            ->selectRaw('DATE(completed_at) as d, COUNT(*) as cnt')
+            ->groupBy('d')
+            ->pluck('cnt', 'd');
 
         for ($i = 0; $i < 7; $i++) {
             $date = $startOfWeek->copy()->addDays($i);
-
-            $count = $user->userWorkouts()
-                ->where('status', 'completed')
-                ->whereDate('completed_at', $date)
-                ->count();
 
             $days->push([
                 'day_index' => $i,
@@ -384,7 +391,7 @@ class ProfileStatisticsService
                 'label' => $dayNames[$i],
                 'date' => $date->format('Y-m-d'),
                 'date_formatted' => $date->format('d.m'),
-                'count' => $count,
+                'count' => (int) ($countsByDay[$date->format('Y-m-d')] ?? 0),
                 'goal' => null,
             ]);
         }
