@@ -169,7 +169,7 @@ class ProfileDetailController extends Controller
         $testAttempts = TestAttempt::whereHas('testResults', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
-            ->with('testing')
+            ->with(['testing', 'testResults'])
             ->whereNotNull('completed_at')
             ->orderBy('completed_at', 'desc')
             ->get();
