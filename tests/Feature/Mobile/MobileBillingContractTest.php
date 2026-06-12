@@ -17,12 +17,12 @@ class MobileBillingContractTest extends MobileApiTestCase
         $this->getJson('/api/subscriptions')
             ->assertOk()
             ->assertJsonPath('success', true)
-            ->assertJsonStructure(['data' => [['id', 'name', 'price', 'duration_days']]]);
+            ->assertJsonStructure(['data' => [['id', 'name', 'price', 'duration_days', 'is_active']]]);
 
         $this->getJson("/api/subscriptions/{$subscription->id}")
             ->assertOk()
             ->assertJsonPath('success', true)
-            ->assertJsonStructure(['data' => ['id', 'name', 'price', 'duration_days']]);
+            ->assertJsonStructure(['data' => ['id', 'name', 'price', 'duration_days', 'is_active']]);
 
         $saveCard = $this->postJson('/api/payment/cards/save', [
             'card_number' => '4111111111111111',

@@ -22,6 +22,7 @@ class SubscriptionController extends Controller
                     'image' => $subscription->image,
                     'price' => $subscription->price,
                     'duration_days' => $subscription->duration_days,
+                    'is_active' => $subscription->is_active,
                 ];
             });
 
