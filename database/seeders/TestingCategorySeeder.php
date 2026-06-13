@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Testing;
 use Illuminate\Database\Seeder;
+use RuntimeException;
 
 class TestingCategorySeeder extends Seeder
 {
@@ -29,7 +30,20 @@ class TestingCategorySeeder extends Seeder
             $testing = Testing::where('title', $title)->first();
 
             if (! $testing) {
-                continue;
+                throw new RuntimeException(
+                    "TestingCategorySeeder: тест '{$title}' не найден. "
+                    . "Проверь TestingSeeder или обнови \$map."
+                );
+            }
+
+            $found = Category::whereIn('name', $names)->pluck('name')->all();
+            $missing = array_diff($names, $found);
+
+            if (! empty($missing)) {
+                throw new RuntimeException(
+                    "TestingCategorySeeder: категории " . implode(', ', $missing)
+                    . " не найдены для теста '{$title}'. Проверь CategorySeeder или обнови \$map."
+                );
             }
 
             $ids = Category::whereIn('name', $names)->pluck('id')->all();
