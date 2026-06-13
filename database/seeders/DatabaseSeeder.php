@@ -20,9 +20,11 @@ class DatabaseSeeder extends Seeder
             $this->call(WarmupSeeder::class);
             $this->call(WorkoutSeeder::class);
 
+            $this->call(CategorySeeder::class);
             $this->call(TestingSeeder::class);
             $this->call(TestingExerciseSeeder::class);
             $this->call(TestingTestExerciseSeeder::class);
+            $this->call(TestingCategorySeeder::class);
         }
     }
 }
